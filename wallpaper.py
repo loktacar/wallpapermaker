@@ -1,10 +1,13 @@
 import os
 import random
+import time
 
 import Image
 
-from files import get_images
-from resolution import get_ratio
+from config import update_period
+from files import get_images, can_get_images
+from resolution import get_ratio, get_screen_resolution
+from threads import StoppableThread
 
 def resize(img, size):
     # resize image to fit height, width, or both
@@ -42,7 +45,7 @@ def wallpaper_split(size, iteration=0):
     new_size = (size[0]/2, size[1]/2)
     placement = ((0,0,1,1), (1,0,2,1), (0,1,1,2), (1,1,2,2))
     for i, img in enumerate(images):
-        if iteration < 4 and random.randint(0,6-iteration) == 0:
+        if iteration < 4 and random.randint(0,4-iteration) == 0:
             img = wallpaper_split(size, iteration+1)
         img = resize(img, new_size)
         pos = [new_size[j%2]*placement[i][j] for j in range(4)]
@@ -59,3 +62,17 @@ def set_wallpaper(filename='~/wp.png'):
     # TODO: Make platform independant
     filename = os.path.expanduser(filename)
     os.system("gsettings set org.gnome.desktop.background picture-uri \"file://%s\"" % filename)
+
+resolution = ()
+
+# Make wallpapers periodically
+class MakeWallpapers(StoppableThread):
+    def run(self):
+        resolution = get_screen_resolution()
+        while not self._stop and len(resolution) > 0 and can_get_images():
+            print 'Make wallpaper'
+            resolution = get_screen_resolution()
+            make_wallpaper(resolution)
+            set_wallpaper()
+            print 'Sleep'
+            time.sleep(update_period)

@@ -1,15 +1,24 @@
 #!/usr/bin/env python
-from resolution import get_screen_resolution
-from wallpaper import make_wallpaper, set_wallpaper
+import time
 
-# Create a thread and update periodically, period set in config.py
-#
-# Create a nother thread maintaining the file list,
-#   even in Image form if it cuts down on the creation time
-#
-# Create other forms of wallpaper collages
+from files import ImageThread
+from wallpaper import MakeWallpapers
+
+update_thread = MakeWallpapers()
+file_update_thread = ImageThread()
+
+def start_threads():
+    file_update_thread.start()
+    update_thread.start()
+
+def kill_threads():
+    file_update_thread.stop()
+    update_thread.stop()
 
 if __name__ == '__main__':
-    resolution = get_screen_resolution()
-    make_wallpaper(resolution)
-    set_wallpaper()
+    try:
+        start_threads()
+        while (True):
+            time.sleep(10)
+    except (KeyboardInterrupt, SystemExit):
+        kill_threads()
