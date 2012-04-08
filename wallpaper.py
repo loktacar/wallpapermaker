@@ -4,8 +4,8 @@ import time
 
 import Image
 
-from config import update_period
-from files import get_images, can_get_images
+from config import update_period, generated_wallpaper
+#from files import get_images, can_get_images
 from resolution import get_ratio, get_screen_resolution
 from threads import StoppableThread
 
@@ -36,43 +36,48 @@ def resize(img, size):
 
     return img
 
-def wallpaper_split(size, iteration=0):
+def wallpaper_split(size, get_image, iteration=0):
     aspect_ratio = get_ratio(*size)
-    images = get_images(4)
 
     wp = Image.new('RGB', size, (0,0,0))
 
     new_size = (size[0]/2, size[1]/2)
     placement = ((0,0,1,1), (1,0,2,1), (0,1,1,2), (1,1,2,2))
-    for i, img in enumerate(images):
+    for i in range(4):
         if iteration < 4 and random.randint(0,4-iteration) == 0:
-            img = wallpaper_split(size, iteration+1)
+            img = wallpaper_split(size, get_image, iteration+1)
+        else:
+            img = get_image()
         img = resize(img, new_size)
         pos = [new_size[j%2]*placement[i][j] for j in range(4)]
         wp.paste(img, pos)
 
     return wp
 
-def make_wallpaper(size, filename='~/wp.png'):
-    filename = os.path.expanduser(filename)
-    img = wallpaper_split(size)
-    img.save(filename, 'PNG', quality=100)
-
-def set_wallpaper(filename='~/wp.png'):
-    # TODO: Make platform independant
-    filename = os.path.expanduser(filename)
-    os.system("gsettings set org.gnome.desktop.background picture-uri \"file://%s\"" % filename)
-
-resolution = ()
-
 # Make wallpapers periodically
 class MakeWallpapers(StoppableThread):
+    def __init__(self, image_thread):
+        super(MakeWallpapers, self).__init__()
+        self.image_thread = image_thread
+        self.resolution = ()
+
     def run(self):
-        resolution = get_screen_resolution()
-        while not self._stop and len(resolution) > 0 and can_get_images():
+        self.resolution = get_screen_resolution()
+        while not self._stop and len(self.resolution) > 0 and self.image_thread.can_get_images():
             print 'Make wallpaper'
-            resolution = get_screen_resolution()
-            make_wallpaper(resolution)
-            set_wallpaper()
+            self.resolution = get_screen_resolution()
+            self.make_wallpaper(self.resolution)
+            self.set_wallpaper()
             print 'Sleep'
             time.sleep(update_period)
+
+    def make_wallpaper(self, size, filename=generated_wallpaper):
+        filename = os.path.expanduser(filename)
+        img = wallpaper_split(size, self.image_thread.get_image)
+        img.save(filename, 'PNG', quality=100)
+
+    def set_wallpaper(self, filename=generated_wallpaper):
+        # TODO: Make platform independant
+        filename = os.path.expanduser(filename)
+        os.system("gsettings set org.gnome.desktop.background picture-uri \"file://%s\"" % filename)
+
