@@ -1,14 +1,11 @@
 #!/usr/bin/env python
 import time
 
-from files import ImageThread
+from images import ImageThread
 from wallpaper import MakeWallpapers
 
 # TODO:
 #   - make each split occupy a seperate folder
-#   - Randomize the file list and make it a queue, pop images as needed and push them again.
-#     Randomize order upon completing a wallpaper and completing the queue.
-#   - Change files.py name to images.py
 #   - Multiple threads for resize and make_split functions so that it can be done on multiple cores?
 
 image_thread = ImageThread()

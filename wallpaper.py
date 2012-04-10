@@ -5,7 +5,6 @@ import time
 import Image
 
 from config import update_period, generated_wallpaper
-#from files import get_images, can_get_images
 from resolution import get_ratio, get_screen_resolution
 from threads import StoppableThread
 
@@ -42,9 +41,13 @@ def wallpaper_split(size, get_image, iteration=0):
     wp = Image.new('RGB', size, (0,0,0))
 
     new_size = (size[0]/2, size[1]/2)
+
+    # Constants for the loop
     placement = ((0,0,1,1), (1,0,2,1), (0,1,1,2), (1,1,2,2))
+    chances = (4, 4, 4, 8)
     for i in range(4):
-        if iteration < 4 and random.randint(0,4-iteration) == 0:
+        # Check that the random calculations make sense, i.e. print them out and spekk it
+        if iteration < 4 and random.randint(0,chances[iteration]) == 0:
             img = wallpaper_split(size, get_image, iteration+1)
         else:
             img = get_image()
@@ -63,13 +66,14 @@ class MakeWallpapers(StoppableThread):
 
     def run(self):
         self.resolution = get_screen_resolution()
-        while not self._stop and len(self.resolution) > 0 and self.image_thread.can_get_images():
-            print 'Make wallpaper'
+        while not self._stop:
             self.resolution = get_screen_resolution()
-            self.make_wallpaper(self.resolution)
-            self.set_wallpaper()
-            print 'Sleep'
-            time.sleep(update_period)
+            if len(self.resolution) > 0 and self.image_thread.can_get_images():
+                print 'Make wallpaper'
+                self.make_wallpaper(self.resolution)
+                self.set_wallpaper()
+                print 'Sleep'
+                time.sleep(update_period)
 
     def make_wallpaper(self, size, filename=generated_wallpaper):
         filename = os.path.expanduser(filename)
