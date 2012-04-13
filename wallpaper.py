@@ -1,14 +1,12 @@
-import os
 import random
-import time
 
 import Image
 
-from config import update_period, generated_wallpaper
-from resolution import get_ratio, get_screen_resolution
-from threads import StoppableThread
+from resolution import get_ratio
 
 def resize(img, size):
+    """ Resizes image to set size, conserves aspect ration by cropping """
+
     # resize image to fit height, width, or both
     width_ratio = 1.0*size[0]/img.size[0]
     height_ratio = 1.0*size[1]/img.size[1]
@@ -36,6 +34,8 @@ def resize(img, size):
     return img
 
 def wallpaper_split(size, get_image, iteration=0):
+    """ Splits wallpaper in four with a chance of each piece being recursively generated """
+
     aspect_ratio = get_ratio(*size)
 
     wp = Image.new('RGB', size, (0,0,0))
@@ -56,32 +56,3 @@ def wallpaper_split(size, get_image, iteration=0):
         wp.paste(img, pos)
 
     return wp
-
-# Make wallpapers periodically
-class MakeWallpapers(StoppableThread):
-    def __init__(self, image_thread):
-        super(MakeWallpapers, self).__init__()
-        self.image_thread = image_thread
-        self.resolution = ()
-
-    def run(self):
-        self.resolution = get_screen_resolution()
-        while not self._stop:
-            self.resolution = get_screen_resolution()
-            if len(self.resolution) > 0 and self.image_thread.can_get_images():
-                print 'Make wallpaper'
-                self.make_wallpaper(self.resolution)
-                self.set_wallpaper()
-                print 'Sleep'
-                time.sleep(update_period)
-
-    def make_wallpaper(self, size, filename=generated_wallpaper):
-        filename = os.path.expanduser(filename)
-        img = wallpaper_split(size, self.image_thread.get_image)
-        img.save(filename, 'PNG', quality=100)
-
-    def set_wallpaper(self, filename=generated_wallpaper):
-        # TODO: Make platform independant
-        filename = os.path.expanduser(filename)
-        os.system("gsettings set org.gnome.desktop.background picture-uri \"file://%s\"" % filename)
-
