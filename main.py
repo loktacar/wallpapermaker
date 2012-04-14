@@ -3,6 +3,7 @@
 #   - make each split occupy a seperate folder
 #   - Change name of main.py
 #   - Multiple instances of the thread running at once? With seperate configurations from config.py
+#   - Remove deleted images
 #
 # Optimization
 #   - Multiple threads for resize and make_split functions so that it can be done on multiple cores?
@@ -30,6 +31,7 @@ from docopt import docopt
 
 import config
 from resolution import get_screen_resolution
+from setwallpaper import set_wallpaper
 from images import ImageQueue
 from wallpaper import wallpaper_split
 
@@ -40,7 +42,6 @@ def parse_options(cmd_opts):
     options['path'] = os.path.expanduser(cmd_opts.path if cmd_opts.path else config.path)
     options['extensions'] = cmd_opts.extensions if cmd_opts.extensions else config.extensions
     options['update_period'] = cmd_opts.update if cmd_opts.update else config.update_period
-    options['file_update_period'] = cmd_opts.fupdate if cmd_opts.fupdate else config.file_update_period
     options['generated_wallpaper'] = os.path.expanduser(\
                                         cmd_opts.generated_wallpaper if cmd_opts.generated_wallpaper else\
                                         config.generated_wallpaper)
@@ -110,22 +111,20 @@ class MainThread(threading.Thread):
     def _make_wallpaper(self, size):
         """ Creates a wallpaper and saves it """
         img = wallpaper_split(size, self.wallpapers.pop_image)
-        img.save(self.options['generated_wallpaper'], 'PNG', quality=100)
+        img.save(self.options['generated_wallpaper'], 'BMP')
 
     def _set_wallpaper(self):
         """ Sets the wallpaper to latest generated wallpaper """
-        os.system(\
-                "gsettings set org.gnome.desktop.background picture-uri \"file://%s\"" \
-                    % self.options['generated_wallpaper'])
+        set_wallpaper(self.options['generated_wallpaper'])
 
     # 'private' file functions
     def _callback(self, arg, dirname, fnames):
         """ Gets a list of files from each directory in 'path', including 'path' directory iteself """
-        filtered_filenames = ['%s/%s' % (dirname, i) for i in fnames if self._check_extension(i)]
-        self.wallpapers.push(filtered_filenames)
+        filtered_filenames = ['%s/%s' % (dirname, i) for i in fnames if self._check_extension(i.lower())]
+        pushed_count = self.wallpapers.push(filtered_filenames)
 
-        if self.options['verbose']:
-            print 'pushed %d images from %s' % (len(filtered_filenames), dirname)
+        if self.options['verbose'] and pushed_count:
+            print 'pushed %d images from %s' % (pushed_count, dirname)
 
     def _check_extension(self, fname):
         """ Checks if file has extension found in extensions, from configuration """

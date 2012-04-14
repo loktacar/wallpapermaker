@@ -47,19 +47,24 @@ class ImageQueue:
         return Image.open(images.next())
 
     def push(self, images):
-        """ Pushes images onto the list """
+        """ Pushes images onto the list, returns number of images pushed (not including duplicates) """
 
         if not type(images) is list:
-            self.push_image(images)
-            return True
+            return 1 if self.push_image(images) else 0
 
+        c = 0
         for image in images:
-            self.images.append(image)
+            c += 1 if self.push_image(image) else 0
+
+        return c
 
     def push_image(self, image):
-        """ Pushes a single image to the list """
+        """ Pushes a single image to the list, returns true if pushed (doesn't push duplicates) """
         if not image in self.images:
             self.images.append(image)
+            return True
+
+        return False
 
     def shuffle(self):
         """ Shuffles the image list """
