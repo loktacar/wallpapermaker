@@ -22,6 +22,9 @@ recursion_depth = 4
 # ex. generated_wallpaper = '~/.wp.bmp' results in '~/.wp_2012-04-15_21-51.bmp'
 add_date = False
 
+# Run once then die (Create wallpaper, save, set and exit)
+single_run = False
+
 # For linux systems only, desktop environment (gnome, kde, xmonad, xfce, etc.)
 desktop_environment = 'gnome'
 
@@ -40,6 +43,9 @@ def parse_options(cmd_opts):
                                         generated_wallpaper)
     options['recursion_depth'] = cmd_opts.recursion_depth if cmd_opts.recursion_depth else recursion_depth
     options['add_date'] = cmd_opts.add_date if cmd_opts.add_date else add_date
+
+    options['single_run'] = cmd_opts.single_run if cmd_opts.single_run else single_run
+
     options['verbose'] = cmd_opts.verbose
 
     # Parse resolution input

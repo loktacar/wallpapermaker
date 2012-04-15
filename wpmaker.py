@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # TODO, before I release:
 #   - Read configuration from default locations (see appdirs and Config module)
-#   - Single run option: create wp, set wp and die
 #
 # Compatibility
 #   - Make mac compatible
@@ -28,6 +27,7 @@ Options:
     --resolution=WIDTHxHEIGHT   sets a static value for resolution, instead of automatic
     --add-date                  adds date to generated wallpaper filename
     --recursion-depth=INT       maximum number of times each split can be split
+    -s --single-run             create and set a single wallpaper then exit
     -h --help                   shows this help message and exits
     -v --verbose                prints status messages as the program runs
 
@@ -83,6 +83,12 @@ class MainThread(threading.Thread):
                 self.wallpapers.shuffle_check()
                 # Change wallpaper
                 self._set_wallpaper(wp_name)
+
+            if self.options['single_run']:
+                if self.options['verbose']:
+                    print 'Single run, now exiting'
+
+                os._exit(os.EX_OK) # Exit without errors
 
             if self.options['verbose']:
                 print 'sleep %ds' % self.options['update_period']
