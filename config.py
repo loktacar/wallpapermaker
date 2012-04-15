@@ -39,7 +39,6 @@ def parse_options(cmd_opts):
                                         cmd_opts.generated_wallpaper if cmd_opts.generated_wallpaper else\
                                         generated_wallpaper)
     options['recursion_depth'] = cmd_opts.recursion_depth if cmd_opts.recursion_depth else recursion_depth
-    print options['recursion_depth']
     options['add_date'] = cmd_opts.add_date if cmd_opts.add_date else add_date
     options['verbose'] = cmd_opts.verbose
 
