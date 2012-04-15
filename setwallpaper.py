@@ -1,13 +1,15 @@
 import sys
+import os
+from config import desktop_environment
 
 def set_wallpaper(filename):
     # Check if windows, linux or mac
 
     if sys.platform == 'win32':
         set_win32_wallpaper(filename)
-    elif sys.platform == 'linux':
-        # if linux, we need to check which desktop manager is being used (gnome, kde, xmonad, etc.)
-        set_gnome_wallpaper(filename)
+    elif sys.platform == 'linux2':
+        if desktop_environment == 'gnome':
+            set_gnome_wallpaper(filename)
 
 def set_win32_wallpaper(filename):
     import ctypes

@@ -8,7 +8,7 @@ def get_screen_resolution():
         import ctypes
         resolution = (ctypes.windll.user32.GetSystemMetrics(0),
                       ctypes.windll.user32.GetSystemMetrics(1))
-    elif sys.platform == 'linux':
+    elif sys.platform == 'linux2':
         import Xlib
         import Xlib.display
         display = Xlib.display.Display()

@@ -47,7 +47,7 @@ def wallpaper_split(size, get_image, iteration=0):
     chances = (4, 4, 4, 8)
     for i in range(4):
         # Check that the random calculations make sense, i.e. print them out and spekk it
-        if iteration < 4 and random.randint(0,chances[iteration]) == 0:
+        if iteration < 3 and random.randint(0,chances[iteration]) == 0:
             img = wallpaper_split(size, get_image, iteration+1)
         else:
             img = get_image()

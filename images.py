@@ -11,7 +11,7 @@ class ImageQueue:
         self.verbose = verbose
 
     def pop(self, count=1):
-        """ Pops images of the list, returns list of filenames """
+        """ Pops images off the list, returns list of filenames """
 
         # Shuffle before pop
         if self.index == -1:
@@ -31,10 +31,6 @@ class ImageQueue:
             self.index += 1
 
             yield image
-
-        # Shuffle list if all images have been shows atleast once
-        if self.index >= len(self.images):
-            self.shuffle()
 
     def pop_images(self, count=1):
         """ Pops images off the list, returns list of Image objects """
@@ -73,6 +69,11 @@ class ImageQueue:
 
         random.shuffle(self.images)
         self.index = 0
+
+    def shuffle_check(self):
+        """ Shuffles images if neccesary """
+        if self.index > len(self.images):
+            self.shuffle()
 
     def count(self):
         """ Returns the number of images in the list """

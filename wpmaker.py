@@ -1,13 +1,17 @@
 #!/usr/bin/env python
 # TODO:
 #   - make each split occupy a seperate folder
-#   - Change name of main.py
-#   - Multiple instances of the thread running at once? With seperate configurations from config.py
-#   - Remove deleted images
+#   - Remove deleted images from queue
+#   - Add an recursion level option
+#   - Add date to generated wallpaper name, preceding the '.'
 #
 # Optimization
 #   - Multiple threads for resize and make_split functions so that it can be done on multiple cores?
 #     Try to lower cpu usage, even though it's running for a while
+#
+# IDEAS
+#   - Multiple instances of the thread running at once? With seperate configurations from config.py
+#       * Option to only create image, don't set as wallpaper
 #
 """Usage main.py [options]
 
@@ -15,7 +19,6 @@ Options:
     --path=PATH                 path of wallpaper folder
     --extensions=LIST           comma seperated list of acceptable extensions
     --update=TIME               time seperating each wallpaper update in seconds
-    --fupdate=TIME              time seperating each scan of the wallpaper folder in seconds
     --generated-wallpaper=PATH  path of the output wallpaper
     --resolution=WIDTHxHEIGHT   sets a static value for resolution, instead of automatic
     -h --help                   shows this help message and exits
@@ -94,6 +97,7 @@ class MainThread(threading.Thread):
 
                 # Create wallpaper
                 self._make_wallpaper(self.resolution)
+                self.wallpapers.shuffle_check()
                 # Change wallpaper
                 self._set_wallpaper()
 
