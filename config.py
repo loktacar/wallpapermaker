@@ -16,3 +16,35 @@ update_period = 300
 
 # For linux systems only, desktop environment (gnome, kde, xmonad, xfce, etc.)
 desktop_environment = 'gnome'
+
+# Do not change the following
+import os
+
+def parse_options(cmd_opts):
+    """ Generates option dictionary from defaults (above) and command line options """
+    options = {}
+
+    options['path'] = os.path.expanduser(cmd_opts.path if cmd_opts.path else path)
+    options['extensions'] = cmd_opts.extensions if cmd_opts.extensions else extensions
+    options['update_period'] = cmd_opts.update if cmd_opts.update else update_period
+    options['generated_wallpaper'] = os.path.expanduser(\
+                                        cmd_opts.generated_wallpaper if cmd_opts.generated_wallpaper else\
+                                        generated_wallpaper)
+    options['verbose'] = cmd_opts.verbose
+
+    # Parse resolution input
+    options['resolution'] = cmd_opts.resolution
+    if options['resolution']:
+        res = options['resolution'].split('x')
+        if type(res) == str:
+            res = options['resolution'].split('X')
+
+        if type(res) == str:
+            options['resolution'] == False
+        else:
+            try:
+                options['resolution'] = [int(i) for i in res]
+            except:
+                options['resolution'] = False
+
+    return options

@@ -1,17 +1,22 @@
 #!/usr/bin/env python
 # TODO:
-#   - make each split occupy a seperate folder
 #   - Remove deleted images from queue
-#   - Add an recursion level option
-#   - Add date to generated wallpaper name, preceding the '.'
+#   - Add a recursion level option
+#   - Add option to add date to generated wallpaper name, preceding the '.'
+#   - Read configuration from default locations (see appdirs and Config module)
+#
+# Compatibility
+#   - Make mac compatible
+#   - Make xmonad compatible
+#
+# IDEAS
+#   - Make each split occupy a seperate folder
+#   - Multiple instances of the thread running at once? With seperate configurations from config.py
+#       * Option to only create image, don't set as wallpaper
 #
 # Optimization
 #   - Multiple threads for resize and make_split functions so that it can be done on multiple cores?
 #     Try to lower cpu usage, even though it's running for a while
-#
-# IDEAS
-#   - Multiple instances of the thread running at once? With seperate configurations from config.py
-#       * Option to only create image, don't set as wallpaper
 #
 """Usage main.py [options]
 
@@ -27,45 +32,21 @@ Options:
 """
 
 import os
+import sys
+
+# Add site-packages directory to pythonpath
+sys.path.append(os.path.abspath('site-packages'))
+
 import threading
 import time
 
 from docopt import docopt
 
-import config
+from config import parse_options
 from resolution import get_screen_resolution
 from setwallpaper import set_wallpaper
 from images import ImageQueue
 from wallpaper import wallpaper_split
-
-def parse_options(cmd_opts):
-    """ Generates option dictionary from configuration file and command line options """
-    options = {}
-
-    options['path'] = os.path.expanduser(cmd_opts.path if cmd_opts.path else config.path)
-    options['extensions'] = cmd_opts.extensions if cmd_opts.extensions else config.extensions
-    options['update_period'] = cmd_opts.update if cmd_opts.update else config.update_period
-    options['generated_wallpaper'] = os.path.expanduser(\
-                                        cmd_opts.generated_wallpaper if cmd_opts.generated_wallpaper else\
-                                        config.generated_wallpaper)
-    options['verbose'] = cmd_opts.verbose
-
-    # Parse resolution input
-    options['resolution'] = cmd_opts.resolution
-    if options['resolution']:
-        res = options['resolution'].split('x')
-        if type(res) == str:
-            res = options['resolution'].split('X')
-
-        if type(res) == str:
-            options['resolution'] == False
-        else:
-            try:
-                options['resolution'] = [int(i) for i in res]
-            except:
-                options['resolution'] = False
-
-    return options
 
 class MainThread(threading.Thread):
     def __init__(self, options):
