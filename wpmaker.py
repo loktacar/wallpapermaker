@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 # TODO, before I release:
-#   - Add a recursion level option
-#   - Add option to add date to generated wallpaper name, preceding the '.'
 #   - Read configuration from default locations (see appdirs and Config module)
 #   - Single run option: create wp, set wp and die
 #
@@ -28,6 +26,8 @@ Options:
     --update=TIME               time seperating each wallpaper update in seconds
     --generated-wallpaper=PATH  path of the output wallpaper
     --resolution=WIDTHxHEIGHT   sets a static value for resolution, instead of automatic
+    --add-date                  adds date to generated wallpaper filename
+    --recursion-depth=INT       maximum number of times each split can be split
     -h --help                   shows this help message and exits
     -v --verbose                prints status messages as the program runs
 
@@ -79,10 +79,10 @@ class MainThread(threading.Thread):
                     self.resolution = get_screen_resolution()
 
                 # Create wallpaper
-                self._make_wallpaper(self.resolution)
+                wp_name = self._make_wallpaper(self.resolution)
                 self.wallpapers.shuffle_check()
                 # Change wallpaper
-                self._set_wallpaper()
+                self._set_wallpaper(wp_name)
 
             if self.options['verbose']:
                 print 'sleep %ds' % self.options['update_period']
@@ -97,12 +97,30 @@ class MainThread(threading.Thread):
     # 'private' wallpaper manipulation functions
     def _make_wallpaper(self, size):
         """ Creates a wallpaper and saves it """
-        img = wallpaper_split(size, self.wallpapers.pop_image)
-        img.save(self.options['generated_wallpaper'], 'BMP')
+        img = wallpaper_split(size,
+                              self.wallpapers.pop_image,
+                              recursion_depth=self.options['recursion_depth'] - 1)
 
-    def _set_wallpaper(self):
+        wp_name = self.options['generated_wallpaper']
+        if self.options['add_date']:
+            from datetime import datetime
+            last_period_index = 0
+            try:
+                last_period_index = len(wp_name) - 1 - wp_name[::-1].index('.')
+            except ValueError:
+                last_period_index = len(wp_name) - 1
+
+            now = datetime.now()
+            wp_name = wp_name[:last_period_index] + now.strftime('_%Y-%m-%d_%H-%M') + wp_name[last_period_index:]
+
+        print 'wallpaper saved as %s' % wp_name
+        img.save(wp_name, 'BMP')
+
+        return wp_name
+
+    def _set_wallpaper(self, wp_name):
         """ Sets the wallpaper to latest generated wallpaper """
-        set_wallpaper(self.options['generated_wallpaper'])
+        set_wallpaper(wp_name)
         if self.options['verbose']:
             print 'wp set'
 

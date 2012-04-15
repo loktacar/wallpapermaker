@@ -33,7 +33,7 @@ def resize(img, size):
 
     return img
 
-def wallpaper_split(size, get_image, iteration=0):
+def wallpaper_split(size, get_image, recursion_depth=3, iteration=0):
     """ Splits wallpaper in four with a chance of each piece being recursively generated """
 
     aspect_ratio = get_ratio(*size)
@@ -47,8 +47,8 @@ def wallpaper_split(size, get_image, iteration=0):
     chances = (4, 4, 4, 8)
     for i in range(4):
         # Check that the random calculations make sense, i.e. print them out and spekk it
-        if iteration < 3 and random.randint(0,chances[iteration]) == 0:
-            img = wallpaper_split(size, get_image, iteration+1)
+        if iteration < recursion_depth and random.randint(0, 4 + iteration*2) == 0:
+            img = wallpaper_split(size, get_image, iteration + 1)
         else:
             img = get_image()
         img = resize(img, new_size)
