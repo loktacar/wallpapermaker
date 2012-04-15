@@ -1,15 +1,15 @@
 #!/usr/bin/env python
-# TODO:
-#   - Remove deleted images from queue
+# TODO, before I release:
 #   - Add a recursion level option
 #   - Add option to add date to generated wallpaper name, preceding the '.'
 #   - Read configuration from default locations (see appdirs and Config module)
+#   - Single run option: create wp, set wp and die
 #
 # Compatibility
 #   - Make mac compatible
 #   - Make xmonad compatible
 #
-# IDEAS
+# IDEAS, to be done after release:
 #   - Make each split occupy a seperate folder
 #   - Multiple instances of the thread running at once? With seperate configurations from config.py
 #       * Option to only create image, don't set as wallpaper
@@ -17,6 +17,8 @@
 # Optimization
 #   - Multiple threads for resize and make_split functions so that it can be done on multiple cores?
 #     Try to lower cpu usage, even though it's running for a while
+#   - Use OpenGL or similar to create images, might save A LOT of time. However might be harder to implement.
+#     Although a 3d image collage might be cool
 #
 """Usage main.py [options]
 
@@ -101,6 +103,8 @@ class MainThread(threading.Thread):
     def _set_wallpaper(self):
         """ Sets the wallpaper to latest generated wallpaper """
         set_wallpaper(self.options['generated_wallpaper'])
+        if self.options['verbose']:
+            print 'wp set'
 
     # 'private' file functions
     def _callback(self, arg, dirname, fnames):

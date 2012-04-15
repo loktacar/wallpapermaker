@@ -35,12 +35,18 @@ class ImageQueue:
     def pop_images(self, count=1):
         """ Pops images off the list, returns list of Image objects """
         for i in self.pop(count):
-            yield Image.open(i)
+            yield self.pop_image()
 
     def pop_image(self):
         """ Pops a single image from list, returns Image object """
         images = self.pop()
-        return Image.open(images.next())
+        image = images.next()
+        try:
+            return Image.open(image)
+        except IOError:
+            print 'Failed to find image %s' % image
+            self.images.remove(image)
+            return self.pop_image()
 
     def push(self, images):
         """ Pushes images onto the list, returns number of images pushed (not including duplicates) """
