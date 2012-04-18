@@ -42,6 +42,8 @@ sys.path.append(os.path.abspath('site-packages'))
 import threading
 import time
 
+import pygame
+
 from docopt import docopt
 
 from config import parse_options
@@ -63,7 +65,6 @@ class MainThread(threading.Thread):
             self.resolution = self.options['resolution']
         else:
             self.resolution = get_screen_resolution()
-
 
     # Use only one update period, for now
     def run(self):
@@ -119,8 +120,7 @@ class MainThread(threading.Thread):
             now = datetime.now()
             wp_name = wp_name[:last_period_index] + now.strftime('_%Y-%m-%d_%H-%M') + wp_name[last_period_index:]
 
-        print 'wallpaper saved as %s' % wp_name
-        img.save(wp_name, 'BMP')
+        pygame.image.save(img, wp_name)
 
         return wp_name
 

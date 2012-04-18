@@ -16,7 +16,7 @@ extensions = ['jpg','png','jpeg','gif','bmp']
 update_period = 300
 
 # Recursion depth, must be greater than one
-recursion_depth = 4
+recursion_depth = 3
 
 # Add date 'n time to generated wallpaper, will be added before last period
 # ex. generated_wallpaper = '~/.wp.bmp' results in '~/.wp_2012-04-15_21-51.bmp'

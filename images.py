@@ -1,6 +1,6 @@
 import random
 
-import Image
+import pygame
 
 # Used in MakeWallpaper Thread by way of ImageThread
 class ImageQueue:
@@ -42,7 +42,11 @@ class ImageQueue:
         images = self.pop()
         image = images.next()
         try:
-            return Image.open(image)
+            pyimg = pygame.image.load(image)
+            if pyimg.get_width() == 0 or pyimg.get_height() == 0:
+                raise IOError
+            print '\t%s' % image
+            return pyimg
         except IOError:
             print 'Failed to find image %s' % image
             self.images.remove(image)
