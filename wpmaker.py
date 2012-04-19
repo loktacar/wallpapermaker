@@ -105,14 +105,13 @@ class MainThread(threading.Thread):
         wp_name = self.options['generated_wallpaper']
         if self.options['add_date']:
             from datetime import datetime
-            last_period_index = 0
-            try:
-                last_period_index = len(wp_name) - 1 - wp_name[::-1].index('.')
-            except ValueError:
-                last_period_index = len(wp_name) - 1
-
             now = datetime.now()
-            wp_name = wp_name[:last_period_index] + now.strftime('_%Y-%m-%d_%H-%M') + wp_name[last_period_index:]
+            period = wp_name.rindex('.')
+            wp_name = ''.join([
+                wp_name[:period],
+                now.strftime('_%Y-%m-%d_%H-%M'),
+                wp_name[period:]
+                ])
 
         pygame.image.save(img, wp_name)
 
@@ -122,7 +121,7 @@ class MainThread(threading.Thread):
         """ Sets the wallpaper to latest generated wallpaper """
         set_wallpaper(wp_name, self.options['desktop_environment'])
         if self.options['verbose']:
-            print 'wp set'
+            print 'wp set to ' + wp_name
 
 
 if __name__ == '__main__':
