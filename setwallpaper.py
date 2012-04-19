@@ -1,8 +1,7 @@
 import sys
 import os
-from config import desktop_environment
 
-def set_wallpaper(filename):
+def set_wallpaper(filename, desktop_environment):
     # Check if windows, linux or mac
 
     if sys.platform == 'win32':

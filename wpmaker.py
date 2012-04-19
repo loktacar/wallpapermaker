@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 # TODO, before I release:
-#   - Read configuration from default locations (see appdirs and Config module)
-#
-# Compatibility
-#   - Make mac compatible
-#   - Make xmonad compatible
+#   Compatibility
+#       - Make mac compatible
+#       - Make xmonad compatible
 #
 # IDEAS, to be done after release:
 #   - Make each split occupy a seperate folder
@@ -20,6 +18,7 @@
 """Usage main.py [options]
 
 Options:
+    --section=SECTION           section of config file to be used
     --path=PATH                 path of wallpaper folder
     --extensions=LIST           comma seperated list of acceptable extensions
     --update=TIME               time seperating each wallpaper update in seconds
@@ -121,7 +120,7 @@ class MainThread(threading.Thread):
 
     def _set_wallpaper(self, wp_name):
         """ Sets the wallpaper to latest generated wallpaper """
-        set_wallpaper(wp_name)
+        set_wallpaper(wp_name, self.options['desktop_environment'])
         if self.options['verbose']:
             print 'wp set'
 
