@@ -34,33 +34,26 @@ Options:
 
 import os
 import sys
-
-import threading
 import time
-
 import pygame
 
 from docopt import docopt
-
 from config import parse_options
 from resolution import get_screen_resolution
 from setwallpaper import set_wallpaper
 from images import ImageQueue
 from wallpaper import wallpaper_split
 
-class MainThread(threading.Thread):
+
+class Application:
     def __init__(self, options):
-        super(MainThread, self).__init__()
-        self.daemon = True
-        self._stop = False
-
         self.options = options
-
         self.wallpapers = ImageQueue(self.options['path'], self.options['extensions'], verbose=self.options['verbose'])
         if self.options['resolution']:
             self.resolution = self.options['resolution']
         else:
             self.resolution = get_screen_resolution()
+        self._stop = False
 
     # Use only one update period, for now
     def run(self):
@@ -83,11 +76,14 @@ class MainThread(threading.Thread):
                 if self.options['verbose']:
                     print 'Single run, now exiting'
 
-                os._exit(os.EX_OK) # Exit without errors
+                return os.EX_OK # Exit without errors
 
             if self.options['verbose']:
                 print 'sleep %ds' % self.options['update_period']
-            time.sleep(self.options['update_period'])
+            try:
+                time.sleep(self.options['update_period'])
+            except KeyboardInterrupt:
+                return os.EX_OK
 
     def stop(self):
         self._stop = True
@@ -127,18 +123,9 @@ class MainThread(threading.Thread):
 if __name__ == '__main__':
     # get input options and arguments
     ioptions, iarguments = docopt(__doc__)
-
     # parse options into dictionary
     options = parse_options(ioptions)
 
-    # create main thread
-    main_thread = MainThread(options)
+    app = Application(options)
+    sys.exit(app.run())
 
-    try:
-        main_thread.start()
-        # wait for keyboard input to kill threads
-        # time seems to have no effect
-        while (True):
-            time.sleep(10)
-    except (KeyboardInterrupt, SystemExit):
-        main_thread.stop()
