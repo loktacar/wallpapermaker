@@ -60,7 +60,7 @@ class MainThread(threading.Thread):
 
         self.options = options
 
-        self.wallpapers = ImageQueue(verbose=self.options['verbose'])
+        self.wallpapers = ImageQueue(self.options['path'], self.options['extensions'], verbose=self.options['verbose'])
         if self.options['resolution']:
             self.resolution = self.options['resolution']
         else:
@@ -70,9 +70,7 @@ class MainThread(threading.Thread):
     def run(self):
         while not self._stop:
             # Check files
-            os.path.walk(self.options['path'], self._callback, [])
-            if self.options['verbose']:
-                print '%d images in queue' % self.wallpapers.count()
+            self.wallpapers.walk_path()
 
             if self.wallpapers.count():
                 # If not set, check resolution
@@ -129,24 +127,6 @@ class MainThread(threading.Thread):
         set_wallpaper(wp_name)
         if self.options['verbose']:
             print 'wp set'
-
-    # 'private' file functions
-    def _callback(self, arg, dirname, fnames):
-        """ Gets a list of files from each directory in 'path', including 'path' directory iteself """
-        filtered_filenames = ['%s/%s' % (dirname, i) for i in fnames if self._check_extension(i.lower())]
-        pushed_count = self.wallpapers.push(filtered_filenames)
-
-        if self.options['verbose'] and pushed_count:
-            print 'pushed %d images from %s' % (pushed_count, dirname)
-
-    def _check_extension(self, fname):
-        """ Checks if file has extension found in extensions, from configuration """
-        for extension in self.options['extensions']:
-            try:
-                if fname.index(extension) == len(fname) - len(extension):
-                    return True
-            except:
-                pass
 
 
 if __name__ == '__main__':

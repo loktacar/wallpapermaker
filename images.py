@@ -1,11 +1,15 @@
+import os
 import random
 
 import pygame
 
 # Used in MakeWallpaper Thread by way of ImageThread
 class ImageQueue:
-    def __init__(self, images=[], index=-1, verbose=False):
+    def __init__(self, path, extensions, images=[], index=-1, verbose=False):
         # Set index to 0 for no shuffle first
+        self.path = path
+        self.extensions = extensions
+
         self.images = images
         self.index = index
         self.verbose = verbose
@@ -87,3 +91,27 @@ class ImageQueue:
     def count(self):
         """ Returns the number of images in the list """
         return len(self.images)
+
+    def walk_path(self):
+        os.path.walk(self.path, self._callback, [])
+
+        if self.verbose:
+            print '%d images in queue' % self.count()
+
+    def _callback(self, arg, dirname, fnames):
+        """ Gets a list of files from each directory in 'path', including 'path' directory iteself """
+        filtered_filenames = ['%s/%s' % (dirname, i) for i in fnames if self._check_extension(i.lower())]
+        pushed_count = self.push(filtered_filenames)
+
+        if self.verbose and pushed_count:
+            print 'pushed %d images from %s' % (pushed_count, dirname)
+
+    def _check_extension(self, fname):
+        """ Checks if file has extension found in extensions, from configuration """
+        for extension in self.extensions:
+            try:
+                if fname.index(extension) == len(fname) - len(extension):
+                    return True
+            except:
+                pass
+
