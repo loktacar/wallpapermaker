@@ -36,9 +36,6 @@ Options:
 import os
 import sys
 
-# Add site-packages directory to pythonpath
-sys.path.append(os.path.abspath('site-packages'))
-
 import threading
 import time
 
