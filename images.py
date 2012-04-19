@@ -19,14 +19,14 @@ class ImageQueue:
 
         # Yield images
         for i in range(count):
-            if self.verbose:
-                print 'pop %d ' % self.index
-
             image = None
             if self.index < len(self.images):
                 image = self.images[self.index]
             else:
                 image = self.images[self.index % len(self.images)]
+
+            if self.verbose:
+                print 'pop %d - %s' % (self.index, image)
 
             self.index += 1
 
@@ -45,7 +45,6 @@ class ImageQueue:
             pyimg = pygame.image.load(image)
             if pyimg.get_width() == 0 or pyimg.get_height() == 0:
                 raise IOError
-            print '\t%s' % image
             return pyimg
         except IOError:
             print 'Failed to find image %s' % image
