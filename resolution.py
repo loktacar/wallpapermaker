@@ -15,6 +15,12 @@ def get_screen_resolution():
         root = display.screen().root
         geom = root.get_geometry()
         resolution = (geom.width, geom.height)
+    elif sys.platform == "darwin":
+        from AppKit import NSScreen
+        frame = NSScreen.mainScreen().frame()
+        resolution = (int(frame.size.width), int(frame.size.height))
+    else:
+        raise NotImplementedError("Unrecognized platform: "+sys.platform)
 
     return resolution
 

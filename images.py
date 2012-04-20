@@ -73,8 +73,6 @@ class ImageQueue:
             self.images.append(image)
             return True
 
-        return False
-
     def shuffle(self):
         """ Shuffles the image list """
         if self.verbose:
