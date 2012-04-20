@@ -1,5 +1,4 @@
 import random
-
 import pygame
 
 from resolution import get_ratio
