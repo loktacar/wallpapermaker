@@ -3,6 +3,12 @@
 #   Compatibility
 #       - Make mac compatible
 #       - Make xmonad compatible
+#       - Make kde compatible
+#
+#   Installation
+#       - Create .dmg thingie for mac
+#       - Create yum and apt packages
+#       - Create installer for windows
 #
 # IDEAS, to be done after release:
 #   - Make each split occupy a seperate folder
@@ -14,6 +20,11 @@
 #     Try to lower cpu usage, even though it's running for a while
 #   - Use OpenGL or similar to create images, might save A LOT of time. However might be harder to implement.
 #     Although a 3d image collage might be cool
+#
+# Possible installation problems
+#   - MAC
+#       SLD_Image is problematic, check pygame.image.get_extended()
+#       http://pygame.org/download.shtml - install macintosh stuffs
 #
 """Usage main.py [options]
 
