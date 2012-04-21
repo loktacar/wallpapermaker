@@ -23,8 +23,7 @@
 #
 # Possible installation problems
 #   - MAC
-#       SLD_Image is problematic, check pygame.image.get_extended()
-#       http://pygame.org/download.shtml - install macintosh stuffs
+#       Was fixed with installing osx version specific pygames installation
 #
 """Usage main.py [options]
 
@@ -60,10 +59,7 @@ class Application:
     def __init__(self, options):
         self.options = options
         self.wallpapers = ImageQueue(self.options['path'], self.options['extensions'], verbose=self.options['verbose'])
-        if self.options['resolution']:
-            self.resolution = self.options['resolution']
-        else:
-            self.resolution = get_screen_resolution()
+        self.resolution = self._get_resolution()
         self._stop = False
 
     # Use only one update period, for now
@@ -73,9 +69,7 @@ class Application:
             self.wallpapers.walk_path()
 
             if self.wallpapers.count():
-                # If not set, check resolution
-                if not self.options['resolution']:
-                    self.resolution = get_screen_resolution()
+                self.resolution = self._get_resolution()
 
                 # Create wallpaper
                 wp_name = self._make_wallpaper(self.resolution)
@@ -130,6 +124,17 @@ class Application:
         if self.options['verbose']:
             print 'wp set to ' + wp_name
 
+    def _get_resolution(self):
+        resolution = (0,0)
+        if self.options['resolution']:
+            resolution = self.options['resolution']
+        else:
+            resolution = get_screen_resolution()
+
+        if max(*resolution) < 1:
+            raise ValueError('Resolution incorrect: %s' % resolution)
+
+        return resolution
 
 if __name__ == '__main__':
     # get input options and arguments

@@ -16,6 +16,8 @@ def set_wallpaper(filename, desktop_environment):
     elif sys.platform == 'linux2':
         if desktop_environment == 'gnome':
             set_gnome_wallpaper(filename)
+        else:
+            raise NotImplementedError("Unrecognized desktop environment: "+desktop_environment)
     elif sys.platform == 'darwin':
         subprocess.Popen(DARWIN_SCRIPT%filename, shell=True)
     else:

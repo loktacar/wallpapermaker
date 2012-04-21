@@ -1,3 +1,4 @@
+import math
 import random
 import pygame
 
@@ -10,9 +11,9 @@ def resize(img, size):
     width_ratio = 1.0*size[0]/img.get_width()
     height_ratio = 1.0*size[1]/img.get_height()
     if width_ratio > height_ratio:
-        new_size = (size[0], int(img.get_height()*width_ratio))
+        new_size = (size[0], int(math.ceil(img.get_height()*width_ratio)))
     else:
-        new_size = (int(img.get_width()*height_ratio), size[1])
+        new_size = (int(math.ceil(img.get_width()*height_ratio)), size[1])
 
     # smoothscale
     try:
@@ -23,17 +24,17 @@ def resize(img, size):
 
     # Either width or height might be too large, LET'S CROP!
     box = (0,0,0,0)
-    if img.get_width() != size[0]:
+    if img.get_width() > size[0]+1:# != size[0]:
         overflow = img.get_width() - size[0]
-        margin = overflow / 2
+        margin = int(overflow / 2)
         box = (margin, 0, margin+size[0], size[1])
-    if img.get_height() != size[1]:
+    if img.get_height() > size[1]+1:# != size[1]:
         overflow = img.get_height() - size[1]
-        margin = overflow / 2
+        margin = int(overflow / 2)
         box = (0, margin, size[0], margin+size[1])
 
     if max(*box) > 0:
-        img = img.subsurface(box)
+            img = img.subsurface(box)
 
     return img
 
@@ -44,7 +45,7 @@ def wallpaper_split(size, get_image, recursion_depth=3, iteration=0):
 
     wp = pygame.Surface(size)
 
-    new_size = (size[0]/2, size[1]/2)
+    new_size = (int(math.ceil(size[0]/2.0)), int(math.ceil(size[1]/2.0)))
 
     # Constants for the loop
     placement = ((0,0,1,1), (1,0,2,1), (0,1,1,2), (1,1,2,2))
