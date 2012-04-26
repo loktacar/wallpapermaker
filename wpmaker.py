@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # TODO, before I release:
+#   Bugs
+#       - On windows when exiting I get an attribute error on the os.EX_OK attribute
+#
 #   Compatibility
 #       - Make mac compatible
 #       - Make xmonad compatible
@@ -59,7 +62,7 @@ class Application:
     def __init__(self, options):
         self.options = options
         self.wallpapers = ImageQueue(self.options['path'], self.options['extensions'], verbose=self.options['verbose'])
-        self.resolution = self._get_resolution()
+        self.resolution = (0,0)
         self._stop = False
 
     # Use only one update period, for now
@@ -81,14 +84,20 @@ class Application:
                 if self.options['verbose']:
                     print 'Single run, now exiting'
 
-                return os.EX_OK # Exit without errors
+                try:
+                    return os.EX_OK # Exit without errors
+                except AttributeError:
+                    return 0
 
             if self.options['verbose']:
                 print 'sleep %ds' % self.options['update_period']
             try:
                 time.sleep(self.options['update_period'])
             except KeyboardInterrupt:
-                return os.EX_OK
+                try:
+                    return os.EX_OK
+                except AttributeError:
+                    return 0 # On windows just exit, windwos doesnt care about results
 
     def stop(self):
         self._stop = True
@@ -125,14 +134,16 @@ class Application:
             print 'wp set to ' + wp_name
 
     def _get_resolution(self):
-        resolution = (0,0)
+        resolution = self.resolution
         if self.options['resolution']:
             resolution = self.options['resolution']
         else:
             resolution = get_screen_resolution()
+            if not resolution == self.resolution and self.options['verbose']:
+                print 'resolution changed to %sx%s' % (resolution[0], resolution[1])
 
         if max(*resolution) < 1:
-            raise ValueError('Resolution incorrect: %s' % resolution)
+            raise ValueError('Resolution incorrect: %sx%s' % (resolution[0], resolution[1]))
 
         return resolution
 
