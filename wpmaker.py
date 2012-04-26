@@ -52,8 +52,7 @@ import pygame
 
 from docopt import docopt
 from config import parse_options
-from resolution import get_screen_resolution
-from setwallpaper import set_wallpaper
+from compatibility import get_screen_resolution, set_wallpaper
 from images import ImageQueue
 from wallpaper import wallpaper_split
 
