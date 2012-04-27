@@ -15,6 +15,9 @@ extensions = ['jpg','png','jpeg','gif','bmp']
 # The time between file searches and wallpaper changes
 update_period = 300
 
+# Number of update periods between file checks
+file_check_period = 5
+
 # Recursion depth, must be greater than one
 recursion_depth = 3
 
@@ -117,6 +120,7 @@ def get_defaults():
     options['verbose'] = verbose
     options['desktop_environment'] = desktop_environment
     options['resolution'] = False
+    options['file_check_period'] = file_check_period
 
     return options
 

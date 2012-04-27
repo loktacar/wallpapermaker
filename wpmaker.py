@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 # TODO, before I release:
-#   Bugs
-#       - On windows when exiting I get an attribute error on the os.EX_OK attribute
 #
 #   Compatibility
 #       - Make mac compatible
@@ -63,12 +61,17 @@ class Application:
         self.wallpapers = ImageQueue(self.options['path'], self.options['extensions'], verbose=self.options['verbose'])
         self.resolution = (0,0)
         self._stop = False
+        self._no_file_check_interval = self.options['file_check_period']
 
     # Use only one update period, for now
     def run(self):
         while not self._stop:
             # Check files
-            self.wallpapers.walk_path()
+            if self._no_file_check_interval == self.options['file_check_period']:
+                self.wallpapers.walk_path()
+                self._no_file_check_interval = 0
+            else:
+                self._no_file_check_interval += 1
 
             if self.wallpapers.count():
                 self.resolution = self._get_resolution()
@@ -78,6 +81,8 @@ class Application:
                 self.wallpapers.shuffle_check()
                 # Change wallpaper
                 self._set_wallpaper(wp_name)
+            else:
+                raise ValueError('No wallpapers found')
 
             if self.options['single_run']:
                 if self.options['verbose']:
