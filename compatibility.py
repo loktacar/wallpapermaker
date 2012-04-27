@@ -1,3 +1,5 @@
+# Set wallpaper code, get resolution is below
+
 def set_win32_wallpaper(filename):
     import ctypes
 
@@ -21,10 +23,12 @@ END
 
     subprocess.Popen(DARWIN_SCRIPT % filename, shell=True)
 
-# keys are checked agains sys.platform and when applicable sys.platform/dekstop_environment
+# Keys are matched against sys.platform and when applicable sys.platform/desktop_environment
 set_wallpaper_dict = {'win32': set_win32_wallpaper, # Windows platform
                       'linux2/gnome': set_gnome_wallpaper,
                       'darwin': set_darwin_wallpaper } # Mac platform
+
+# Get resolution code
 
 def get_win32_resolution():
     import ctypes
@@ -46,6 +50,7 @@ def get_darwin_resolution():
     fram = NSSceen.mainScreen().frame()
     return (int(fram.size.width), int(frame.size.height))
 
+# Keys are matched against sys.platform
 get_resolution_dict = {'win32': get_win32_resolution,
                        'linux2': get_xlib_resolution, # Linux platform w/ xlib
                        'darwin': get_darwin_resolution } # Mac platform
@@ -54,26 +59,18 @@ get_resolution_dict = {'win32': get_win32_resolution,
 import sys
 
 def set_wallpaper(filename, desktop_environment):
-    try:
-        if sys.platform.index('/') >= 0:
-            platform = '%s/%s' % sys.platform, desktop_environment
-    except ValueError:
-        platform = sys.platform
-
-    wallpaper_set = False
-    for pf in set_wallpaper_dict.keys():
-        if platform == pf:
-            set_wallpaper_dict[pf](filename)
-            wallpaper_set = True
-
-    if not wallpaper_set:
-        raise NotImplementedError("Unrecognized platform: " + platform)
+    return call_dict_function(set_wallpaper_dict, desktop_environment, filename)
 
 def get_screen_resolution():
-    platform = sys.platform
+    return call_dict_function(get_resolution_dict, '')
 
-    for pf in get_resolution_dict.keys():
-        if platform == pf:
-            return get_resolution_dict[pf]()
+def call_dict_function(dict, support, *args, **kwargs):
+    for pf in dict.keys():
+        if '/' in pf and len(support):
+            if '%s/%s' % (sys.platform, support) == pf:
+                return dict[pf](*args, **kwargs)
+        else:
+            if sys.platform == pf:
+                return dict[pf](*args, **kwargs)
 
     raise NotImplementedError("Unrecognized platform: " + sys.platform)
