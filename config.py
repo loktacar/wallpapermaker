@@ -1,170 +1,136 @@
-# Configuration file for wallpapermaker
-
-# The path to the wallpapers, the program will search through subdirectories.
-path = '/media/One/Users/viktor/Pictures/wp'
-#path = 'D:/Users/viktor/Pictures/wp'
-#path = 'D:\\Users\\viktor\\Pictures\\Cannon'
-
-# The name of the file that will be outputted, and used as desktop wallpaper.
-# file is always saved as bitmap image, irrespective of file extension
-generated_wallpaper = '~/.wp.bmp'
-
-# Extensions the program searches for
-extensions = ['jpg','png','jpeg','gif','bmp']
-
-# The time between file searches and wallpaper changes
-update_period = 300
-
-# Number of update periods between file checks
-file_check_period = 5
-
-# Recursion depth, must be greater than one
-recursion_depth = 3
-
-# Add date 'n time to generated wallpaper, will be added before last period
-# ex. generated_wallpaper = '~/.wp.bmp' results in '~/.wp_2012-04-15_21-51.bmp'
-add_date = False
-
-# Run once then die (Create wallpaper, save, set and exit)
-single_run = False
-
-# Whether or not helpful debugging messages should be printed
-verbose = False
-
-# For linux systems only, desktop environment (gnome, kde, xmonad, xfce, etc.)
-desktop_environment = 'gnome'
-
-# Do not change the following
 import os
 
 import ConfigParser
 
 from appdirs import AppDirs
 
-appname = 'wpmaker'
-appauthor = 'viktor'
-config_file_name = '%s.conf' % appname
+class Config:
+    def __init__(self, cmd_opts):
+        self.appname = 'wpmaker'
+        self.appauthor = 'viktor'
+        self.config_file_name = '%s.conf' % self.appname
 
-default_config_section = 'default'
+        self.dirs = AppDirs(self.appname, self.appauthor)
 
-def parse_options(cmd_opts):
-    options = get_defaults()
+        self.cmd_opts = cmd_opts
 
-    dirs = AppDirs(appname, appauthor)
+        self.required_option_keys = ['path']
 
-    options = parse_config_files(options,
-                                 config_file_name,
-                                 (dirs.user_data_dir, dirs.site_data_dir),
-                                 section=cmd_opts.section if cmd_opts.section else default_config_section)
+        # Options, and also default options
+        self.options = {
+                'path': None,                                       # Path to wallpaper folder
 
-    options = parse_cmd_options(cmd_opts, options)
+                'extensions': ['jpg','png','jpeg','gif','bmp'],     # Extensions to search for
 
-    return options
+                'update_period': 300,                               # Update period, aka time to wait between
+                                                                    # setting wp's
 
-def parse_config_files(options, config_file_name, dirs, section=default_config_section):
-    """ Checks directories for config_file_name and adds values from config file to options dictionary, last dir checked first """
-    files = ['%s/%s' % (dir, config_file_name) for dir in dirs]
+                'generated_wallpaper':
+                    os.path.expanduser('~/.wp.bmp'),                # Name of generated wallpaper
 
-    cfg = ConfigParser.SafeConfigParser()
-    read_files = cfg.read(files)
+                'recursion_depth': 3,                               # Recursion depth, ie how deep the splits
+                                                                    # should go
 
-    if len(read_files):
-        use_section = section if cfg.has_section(section) else default_config_section
+                'add_date': False,                                  # Add date and time to generated wallpaper
+                                                                    # file name, before last period '.'
 
-        for key in options.keys():
-            if cfg.has_option(use_section, key):
-                options[key] = fix_config_file_values(key, cfg.get(use_section, key))
+                'single_run': False,                                # Run once and die
 
-    return options
+                'verbose': False,                                   # Print debuggin information
 
-def fix_config_file_values(key, value):
-    if key in ['add_date', 'single_run', 'verbose']:
-        return bool(value)
+                'desktop_environment': 'gnome',                     # Desktop environment run in linux
 
-    if key in ['recursion_depth', 'update_period']:
-        return int(value)
+                'resolution': None,                                 # Resolution of generated wallpaper
 
-    if key in ['path', 'generated_wallpaper']:
-        return os.path.expanduser(value)
+                'file_check_period': 5,                             # How often we should check the files for
+                                                                    # updates
 
-    if key in ['extensions']:
-        return value.split(',')
+                'config_section': 'default'}                        # Section of config file to be used
 
-    if key in ['resolution']:
-        res = value.split('x')
-        if type(res) == str:
-            res = value.split('X')
+        self.parse_options()
 
-        if type(res) == str:
-            value = False
-        else:
-            try:
-                value = [int(i) for i in res]
-            except:
+    def __setitem__(self, key, value):
+        if not key in self.options:
+            raise ValueError('Config.__setitem__(): key %s not found' % key)
+
+        if key in ['add_date', 'single_run', 'verbose']:
+            self.options[key] = bool(value)
+        elif key in ['recursion_depth', 'update_period']:
+            self.options[key] = int(value)
+        elif key in ['path', 'generated_wallpaper']:
+            self.options[key] = os.path.expanduser(value)
+        elif key in ['extensions']:
+            self.options[key] = value.split(',')
+        elif key in ['resolution']:
+            res = value.split('x')
+            if type(res) == str:
+                res = value.split('X')
+
+            if type(res) == str:
                 value = False
-
-        return value
-
-    return value
-
-def get_defaults():
-    """ Generate new option dictionary from defaults (from above) """
-    options = {}
-    options['path'] = os.path.expanduser(path)
-    options['extensions'] = extensions
-    options['update_period'] = update_period
-    options['generated_wallpaper'] = os.path.expanduser(generated_wallpaper)
-    options['recursion_depth'] = recursion_depth
-    options['add_date'] = add_date
-    options['single_run'] = single_run
-    options['verbose'] = verbose
-    options['desktop_environment'] = desktop_environment
-    options['resolution'] = False
-    options['file_check_period'] = file_check_period
-
-    return options
-
-def parse_cmd_options(cmd_opts, options):
-    """ Fills in the options dictionary with values from command line options """
-
-    if cmd_opts.path:
-        options['path'] = os.path.expanduser(cmd_opts.path)
-
-    if cmd_opts.extensions:
-        options['extensions'] = cmd_opts.extensions
-
-    if cmd_opts.update:
-        options['update_period'] = cmd_opts.update
-
-    if cmd_opts.generated_wallpaper:
-        options['generated_wallpaper'] = os.path.expanduser(cmd_opts.generated_wallpaper)
-
-    if cmd_opts.recursion_depth:
-        options['recursion_depth'] = cmd_opts.recursion_depth
-
-    if cmd_opts.add_date:
-        options['add_date'] = cmd_opts.add_date
-
-    if cmd_opts.single_run:
-        options['single_run'] = cmd_opts.single_run
-
-    if cmd_opts.verbose:
-        options['verbose'] = cmd_opts.verbose
-
-    # Parse resolution input
-    if cmd_opts.resolution:
-        options['resolution'] = cmd_opts.resolution
-        if options['resolution']:
-            res = options['resolution'].split('x')
-            if type(res) == str:
-                res = options['resolution'].split('X')
-
-            if type(res) == str:
-                options['resolution'] = False
             else:
                 try:
-                    options['resolution'] = [int(i) for i in res]
+                    value = [int(i) for i in res]
                 except:
-                    options['resolution'] = False
+                    value = False
 
-    return options
+            self.options[key] = value
+        else:
+            self.options[key] = value
+
+    def __getitem__(self, key):
+        return self.options[key]
+
+    def parse_options(self):
+        # Get config file section from command line options
+        self.options['config_section'] = \
+            self.cmd_opts.section \
+            if self.cmd_opts.section \
+            else self.options['config_section']
+
+        # Read config files
+        self._parse_config_files()
+
+        # Read command line options
+        self._parse_cmd_options()
+
+        # Check if required options are set, e.x. 'path'
+        for key in self.required_option_keys:
+            if self.options[key] is None:
+                raise ValueError('Required option %s not set' % key)
+
+    def _parse_config_files(self):
+        appdirs = AppDirs(self.appname, self.appauthor)
+        dirs = (appdirs.user_data_dir, appdirs.site_data_dir)
+        files = ['%s/%s' % (dir, self.config_file_name) for dir in dirs]
+
+        cfg = ConfigParser.SafeConfigParser()
+        read_files = cfg.read(files)
+
+        section = self.options['config_section']
+
+        if len(read_files):
+            if not cfg.has_section(section):
+                raise ValueError('Section %s not found' % section)
+
+            for key in self.options.keys():
+                if cfg.has_option(section, key):
+                    self[key] = cfg.get(section, key)
+
+    def _parse_cmd_options(self):
+        #print self.cmd_opts.__dict__
+        translation_dict = {'update': 'update_period'}
+
+        # help is irrelevant
+        # section has already been parsed
+        ignore_keys = ['help', 'section']
+
+        for cmd_key in self.cmd_opts.__dict__.keys():
+            if cmd_key in ignore_keys:
+                continue
+
+            value = self.cmd_opts.__dict__[cmd_key]
+            key = translation_dict[cmd_key] if cmd_key in translation_dict.keys() else cmd_key
+
+            if value:
+                self[key] = value

@@ -49,25 +49,25 @@ import time
 import pygame
 
 from docopt import docopt
-from config import parse_options
+from config import Config
 from compatibility import get_screen_resolution, set_wallpaper
 from images import ImageQueue
 from wallpaper import wallpaper_split
 
 
 class Application:
-    def __init__(self, options):
-        self.options = options
-        self.wallpapers = ImageQueue(self.options['path'], self.options['extensions'], verbose=self.options['verbose'])
+    def __init__(self, config):
+        self.config = config
+        self.wallpapers = ImageQueue(self.config['path'], self.config['extensions'], verbose=self.config['verbose'])
         self.resolution = (0,0)
         self._stop = False
-        self._no_file_check_interval = self.options['file_check_period']
+        self._no_file_check_interval = self.config['file_check_period']
 
     # Use only one update period, for now
     def run(self):
         while not self._stop:
             # Check files
-            if self._no_file_check_interval == self.options['file_check_period']:
+            if self._no_file_check_interval == self.config['file_check_period']:
                 self.wallpapers.walk_path()
                 self._no_file_check_interval = 0
             else:
@@ -84,8 +84,8 @@ class Application:
             else:
                 raise ValueError('No wallpapers found')
 
-            if self.options['single_run']:
-                if self.options['verbose']:
+            if self.config['single_run']:
+                if self.config['verbose']:
                     print 'Single run, now exiting'
 
                 try:
@@ -93,10 +93,10 @@ class Application:
                 except AttributeError:
                     return 0
 
-            if self.options['verbose']:
-                print 'sleep %ds' % self.options['update_period']
+            if self.config['verbose']:
+                print 'sleep %ds' % self.config['update_period']
             try:
-                time.sleep(self.options['update_period'])
+                time.sleep(self.config['update_period'])
             except KeyboardInterrupt:
                 try:
                     return os.EX_OK
@@ -114,10 +114,10 @@ class Application:
         """ Creates a wallpaper and saves it """
         img = wallpaper_split(size,
                               self.wallpapers.pop_image,
-                              recursion_depth=self.options['recursion_depth'] - 1)
+                              recursion_depth=self.config['recursion_depth'] - 1)
 
-        wp_name = self.options['generated_wallpaper']
-        if self.options['add_date']:
+        wp_name = self.config['generated_wallpaper']
+        if self.config['add_date']:
             from datetime import datetime
             now = datetime.now()
             period = wp_name.rindex('.')
@@ -133,17 +133,17 @@ class Application:
 
     def _set_wallpaper(self, wp_name):
         """ Sets the wallpaper to latest generated wallpaper """
-        set_wallpaper(wp_name, self.options['desktop_environment'])
-        if self.options['verbose']:
+        set_wallpaper(wp_name, self.config['desktop_environment'])
+        if self.config['verbose']:
             print 'wp set to ' + wp_name
 
     def _get_resolution(self):
         resolution = self.resolution
-        if self.options['resolution']:
-            resolution = self.options['resolution']
+        if self.config['resolution']:
+            resolution = self.config['resolution']
         else:
             resolution = get_screen_resolution()
-            if not resolution == self.resolution and self.options['verbose']:
+            if not resolution == self.resolution and self.config['verbose']:
                 print 'resolution changed to %sx%s' % (resolution[0], resolution[1])
 
         if max(*resolution) < 1:
@@ -154,9 +154,9 @@ class Application:
 if __name__ == '__main__':
     # get input options and arguments
     ioptions, iarguments = docopt(__doc__)
-    # parse options into dictionary
-    options = parse_options(ioptions)
+    # parse options
+    cfg = Config(ioptions)
 
-    app = Application(options)
+    app = Application(cfg)
     sys.exit(app.run())
 
