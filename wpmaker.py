@@ -152,6 +152,23 @@ class Application:
         return resolution
 
 if __name__ == '__main__':
+    # Append configuration file help
+    from config import appname, appauthor, config_file_name
+    from appdirs import AppDirs
+    appdirs = AppDirs(appname, appauthor)
+    dir_splitter = '/'
+    if '\\' in  appdirs.user_data_dir:
+        dir_splitter = '\\'
+    __doc__ += """Configuration:
+
+    Files
+    %s
+    %s
+
+    See sample.config.py for information on options and examples
+""" % (appdirs.user_data_dir + dir_splitter + config_file_name,
+       appdirs.site_data_dir + dir_splitter + config_file_name)
+
     # get input options and arguments
     ioptions, iarguments = docopt(__doc__)
     # parse options

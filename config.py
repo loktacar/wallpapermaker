@@ -4,13 +4,13 @@ import ConfigParser
 
 from appdirs import AppDirs
 
+appname = 'wpmaker'
+appauthor = 'viktor'
+config_file_name = '%s.conf' % appname
+
 class Config:
     def __init__(self, cmd_opts):
-        self.appname = 'wpmaker'
-        self.appauthor = 'viktor'
-        self.config_file_name = '%s.conf' % self.appname
-
-        self.dirs = AppDirs(self.appname, self.appauthor)
+        self.dirs = AppDirs(appname, appauthor)
 
         self.cmd_opts = cmd_opts
 
@@ -100,9 +100,9 @@ class Config:
                 raise ValueError('Required option %s not set' % key)
 
     def _parse_config_files(self):
-        appdirs = AppDirs(self.appname, self.appauthor)
+        appdirs = AppDirs(appname, appauthor)
         dirs = (appdirs.user_data_dir, appdirs.site_data_dir)
-        files = ['%s/%s' % (dir, self.config_file_name) for dir in dirs]
+        files = ['%s/%s' % (dir, config_file_name) for dir in dirs]
 
         cfg = ConfigParser.SafeConfigParser()
         read_files = cfg.read(files)

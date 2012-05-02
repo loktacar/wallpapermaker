@@ -33,10 +33,7 @@ def resize(img, size):
         margin = int(overflow / 2)
         box = (0, margin, size[0], margin+size[1])
 
-    if max(*box) > 0:
-            img = img.subsurface(box)
-
-    return img
+    return box[:2], img
 
 def wallpaper_split(size, get_image, recursion_depth=3, iteration=0):
     """ Splits wallpaper in four with a chance of each piece being recursively generated """
@@ -51,16 +48,17 @@ def wallpaper_split(size, get_image, recursion_depth=3, iteration=0):
     placement = ((0,0,1,1), (1,0,2,1), (0,1,1,2), (1,1,2,2))
     chances = (4, 4, 4, 8)
     for i in range(4):
+        offset = [0,0]
         if iteration < recursion_depth and random.randint(0, 4 + iteration*2) == 0:
             img = wallpaper_split(new_size, get_image, iteration=iteration + 1)
         else:
             img = get_image()
-            img = resize(img, new_size)
+            offset, img = resize(img, new_size)
 
         pos = [new_size[j%2]*placement[i][j] for j in range(4)]
 
-        for x1, x2 in enumerate(range(pos[0], pos[2])):
-            for y1, y2 in enumerate(range(pos[1], pos[3])):
+        for x1, x2 in enumerate(range(pos[0], pos[2]), offset[0]):
+            for y1, y2 in enumerate(range(pos[1], pos[3]), offset[1]):
                 wp.set_at((x2, y2), img.get_at((x1, y1)))
 
 
