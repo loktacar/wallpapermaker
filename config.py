@@ -53,6 +53,8 @@ class Config:
         if not key in self.options:
             raise ValueError('Config.__setitem__(): key %s not found' % key)
 
+        print '%s set to %s' % (key, value)
+
         if key in ['add_date', 'single_run', 'verbose']:
             self.options[key] = bool(value)
         elif key in ['recursion_depth', 'update_period']:

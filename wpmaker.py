@@ -25,6 +25,8 @@
 # Possible installation problems
 #   - MAC
 #       Was fixed with installing osx version specific pygames installation
+#   - Windows
+#       If I end up using gtk+ for tray icon I will have to install it and add gtk installation path to PATH environment variable
 #
 """Usage main.py [options]
 
@@ -42,10 +44,15 @@ Options:
     -v --verbose                prints status messages as the program runs
 
 """
+import pygtk
+#pygtk.require('2.0')
+import gtk
 
 import os
 import sys
+import threading
 import time
+
 import pygame
 
 from docopt import docopt
@@ -55,17 +62,23 @@ from images import ImageQueue
 from wallpaper import wallpaper_split
 
 
-class Application:
+class MainThread(threading.Thread):
     def __init__(self, config):
-        self.config = config
-        self.wallpapers = ImageQueue(self.config['path'], self.config['extensions'], verbose=self.config['verbose'])
-        self.resolution = (0,0)
+        super(MainThread, self).__init__()
+        self.daemon = True
         self._stop = False
+        self._sleeping = False
+
+        self.config = config
+        self.wallpapers = ImageQueue(self.config)
+        self.resolution = (0,0)
         self._no_file_check_interval = self.config['file_check_period']
 
     # Use only one update period, for now
     def run(self):
         while not self._stop:
+            self._sleeping = False
+
             # Check files
             if self._no_file_check_interval == self.config['file_check_period']:
                 self.wallpapers.walk_path()
@@ -88,26 +101,23 @@ class Application:
                 if self.config['verbose']:
                     print 'Single run, now exiting'
 
-                try:
-                    return os.EX_OK # Exit without errors
-                except AttributeError:
-                    return 0
+                self.stop()
+            else:
+                if self.config['verbose']:
+                    print 'sleep %ds' % self.config['update_period']
 
-            if self.config['verbose']:
-                print 'sleep %ds' % self.config['update_period']
-            try:
+                self._sleeping = True
+
                 time.sleep(self.config['update_period'])
-            except KeyboardInterrupt:
-                try:
-                    return os.EX_OK
-                except AttributeError:
-                    return 0 # On windows just exit, windwos doesnt care about results
 
     def stop(self):
         self._stop = True
 
     def stopped(self):
         return self._stop
+
+    def sleeping(self):
+        return self._sleeping
 
     # 'private' wallpaper manipulation functions
     def _make_wallpaper(self, size):
@@ -151,6 +161,107 @@ class Application:
 
         return resolution
 
+class CmdInputThread(threading.Thread):
+
+    def __init__(self, main_thread):
+        super(CmdInputThread, self).__init__()
+        self.main_thread = main_thread
+        self._stop = False
+        self.daemon = True
+
+    def run(self):
+        while not self._stop and not self.main_thread.stopped():
+            try:
+                s = raw_input()
+            except (KeyboardInterrupt, EOFError):
+                sys.exit()
+
+            if s == 'v' or s == 'verbose':
+                self.main_thread.config['verbose'] = not self.main_thread.config['verbose']
+                print self.main_thread.config['verbose']
+            if s == 'q' or s == 'quit':
+                self.stop()
+
+        print 'cmdinputthread stopped'
+
+    def stop(self):
+        self._stop = True
+
+    def stopped(self):
+        return self._stop
+
+class ControlThread(threading.Thread):
+
+    def __init__(self, threads):
+        super(ControlThread, self).__init__()
+        self.threads = threads
+
+    def run(self):
+        while self.are_threads_running():
+            time.sleep(0.5)
+
+    def are_threads_running(self):
+        running = True
+        for t in self.threads:
+            running = running and not t.stopped()
+
+        return running
+
+class HelloTray(threading.Thread):
+    def __init__(self):
+        super(HelloTray, self).__init__()
+        self.daemon = True
+        self._stop = False
+
+        self.statusIcon = gtk.StatusIcon()
+        self.statusIcon.set_from_stock(gtk.STOCK_ABOUT)
+        self.statusIcon.set_visible(True)
+        self.statusIcon.set_tooltip("Hello World")
+
+        self.menu = gtk.Menu()
+        self.menuItem = gtk.ImageMenuItem(gtk.STOCK_EXECUTE)
+        self.menuItem.connect('activate', self.execute_cb, self.statusIcon)
+        self.menu.append(self.menuItem)
+        self.menuItem = gtk.ImageMenuItem(gtk.STOCK_QUIT)
+        self.menuItem.connect('activate', self.quit_cb, self.statusIcon)
+        self.menu.append(self.menuItem)
+
+        self.statusIcon.connect('popup-menu', self.popup_menu_cb, self.menu)
+        self.statusIcon.set_visible(1)
+
+        #gtk.main()
+
+    def run(self):
+        gtk.gdk.threads_init()
+        gtk.main()
+
+        self._stop = True
+
+    def execute_cb(self, widget, event, data = None):
+        window = gtk.Window(gtk.WINDOW_TOPLEVEL)
+        window.set_border_width(10)
+
+        button = gtk.Button("Hello World")
+        button.connect_object("clicked", gtk.Widget.destroy, window)
+
+        window.add(button)
+        button.show()
+        window.show()
+
+    def quit_cb(self, widget, data = None):
+        self.statusIcon.set_visible(0)
+        gtk.main_quit()
+
+    def popup_menu_cb(self, widget, button, time, data = None):
+        if button == 3:
+            if data:
+                data.show_all()
+                data.popup(None, None, gtk.status_icon_position_menu,
+                        3, time, self.statusIcon)
+
+    def stopped(self):
+        return self._stop
+
 if __name__ == '__main__':
     # Append configuration file help
     from config import appname, appauthor, config_file_name
@@ -174,6 +285,19 @@ if __name__ == '__main__':
     # parse options
     cfg = Config(ioptions)
 
-    app = Application(cfg)
-    sys.exit(app.run())
+
+    #app = Application(cfg)
+    #sys.exit(app.run())
+
+    main_thread = MainThread(cfg)
+    main_thread.start()
+
+    #input_thread = CmdInputThread(main_thread)
+    #input_thread.start()
+
+    tray_thread = HelloTray()
+    tray_thread.start()
+
+    ctrl_thread = ControlThread((main_thread, tray_thread))
+    ctrl_thread.start()
 
