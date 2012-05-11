@@ -5,14 +5,11 @@ import pygame
 
 # Used in MakeWallpaper Thread by way of ImageThread
 class ImageQueue:
-    def __init__(self, path, extensions, images=[], index=-1, verbose=False):
+    def __init__(self, app, images=[], index=-1):
         # Set index to 0 for no shuffle first
-        self.path = path
-        self.extensions = extensions
-
+        self.app = app
         self.images = images
         self.index = index
-        self.verbose = verbose
 
     def pop(self, count=1):
         """ Pops images off the list, returns list of filenames """
@@ -29,7 +26,7 @@ class ImageQueue:
             else:
                 image = self.images[self.index % len(self.images)]
 
-            if self.verbose:
+            if self.app.config['verbose']:
                 print 'pop %d - %s' % (self.index, image)
 
             self.index += 1
@@ -75,7 +72,7 @@ class ImageQueue:
 
     def shuffle(self):
         """ Shuffles the image list """
-        if self.verbose:
+        if self.app.config['verbose']:
             print 'Shuffling image-queue'
 
         random.shuffle(self.images)
@@ -91,22 +88,25 @@ class ImageQueue:
         return len(self.images)
 
     def walk_path(self):
-        os.path.walk(self.path, self._callback, [])
+        os.path.walk(self.app.config['path'], self._callback, [])
 
-        if self.verbose:
+        if self.app.config['verbose']:
             print '%d images in queue' % self.count()
 
     def _callback(self, arg, dirname, fnames):
         """ Gets a list of files from each directory in 'path', including 'path' directory iteself """
-        filtered_filenames = ['%s/%s' % (dirname, i) for i in fnames if self._check_extension(i.lower())]
+        dir_splitter = '/'
+        if '\\' in dirname:
+            dir_splitter = '\\'
+        filtered_filenames = ['%s%s%s' % (dirname, dir_splitter, i) for i in fnames if self._check_extension(i.lower())]
         pushed_count = self.push(filtered_filenames)
 
-        if self.verbose and pushed_count:
+        if self.app.config['verbose'] and pushed_count:
             print 'pushed %d images from %s' % (pushed_count, dirname)
 
     def _check_extension(self, fname):
         """ Checks if file has extension found in extensions, from configuration """
-        for extension in self.extensions:
+        for extension in self.app.config['extensions']:
             try:
                 if fname.index(extension) == len(fname) - len(extension):
                     return True

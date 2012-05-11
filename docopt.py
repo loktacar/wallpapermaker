@@ -80,13 +80,13 @@ def docopt(doc, args=sys.argv[1:], help=True, version=None):
                             ''.join([d.short for d in docopts if d.short]),
                             [d.long for d in docopts if d.long])
     except GetoptError as e:
-        exit(e.msg)
+        sys.exit(e.msg)
     for k, v in getopts:
         for o in docopts:
             if k in o.forms:
                 o.value = True if o.is_flag else argument_eval(v)
             if help and k in ('-h', '--help'):
-                exit(doc.strip())
+                sys.exit(doc.strip())
             if version is not None and k == '--version':
-                exit(version)
+                sys.exit(version)
     return Options(**dict([(o.name, o.value) for o in docopts])), args

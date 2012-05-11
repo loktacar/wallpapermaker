@@ -1,6 +1,17 @@
 #!/usr/bin/env python
 # TODO, before I release:
 #
+#   rename wpmaker.py and wpmaker_tray.py to remove .py extension
+#       - for being like an executable on linux
+#
+#   make path able to be set as a list
+#       - create multiple imagequeues
+#       - select a random queue when calling make_wallpaper
+#       - chances of each queue reliant upon the ratio between sum of the queue sizes and size of each queue
+#
+#   Seperate ImageQueue's for each subfolder
+#       - with chances of being selected representative of no of elements
+#
 #   Compatibility
 #       - Make mac compatible
 #       - Make xmonad compatible
@@ -26,48 +37,31 @@
 #   - MAC
 #       Was fixed with installing osx version specific pygames installation
 #
-"""Usage main.py [options]
-
-Options:
-    --section=SECTION           section of config file to be used
-    --path=PATH                 path of wallpaper folder
-    --extensions=LIST           comma seperated list of acceptable extensions
-    --update=TIME               time seperating each wallpaper update in seconds
-    --generated-wallpaper=PATH  path of the output wallpaper
-    --resolution=WIDTHxHEIGHT   sets a static value for resolution, instead of automatic
-    --add-date                  adds date to generated wallpaper filename
-    --recursion-depth=INT       maximum number of times each split can be split
-    -s --single-run             create and set a single wallpaper then exit
-    -h --help                   shows this help message and exits
-    -v --verbose                prints status messages as the program runs
-
-"""
-
 import os
 import sys
+import threading
 import time
 import pygame
 
 from docopt import docopt
-from config import Config
+from config import Config, get_doc
 from compatibility import get_screen_resolution, set_wallpaper
 from images import ImageQueue
 from wallpaper import wallpaper_split
 
-
-class Application:
+class Application(threading.Thread):
     def __init__(self, config):
         self.config = config
-        self.wallpapers = ImageQueue(self.config['path'], self.config['extensions'], verbose=self.config['verbose'])
+        self.wallpapers = ImageQueue(self)
         self.resolution = (0,0)
         self._stop = False
-        self._no_file_check_interval = self.config['file_check_period']
+        self._no_file_check_interval = self.config['file_check_interval']
 
     # Use only one update period, for now
-    def run(self):
+    def run(self, single_run=False):
         while not self._stop:
             # Check files
-            if self._no_file_check_interval == self.config['file_check_period']:
+            if self._no_file_check_interval == self.config['file_check_interval']:
                 self.wallpapers.walk_path()
                 self._no_file_check_interval = 0
             else:
@@ -84,8 +78,8 @@ class Application:
             else:
                 raise ValueError('No wallpapers found')
 
-            if self.config['single_run']:
-                if self.config['verbose']:
+            if self.config['single_run'] or single_run:
+                if self.config['verbose'] and not single_run:
                     print 'Single run, now exiting'
 
                 try:
@@ -117,25 +111,17 @@ class Application:
                               recursion_depth=self.config['recursion_depth'] - 1)
 
         wp_name = self.config['generated_wallpaper']
-        if self.config['add_date']:
-            from datetime import datetime
-            now = datetime.now()
-            period = wp_name.rindex('.')
-            wp_name = ''.join([
-                wp_name[:period],
-                now.strftime('_%Y-%m-%d_%H-%M'),
-                wp_name[period:]
-                ])
 
         pygame.image.save(img, wp_name)
 
-        return wp_name
+        if '\\' in wp_name:
+            return wp_name.replace('/', '\\')
+        else:
+            return wp_name
 
     def _set_wallpaper(self, wp_name):
         """ Sets the wallpaper to latest generated wallpaper """
         set_wallpaper(wp_name, self.config['desktop_environment'])
-        if self.config['verbose']:
-            print 'wp set to ' + wp_name
 
     def _get_resolution(self):
         resolution = self.resolution
@@ -152,22 +138,7 @@ class Application:
         return resolution
 
 if __name__ == '__main__':
-    # Append configuration file help
-    from config import appname, appauthor, config_file_name
-    from appdirs import AppDirs
-    appdirs = AppDirs(appname, appauthor)
-    dir_splitter = '/'
-    if '\\' in  appdirs.user_data_dir:
-        dir_splitter = '\\'
-    __doc__ += """Configuration:
-
-    Files
-    %s
-    %s
-
-    See sample.config.py for information on options and examples
-""" % (appdirs.user_data_dir + dir_splitter + config_file_name,
-       appdirs.site_data_dir + dir_splitter + config_file_name)
+    __doc__ = get_doc()
 
     # get input options and arguments
     ioptions, iarguments = docopt(__doc__)
