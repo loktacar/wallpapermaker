@@ -50,16 +50,8 @@ class HelloTray:
         gobject.idle_add(self.application.config.set_section, section)
 
     def execute_cb(self, widget, event, data = None):
-        gobject.idle_add(self.application.run, True)
-        #window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-        #window.set_border_width(10)
-
-        #button = gtk.Button("Hello World")
-        #button.connect_object("clicked", gtk.Widget.destroy, window)
-
-        #window.add(button)
-        #button.show()
-        #window.show()
+        self.generate_callback()
+        #gobject.idle_add(self.application.run, True)
 
     def quit_cb(self, widget, data = None):
         self.statusIcon.set_visible(0)
@@ -71,6 +63,13 @@ class HelloTray:
                 data.show_all()
                 data.popup(None, None, gtk.status_icon_position_menu,
                            3, time, self.statusIcon)
+
+    def generate_callback(self):
+        gobject.idle_add(self.application.run, True, True)
+
+        #if self.application.config['verbose']:
+            #print 'sleep %ds' % self.application.config['update_period']
+        gobject.timeout_add_seconds(self.application.config['update_period'], self.generate_callback)
 
 if __name__ == "__main__":
     __doc__ = get_doc()

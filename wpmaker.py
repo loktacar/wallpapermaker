@@ -58,7 +58,7 @@ class Application(threading.Thread):
         self._no_file_check_interval = self.config['file_check_interval']
 
     # Use only one update period, for now
-    def run(self, single_run=False):
+    def run(self, single_run=False, sleep_after=False):
         while not self._stop:
             # Check files
             if self._no_file_check_interval == self.config['file_check_interval']:
@@ -80,7 +80,9 @@ class Application(threading.Thread):
 
             if self.config['single_run'] or single_run:
                 if self.config['verbose'] and not single_run:
-                    print 'Single run, now exiting'
+                    print 'single run, now exiting'
+                elif self.config['verbose'] and sleep_after:
+                    print 'sleep %ds' % self.config['update_period']
 
                 try:
                     return os.EX_OK # Exit without errors

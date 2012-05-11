@@ -116,9 +116,6 @@ class Config:
                                             parse_func=int,
                                             description='maximum number of times each split can be split'),
 
-            #'add_date': False,                                  # Add date and time to generated wallpaper
-                                                                # file name, before last period '.'
-
             'single_run': ConfigOption(default=False, cmd_opt='single-run', cmd_short='s',
                                        parse_func=bool,
                                        description='create and set a single wallpaper then exit'),
