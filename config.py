@@ -142,11 +142,15 @@ class Config:
     def __init__(self, cmd_opts):
         self.cmd_opts = cmd_opts
         self.options = {}
+        self.cfg = ConfigParser.SafeConfigParser()
 
         # Find out the full path to configuration files
         appdirs = AppDirs(appname, appauthor)
         dirs = (appdirs.user_data_dir, appdirs.site_data_dir)
         self.files = ['%s/%s' % (dir, config_file_name) for dir in dirs]
+
+        self.cfg = ConfigParser.SafeConfigParser()
+        self.cfg_files = self.cfg.read(self.files)
 
         # Get config file section from command line options
         self.file_section = \
@@ -225,6 +229,7 @@ class Config:
             self._parse_config_files()
 
     def config_sections(self):
+        print self.cfg.sections()
         return self.cfg.sections()
 
     def set_section(self, section):

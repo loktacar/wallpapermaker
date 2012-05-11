@@ -20,38 +20,35 @@ class HelloTray:
         self.statusIcon.set_visible(True)
         self.statusIcon.set_tooltip("wpmaker")
 
-        self.menu = gtk.Menu()
-        self.menuItem = gtk.ImageMenuItem(gtk.STOCK_EXECUTE)
-        self.menuItem.connect('activate', self.execute_cb, self.statusIcon)
-        self.menu.append(self.menuItem)
+        menu = gtk.Menu()
 
         # Config Section selection
-        self.menuItem = gtk.ImageMenuItem(gtk.STOCK_PREFERENCES)
+        sections = self.application.config.config_sections()
+        if len(sections) > 1:
+            menuItem = gtk.ImageMenuItem(gtk.STOCK_PREFERENCES)
+            subMenu = gtk.Menu()
+            for section in sections:
+                subMenuItem = gtk.MenuItem(section)
+                subMenuItem.connect('activate', self.set_config_section, section)
+                subMenu.append(subMenuItem)
 
-        self.subMenu = gtk.Menu()
-        self.subMenuItem = gtk.ImageMenuItem(gtk.STOCK_NEW)
-        self.subMenuItem.connect('activate', self.set_config_section, 'default')
-        self.subMenu.append(self.subMenuItem)
-        self.subMenuItem = gtk.ImageMenuItem(gtk.STOCK_YES)
-        self.subMenuItem.connect('activate', self.set_config_section, 'debug')
-        self.subMenu.append(self.subMenuItem)
+        menuItem.set_submenu(subMenu)
+        menu.append(menuItem)
 
-        self.menuItem.set_submenu(self.subMenu)
-        self.menu.append(self.menuItem)
+        seperator = gtk.SeparatorMenuItem()
+        menu.append(seperator)
 
-        self.menuItem = gtk.ImageMenuItem(gtk.STOCK_QUIT)
-        self.menuItem.connect('activate', self.quit_cb, self.statusIcon)
-        self.menu.append(self.menuItem)
+        menuItem = gtk.ImageMenuItem(gtk.STOCK_QUIT)
+        menuItem.connect('activate', self.quit_cb, self.statusIcon)
+        menu.append(menuItem)
 
-        self.statusIcon.connect('popup-menu', self.popup_menu_cb, self.menu)
+        self.statusIcon.connect('popup-menu', self.popup_menu_cb, menu)
         self.statusIcon.set_visible(1)
+
+        self.generate_callback()
 
     def set_config_section(self, widget, section):
         gobject.idle_add(self.application.config.set_section, section)
-
-    def execute_cb(self, widget, event, data = None):
-        self.generate_callback()
-        #gobject.idle_add(self.application.run, True)
 
     def quit_cb(self, widget, data = None):
         self.statusIcon.set_visible(0)
@@ -67,8 +64,6 @@ class HelloTray:
     def generate_callback(self):
         gobject.idle_add(self.application.run, True, True)
 
-        #if self.application.config['verbose']:
-            #print 'sleep %ds' % self.application.config['update_period']
         gobject.timeout_add_seconds(self.application.config['update_period'], self.generate_callback)
 
 if __name__ == "__main__":
