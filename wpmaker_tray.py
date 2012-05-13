@@ -80,7 +80,7 @@ class TrayApplication:
         self.running = None
 
 if __name__ == "__main__":
-    __doc__ = get_doc()
+    __doc__ = get_doc('wpmaker_tray')
 
     ioptions, iarguments = docopt(__doc__)
     cfg = Config(ioptions)

@@ -1,26 +1,3 @@
-"""Usage %s [options]
-
-Options:
-    --section=SECTION           section of config file to be used
-    --path=PATH                 path of wallpaper folder
-    --extensions=LIST           comma seperated list of acceptable extensions
-    --update=TIME               time seperating each wallpaper update in seconds
-    --generated-wallpaper=PATH  path of the output wallpaper
-    --resolution=WIDTHxHEIGHT   sets a static value for resolution, instead of automatic
-    --recursion-depth=INT       maximum number of times each split can be split
-    -s --single-run             create and set a single wallpaper then exit
-    -h --help                   shows this help message and exits
-    -v --verbose                prints status messages as the program runs
-
-Configuration Files:
-    %s
-    %s
-
-    See sample.config for information on options and examples
-
-"""
-# Add no-set option which doesn't set wallpaper only generates and saves it
-
 import copy
 import imp
 import sys
@@ -40,17 +17,45 @@ def main_is_frozen():
             hasattr(sys, "importers") or # old py2exe
             imp.is_frozen("__main__"))   # tools/freeze
 
-def get_doc():
-    # TODO:
-    #   Make __doc__ string from a dict describing each option
+def get_doc(file):
+    doc_string = []
+    doc_string.append('Usage %s [options]') # 0
+    doc_string.append('') # 1
+    doc_string.append('Options:') # 2
+    # options will be in doc_string[2:-7]
+    for key in sorted(Config.OPTIONS.keys()):
+        opt = Config.OPTIONS[key]
+        if opt.cmd_opt:
+            opt_str = '%s%s%s' % ('' if not opt.cmd_short else '-%s ' % opt.cmd_short, \
+                                  '--%s' % opt.cmd_opt, \
+                                  '' if not opt.cmd_arg else '=%s' % opt.cmd_arg)
+            doc_string.append('    %s%s%s' % \
+                         (opt_str, \
+                         ' '*(25 - len(opt_str)), \
+                         opt.description))
+    doc_string.append('    -h --help'+' '*16+'display this help text')
+    doc_string.append('') # -6
+    doc_string.append('Configuration files:')
+    doc_string.append('    %s') # -5
+    doc_string.append('    %s') # -4
+    doc_string.append('') # -3
+    doc_string.append('See sample.config for information on options and examples') # -2
+    doc_string.append('') # -1
+
     appdirs = AppDirs(appname, appauthor)
     dir_splitter = '/'
     if '\\' in appdirs.user_data_dir:
         dir_splitter = '\\'
 
-    return __doc__ % ('wpmaker.exe' if main_is_frozen() else 'wpmaker.py',
-                      appdirs.user_data_dir + dir_splitter + config_file_name,
-                      appdirs.site_data_dir + dir_splitter + config_file_name)
+    doc_string[0] = doc_string[0] % (file+'.exe' if main_is_frozen() else file+'.py')
+    doc_string[-5] = doc_string[-5] % appdirs.user_data_dir + dir_splitter + config_file_name
+    doc_string[-4] = doc_string[-4] % appdirs.site_data_dir + dir_splitter + config_file_name
+
+    return '\n'.join(doc_string)
+
+    #return __doc__ % ('wpmaker.exe' if main_is_frozen() else 'wpmaker.py',
+    #                  appdirs.user_data_dir + dir_splitter + config_file_name,
+    #                  appdirs.site_data_dir + dir_splitter + config_file_name)
 
 class ConfigOption:
     def __init__(self,
@@ -93,7 +98,7 @@ def resolution_parse(value):
 
 class Config:
     OPTIONS = {
-            'path': ConfigOption(default=None, required=True, cmd_opt='path', cmd_short='p', cmd_arg='PATH',
+            'path': ConfigOption(default=None, required=True, cmd_opt='path', cmd_arg='PATH',
                                  parse_func=os.path.expanduser,
                                  description='path to wallpaper folder'),
 
@@ -102,13 +107,13 @@ class Config:
                                        cmd_opt='extensions', cmd_arg='LIST',
                                        description='comma seperated list of acceptable extensions'),
 
-            'update_period': ConfigOption(default=300, cmd_opt='update', cmd_short='u', cmd_arg='SEC',
+            'update_period': ConfigOption(default=300, cmd_opt='update', cmd_arg='SEC',
                                           parse_func=int,
                                           description='time between generating and updating wallpaper'),
 
             'generated_wallpaper': ConfigOption(default=os.path.expanduser('~/.wp.bmp'),
                                                 parse_func=os.path.expanduser,
-                                                cmd_opt='wallpaper', cmd_short='w', cmd_arg='PATH',
+                                                cmd_opt='wallpaper', cmd_arg='PATH',
                                                 description='path to generated wallpaper'),
 
             'recursion_depth': ConfigOption(default=2, cmd_opt='recursion-depth', cmd_arg='INT',
@@ -125,13 +130,13 @@ class Config:
 
             'desktop_environment': ConfigOption(default='gnome', cmd_console=False, cmd_gui=False, config_file=False),
 
-            'resolution': ConfigOption(default=None, cmd_opt='resolution', cmd_short='r', cmd_arg='RES',
+            'resolution': ConfigOption(default=None, cmd_opt='resolution', cmd_arg='RES',
                                        parse_func=resolution_parse,
                                        description='forces resolution of generated wallpaper'),
 
             'file_check_interval': ConfigOption(default=5, cmd_opt='fs-interval', cmd_arg='INT',
                                                 parse_func=int,
-                                                description='check wallpaper folder every INT updated'),
+                                                description='check wallpaper folder every INT updates'),
 
             'config_section': ConfigOption(default='default', cmd_opt='section', cmd_arg='SECTION',
                                            config_file=False, description='section of configuration file to be used')

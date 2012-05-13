@@ -8,7 +8,6 @@
 #       - create multiple imagequeues
 #       - select a random queue when calling make_wallpaper
 #       - chances of each queue reliant upon the ratio between sum of the queue sizes and size of each queue
-#
 #   Seperate ImageQueue's for each subfolder
 #       - with chances of being selected representative of no of elements
 #
@@ -39,22 +38,6 @@
 #   - Windows
 #       If I end up using gtk+ for tray icon I will have to install it and add gtk installation path to PATH environment variable
 #
-"""Usage main.py [options]
-
-Options:
-    --section=SECTION           section of config file to be used
-    --path=PATH                 path of wallpaper folder
-    --extensions=LIST           comma seperated list of acceptable extensions
-    --update=TIME               time seperating each wallpaper update in seconds
-    --generated-wallpaper=PATH  path of the output wallpaper
-    --resolution=WIDTHxHEIGHT   sets a static value for resolution, instead of automatic
-    --add-date                  adds date to generated wallpaper filename
-    --recursion-depth=INT       maximum number of times each split can be split
-    -s --single-run             create and set a single wallpaper then exit
-    -h --help                   shows this help message and exits
-    -v --verbose                prints status messages as the program runs
-
-"""
 import sys
 import time
 
@@ -158,7 +141,7 @@ class Application():
         return resolution
 
 if __name__ == '__main__':
-    __doc__ = get_doc()
+    __doc__ = get_doc('wpmaker')
 
     # get input options and arguments
     ioptions, iarguments = docopt(__doc__)
