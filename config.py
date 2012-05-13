@@ -229,7 +229,6 @@ class Config:
             self._parse_config_files()
 
     def config_sections(self):
-        print self.cfg.sections()
         return self.cfg.sections()
 
     def set_section(self, section):

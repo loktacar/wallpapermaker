@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+import sys
+
 from docopt import docopt
 from config import Config, get_doc
 
@@ -8,7 +10,8 @@ from config import Config, get_doc
 
 import gobject
 import pygtk
-pygtk.require('2.0')
+if not sys.platform == 'win32':
+    pygtk.require('2.0')
 import gtk
 
 class HelloTray:
@@ -62,6 +65,10 @@ class HelloTray:
                            3, time, self.statusIcon)
 
     def generate_callback(self):
+        # TODO: use popen to call the application
+        #       - this may take more time because of filesystem checks etc.
+        #       - should however stop it from throwing segmentation faults
+        #       - self.config should be a Config instance and generate the arguments for the application
         gobject.idle_add(self.application.run, True, True)
 
         gobject.timeout_add_seconds(self.application.config['update_period'], self.generate_callback)
