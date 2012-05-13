@@ -15,9 +15,10 @@ if not sys.platform == 'win32':
     pygtk.require('2.0')
 import gtk
 
-class HelloTray:
-    def __init__(self, application):
-        self.application = application
+class TrayApplication:
+    def __init__(self, config):
+        self.config = config
+        self.running = None
 
         self.statusIcon = gtk.StatusIcon()
         self.statusIcon.set_from_stock(gtk.STOCK_ABOUT)
@@ -27,7 +28,7 @@ class HelloTray:
         menu = gtk.Menu()
 
         # Config Section selection
-        sections = self.application.config.config_sections()
+        sections = self.config.config_sections()
         if len(sections) > 1:
             menuItem = gtk.ImageMenuItem(gtk.STOCK_PREFERENCES)
             subMenu = gtk.Menu()
@@ -49,10 +50,11 @@ class HelloTray:
         self.statusIcon.connect('popup-menu', self.popup_menu_cb, menu)
         self.statusIcon.set_visible(1)
 
-        self.generate_callback()
+        self.run()
 
     def set_config_section(self, widget, section):
-        gobject.idle_add(self.application.config.set_section, section)
+        self.config.set_section(section)
+        self.run()
 
     def quit_cb(self, widget, data = None):
         self.statusIcon.set_visible(0)
@@ -65,16 +67,17 @@ class HelloTray:
                 data.popup(None, None, gtk.status_icon_position_menu,
                            3, time, self.statusIcon)
 
-    def generate_callback(self):
-        # TODO: use popen to call the application
-        #       - this may take more time because of filesystem checks etc.
-        #       - should however stop it from throwing segmentation faults
-        #       - self.config should be a Config instance and generate the arguments for the application
-        command = ['python', 'wpmaker.py', '--single-run']
-        options = [x for x in cfg.get_option_list()]
-        p = subprocess.Popen(command + options)
+    def run(self):
+        if self.running is not None:
+            self.stop()
 
-        gobject.timeout_add_seconds(self.application.config['update_period'], self.generate_callback)
+        command = ['python', 'wpmaker.py']
+        options = [x for x in cfg.get_option_list()]
+        self.running = subprocess.Popen(command + options)
+
+    def stop(self):
+        self.running.kill()
+        self.running = None
 
 if __name__ == "__main__":
     __doc__ = get_doc()
@@ -82,11 +85,10 @@ if __name__ == "__main__":
     ioptions, iarguments = docopt(__doc__)
     cfg = Config(ioptions)
 
-    gobject.threads_init()
+    tray = TrayApplication(cfg)
 
-    from wpmaker import Application
-    app = Application(cfg)
-
-    helloWord = HelloTray(app)
-    gtk.main()
+    try:
+        gtk.main()
+    except KeyboardInterrupt:
+        tray.statusIcon.set_visible(0)
 
