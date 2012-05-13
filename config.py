@@ -7,7 +7,6 @@ Options:
     --update=TIME               time seperating each wallpaper update in seconds
     --generated-wallpaper=PATH  path of the output wallpaper
     --resolution=WIDTHxHEIGHT   sets a static value for resolution, instead of automatic
-    --add-date                  adds date to generated wallpaper filename
     --recursion-depth=INT       maximum number of times each split can be split
     -s --single-run             create and set a single wallpaper then exit
     -h --help                   shows this help message and exits
@@ -191,9 +190,11 @@ class Config:
         for key in Config.OPTIONS.keys():
             opt = Config.OPTIONS[key]
 
-            if opt.cmd_opt in self.cmd_opts.__dict__.keys():
-                if self.cmd_opts.__dict__[opt.cmd_opt]:
-                    cmd_dict[key] = self.cmd_opts.__dict__[opt.cmd_opt]
+            if opt.cmd_opt:
+                cmd_opt_ = opt.cmd_opt.replace('-','_')
+                if cmd_opt_ in self.cmd_opts.__dict__.keys():
+                    if self.cmd_opts.__dict__[cmd_opt_]:
+                        cmd_dict[key] = self.cmd_opts.__dict__[cmd_opt_]
 
         self.parse_dict(cmd_dict, 'cmd')
 
@@ -248,4 +249,19 @@ class Config:
 
     def __getitem__(self, key):
         return self.options[key]
+
+    def get_option_list(self):
+        for key in Config.OPTIONS:
+            if key == 'config_section':
+                continue
+
+            opt = Config.OPTIONS[key]
+
+            if self[key] == opt.default:
+                continue
+
+            if opt.cmd_opt and not opt.cmd_arg:
+                yield '--%s' % opt.cmd_opt
+            if opt.cmd_opt and opt.cmd_arg:
+                yield '--%s=%s' % (opt.cmd_opt, self[key])
 

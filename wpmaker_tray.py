@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import sys
+import subprocess
 
 from docopt import docopt
 from config import Config, get_doc
@@ -69,7 +70,9 @@ class HelloTray:
         #       - this may take more time because of filesystem checks etc.
         #       - should however stop it from throwing segmentation faults
         #       - self.config should be a Config instance and generate the arguments for the application
-        gobject.idle_add(self.application.run, True, True)
+        command = ['python', 'wpmaker.py', '--single-run']
+        options = [x for x in cfg.get_option_list()]
+        p = subprocess.Popen(command + options)
 
         gobject.timeout_add_seconds(self.application.config['update_period'], self.generate_callback)
 

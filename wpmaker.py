@@ -105,7 +105,7 @@ class Application():
                 elif self.config['verbose'] and sleep_after:
                     print 'sleep %ds' % self.config['update_period']
 
-                self.stop()
+                return 0
             else:
                 if self.config['verbose']:
                     print 'sleep %ds' % self.config['update_period']
