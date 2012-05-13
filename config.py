@@ -217,9 +217,9 @@ class Config:
 
             # set appropriate option to the appropriate value
             if key in dict:
-                self[key] = opt.get(dict[key])
+                self.__setitem__(key, dict[key])
             elif opt.cmd_opt in dict:
-                self[key] = opt.get(dict[opt.cmd_opt])
+                self.__setitem__(key, dict[opt.cmd_opt])
 
     def read_config_files(self, parse=True):
         self.cfg = ConfigParser.SafeConfigParser()
@@ -237,7 +237,14 @@ class Config:
         self.parse_options()
 
     def __setitem__(self, key, value):
-        self.options[key] = value
+        if not key in Config.OPTIONS:
+            raise ValueError('Config.__setitem__(): key %s not found' % key)
+
+        if isinstance(value, str):
+            opt = Config.OPTIONS[key]
+            self.options[key] = opt.get(value)
+        else:
+            self.options[key] = value
 
     def __getitem__(self, key):
         return self.options[key]

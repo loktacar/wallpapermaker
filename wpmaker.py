@@ -36,11 +36,28 @@
 # Possible installation problems
 #   - MAC
 #       Was fixed with installing osx version specific pygames installation
+#   - Windows
+#       If I end up using gtk+ for tray icon I will have to install it and add gtk installation path to PATH environment variable
 #
-import os
+"""Usage main.py [options]
+
+Options:
+    --section=SECTION           section of config file to be used
+    --path=PATH                 path of wallpaper folder
+    --extensions=LIST           comma seperated list of acceptable extensions
+    --update=TIME               time seperating each wallpaper update in seconds
+    --generated-wallpaper=PATH  path of the output wallpaper
+    --resolution=WIDTHxHEIGHT   sets a static value for resolution, instead of automatic
+    --add-date                  adds date to generated wallpaper filename
+    --recursion-depth=INT       maximum number of times each split can be split
+    -s --single-run             create and set a single wallpaper then exit
+    -h --help                   shows this help message and exits
+    -v --verbose                prints status messages as the program runs
+
+"""
 import sys
-import threading
 import time
+
 import pygame
 
 from docopt import docopt
@@ -49,8 +66,10 @@ from compatibility import get_screen_resolution, set_wallpaper
 from images import ImageQueue
 from wallpaper import wallpaper_split
 
-class Application(threading.Thread):
+class Application():
     def __init__(self, config):
+        self._stop = False
+        self._sleeping = False
         self.config = config
         self.wallpapers = ImageQueue(self)
         self.resolution = (0,0)
@@ -60,6 +79,8 @@ class Application(threading.Thread):
     # Use only one update period, for now
     def run(self, single_run=False, sleep_after=False):
         while not self._stop:
+            self._sleeping = False
+
             # Check files
             if self._no_file_check_interval == self.config['file_check_interval']:
                 self.wallpapers.walk_path()
@@ -84,26 +105,23 @@ class Application(threading.Thread):
                 elif self.config['verbose'] and sleep_after:
                     print 'sleep %ds' % self.config['update_period']
 
-                try:
-                    return os.EX_OK # Exit without errors
-                except AttributeError:
-                    return 0
+                self.stop()
+            else:
+                if self.config['verbose']:
+                    print 'sleep %ds' % self.config['update_period']
 
-            if self.config['verbose']:
-                print 'sleep %ds' % self.config['update_period']
-            try:
+                self._sleeping = True
+
                 time.sleep(self.config['update_period'])
-            except KeyboardInterrupt:
-                try:
-                    return os.EX_OK
-                except AttributeError:
-                    return 0 # On windows just exit, windwos doesnt care about results
 
     def stop(self):
         self._stop = True
 
     def stopped(self):
         return self._stop
+
+    def sleeping(self):
+        return self._sleeping
 
     # 'private' wallpaper manipulation functions
     def _make_wallpaper(self, size):
@@ -148,5 +166,9 @@ if __name__ == '__main__':
     cfg = Config(ioptions)
 
     app = Application(cfg)
-    sys.exit(app.run())
+
+    try:
+        sys.exit(app.run())
+    except KeyboardInterrupt:
+        pass
 

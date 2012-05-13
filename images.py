@@ -9,6 +9,8 @@ class ImageQueue:
         # Set index to 0 for no shuffle first
         self.app = app
         self.images = images
+
+        # Set index to 0 for no shuffle first
         self.index = index
 
     def pop(self, count=1):
