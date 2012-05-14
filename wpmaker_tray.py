@@ -3,7 +3,7 @@ import sys
 import subprocess
 
 from docopt import docopt
-from config import Config, get_doc
+from config import Config, get_doc, main_is_frozen
 
 # Create a new gtk+ class here
 # This class calls Application in wpmaker.py
@@ -19,6 +19,9 @@ class TrayApplication:
     def __init__(self, config):
         self.config = config
         self.running = None
+
+        self.startupinfo = subprocess.STARTUPINFO()
+        self.startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
 
         self.statusIcon = gtk.StatusIcon()
         self.statusIcon.set_from_stock(gtk.STOCK_ABOUT)
@@ -58,6 +61,7 @@ class TrayApplication:
 
     def quit_cb(self, widget, data = None):
         self.statusIcon.set_visible(0)
+        self.stop()
         gtk.main_quit()
 
     def popup_menu_cb(self, widget, button, time, data = None):
@@ -68,16 +72,19 @@ class TrayApplication:
                            3, time, self.statusIcon)
 
     def run(self):
-        if self.running is not None:
-            self.stop()
+        self.stop()
 
-        command = ['python', 'wpmaker.py']
+        if main_is_frozen():
+            command = ['wpmaker.exe']
+        else:
+            command = ['python', 'wpmaker.py']
         options = [x for x in cfg.get_option_list()]
-        self.running = subprocess.Popen(command + options)
+        self.running = subprocess.Popen(command + options, startupinfo=self.startupinfo)
 
     def stop(self):
-        self.running.kill()
-        self.running = None
+        if self.running is not None:
+            self.running.terminate()
+            self.running = None
 
 if __name__ == "__main__":
     __doc__ = get_doc('wpmaker_tray')

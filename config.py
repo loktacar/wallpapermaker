@@ -53,10 +53,6 @@ def get_doc(file):
 
     return '\n'.join(doc_string)
 
-    #return __doc__ % ('wpmaker.exe' if main_is_frozen() else 'wpmaker.py',
-    #                  appdirs.user_data_dir + dir_splitter + config_file_name,
-    #                  appdirs.site_data_dir + dir_splitter + config_file_name)
-
 class ConfigOption:
     def __init__(self,
             default=None,
@@ -105,7 +101,7 @@ class Config:
             'extensions': ConfigOption(default=['jpg','png','jpeg','gif','bmp'],
                                        parse_func=lambda x: x.split(','),
                                        cmd_opt='extensions', cmd_arg='LIST',
-                                       description='comma seperated list of acceptable extensions'),
+                                       description='comma seperated list of acceptable image extensions'),
 
             'update_period': ConfigOption(default=300, cmd_opt='update', cmd_arg='SEC',
                                           parse_func=int,
@@ -126,7 +122,7 @@ class Config:
 
             'verbose': ConfigOption(default=False, cmd_opt='verbose', cmd_short='v',
                                     parse_func=bool,
-                                    description='prints out debugging information as it runs'),
+                                    description='print out debugging information'),
 
             'desktop_environment': ConfigOption(default='gnome', cmd_console=False, cmd_gui=False, config_file=False),
 
