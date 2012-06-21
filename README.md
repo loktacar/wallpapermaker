@@ -45,7 +45,8 @@ You can also run `wpmaker` without the console by running `wpmaker.pyw`.
 
 The default help message goes something like this:
 
-```Usage wpmaker.py [options]
+```
+Usage wpmaker.py [options]
 
 Options:
     --collage-plugin=COLLAGEWhich collage plugin should be used
