@@ -65,6 +65,7 @@ Configuration files:
     D:\Users\[username]\AppData\Local\viktor\wpmaker\wpmaker.conf
     C:\ProgramData\viktor\wpmaker\wpmaker.conf
 
-See sample.conf for information on options and example```
+See sample.conf for information on options and example
+```
 
 
