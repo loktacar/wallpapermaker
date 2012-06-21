@@ -4,11 +4,10 @@
 Tired of having a folder full of wallpapers and only seeing one at a time?
 
 `wpmaker` has the ability to create collages from randomly selected images from
-a folder. Also it can do the standard one-at-a-time thing.
+a folder. Also it can do the standard one-at-a-time thing, keeping the aspect
+ratio and cropping instead of stretching.
 
 Here is an [example](http://i.imgur.com/BnZTn.jpg)
-
-See how to work this thing below this description.
 
 Why is this a better solution than other *leading brands*?
 
