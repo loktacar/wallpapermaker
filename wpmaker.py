@@ -50,10 +50,10 @@ def set_wp():
         if s.platform_check(config):
             return s.set(config)
 
-# File check interval counter
-file_check_counter = config['fs-interval']
 
-if __name__ == '__main__':
+def main():
+    # File check interval counter
+    file_check_counter = config['fs-interval']
 
     # Wallpaper generation loop
     while(True):
@@ -97,3 +97,6 @@ if __name__ == '__main__':
         logger.debug('Loop end, sleep %ds' % config['update'])
         time.sleep(config['update'])
 
+
+if __name__ == '__main__':
+    main()
