@@ -1,8 +1,5 @@
 # TODO:
-#       - plugin config, where to implement and how
-#           * plugin selection configuration, how to implement
 #       - Implement multiple wallpaper_queue Wallpapers class
-#       - MAEK LOGGING PREEEETEEEEEE
 
 import sys
 import time
@@ -32,8 +29,6 @@ ioptions, iarguments = docopt(get_doc())
 from config import get_config
 config = get_config(ioptions, iarguments)
 
-#config['collage_plugin'] = 'RecursiveSplit'
-
 # Find wallpapers
 from wallpapers import Wallpapers
 wps = Wallpapers(config)
@@ -49,6 +44,7 @@ def get_res():
 
     return (0,0)
 
+# Set wallpaper
 def set_wp():
     for s in set_wallpaper_plugins:
         if s.platform_check(config):
