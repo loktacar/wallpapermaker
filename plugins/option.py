@@ -32,7 +32,7 @@ class Option(object):
         if self.cmd_argument is not None:
             s += '=%s' % self.cmd_argument
 
-        s += ' ' * (25 - len(s))
+        s += ' ' * (30 - len(s))
 
         s += self.description
 

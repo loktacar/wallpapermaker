@@ -32,16 +32,28 @@ Options:
         doc += op.get_doc_line()
         doc += '\n'
 
-    doc += """    --verbose -v   VERBOCITY PLOX?
-    --help -h    HAAALP!
+    verbose_doc = ' '*4
+    verbose_doc += '-v '
+    verbose_doc += '--verbose'
+    verbose_doc += ' ' * (30 - len(verbose_doc))
+    verbose_doc += 'Debugging output'
+    doc += verbose_doc + '\n'
 
+    help_doc = ' '*4
+    help_doc += '-h '
+    help_doc += '--help'
+    help_doc += ' ' * (30 - len(help_doc))
+    help_doc += 'Displays this help message'
+    doc += help_doc + '\n'
+
+    doc += """
 Configuration files:
 """
     for dir in get_appdirs_paths():
         doc += ' '*4 + dir + '\n'
 
     doc += """
-See sample.conf for information on options and example"""
+See sample.conf for information on options and examples"""
 
     return doc
 

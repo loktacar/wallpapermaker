@@ -43,30 +43,28 @@ How do I use this thing anyways?
 You can run `wpmaker` in the console by running `python wpmaker.py [options]`.
 You can also run `wpmaker` without the console by running `wpmaker.pyw`.
 
-The default help message goes something like this:
+The default help message(on Windows 7) goes something like this:
 
 ```
 Usage wpmaker.py [options]
 
 Options:
-    --collage-plugin=COLLAGEWhich collage plugin should be used
-    --fs-interval=INT    Check wallpaper folder every INT updates
-    --path=PATH          PATH to the wallpaper folder
-    --recursion-depth=INTSplit can be split INT times
-    -r --resolution=RES  Forces resolution of generated wallpaper
-    --section=SECTION    SECTION of configuration file to be used
-    -s --single-run      Generate wallpaper once then exit
-    --update=SEC         Time in seconds between generating and updating wallpap
-er
-    --wallpaper=PATH     PATH to generated wallpaper
-    --verbose -v   VERBOCITY PLOX?
-    --help -h    HAAALP!
+    --collage-plugin=COLLAGE  Which collage plugin should be used
+    --fs-interval=INT         Check wallpaper folder every INT updates
+    --path=PATH               PATH to the wallpaper folder
+    --recursion-depth=INT     Split can be split INT times
+    -r --resolution=RES       Forces resolution of generated wallpaper
+    --section=SECTION         SECTION of configuration file to be used
+    -s --single-run           Generate wallpaper once then exit
+    --update=SEC              Time in seconds between generating and updating wallpaper
+    --wallpaper=PATH          PATH to generated wallpaper
+    -v --verbose              Debugging output
+    -h --help                 Displays this help message
 
 Configuration files:
-    D:\Users\[username]\AppData\Local\viktor\wpmaker\wpmaker.conf
+    D:\Users\viktor\AppData\Local\viktor\wpmaker\wpmaker.conf
     C:\ProgramData\viktor\wpmaker\wpmaker.conf
 
-See sample.conf for information on options and example
+See sample.conf for information on options and examples
 ```
-
 
