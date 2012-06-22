@@ -34,7 +34,7 @@ Configuration
 
 Configuring `wpmaker` is easy, run `python wpmaker.py --help` for a list of
 configuration files. Then create one of them. The options are the same as the
-longer named option used in the command line. See example.conf for more info.
+longer named option used in the command line.
 
 ```
 #############################################################
@@ -44,10 +44,9 @@ longer named option used in the command line. See example.conf for more info.
 [default]
 # The 'default' section is read unless another is specified
 # as a command line option (ex. wpmaker --section=debug)
-path=D:\Users\viktor\Pictures\wp
-# or
-#path=/home/viktor/Pictures/wp
+path=~\Pictures\wp
 
+# Time between wallpaper switching
 update=180
 # personal preference
 
