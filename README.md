@@ -36,6 +36,66 @@ Configuring `wpmaker` is easy, run `python wpmaker.py --help` for a list of
 configuration files. Then create one of them. The options are the same as the
 longer named option used in the command line. See example.conf for more info.
 
+```
+#############################################################
+#           This is a sample configuration file             #
+#############################################################
+
+[default]
+# The 'default' section is read unless another is specified
+# as a command line option (ex. wpmaker --section=debug)
+path=D:\Users\viktor\Pictures\wp
+# or
+#path=/home/viktor/Pictures/wp
+
+update=180
+# personal preference
+
+[debug]
+path=D:\Users\viktor\Pictures\wp
+# again, or
+#path=/home/viktor/Pictures/wp
+update_period=30
+
+#############################################################
+# Below are descriptions and default values for each option #
+#         This section does not need to be included         #
+#############################################################
+
+[default_options]
+
+# path to the wallpaper folder. Not set by default
+# a tilde, ~, in paths is replaced with user directory path
+path=Notset
+
+# time between wallpaper updates
+update=300
+
+# path and filename of generated wallpaper image
+wallpaper=~/.wp.bmp
+
+# create and set a single wallpaper then exit
+single-run=False
+
+# forces resolution of generated wallpaper
+# i.e. desktop resolution is not queried, useful if get_resolution plugins fail
+resolution=None
+# e.x. setting:
+# resolution=1680x1050
+
+# how many wallpapers will be generated between checking of wallpaper folder
+fs-interval=5
+
+# which collage plugin should be used, 'all' will make wpmaker choose one
+# For now acceptable values are: 'SimpleResize', 'RecursiveSplit', and 'all'
+collage-plugin=all
+
+# This options is specifically for RecursiveSplit plugin
+# recursion_depth: maximum number of times each split can be split
+recursion-depth=3
+
+```
+
 How do I use this thing anyways?
 ===============================================================================
 
