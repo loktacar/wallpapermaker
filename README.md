@@ -51,9 +51,7 @@ update=180
 # personal preference
 
 [debug]
-path=D:\Users\viktor\Pictures\wp
-# again, or
-#path=/home/viktor/Pictures/wp
+path=~\Pictures\wp
 update_period=30
 
 #############################################################
