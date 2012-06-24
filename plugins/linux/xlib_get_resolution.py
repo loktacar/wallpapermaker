@@ -10,6 +10,7 @@ class XlibGetResolution(GetResolution):
     @staticmethod
     def get():
         import Xlib
+        import Xlib.display
 
         display = Xlib.display.Display()
         root = display.screen().root

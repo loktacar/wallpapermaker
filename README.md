@@ -1,10 +1,10 @@
-`wpmaker` creates wallpaper collages
+`wpmaker`
 ===============================================================================
 
 Tired of having a folder full of wallpapers and only seeing one at a time?
 
-`wpmaker` has the ability to create collages from randomly selected images from
-a folder. Also it can do the standard one-at-a-time thing, keeping the aspect
+`wpmaker` has the ability to create collages of randomly selected images from
+that folder. Also it can do the standard one-at-a-time thing, keeping the aspect
 ratio and cropping instead of stretching.
 
 Here is an [example](http://i.imgur.com/BnZTn.jpg)
@@ -17,24 +17,32 @@ Why is this a better solution than other *leading brands*?
 - Gnome Linux
 
 `wpmaker` also has plugins, I know *amazing* right?:
-- No problem making `wpmaker` compatible with other systems, just add plugins
+- No problem making `wpmaker` work on other systems, just add plugins
 - Easy to create new collages, just add plugins
 - Do you want a completely new type of plugin? Well `wpmaker` is completely 
-open source and you can just add it yourself.
+open source and you can just write it yourself.
 
 Well, this sounds way too good to be true, there must be something missing.
 You're in luck, `wpmaker` is still missing a GUI.
 
 What about these plugins, can I create one? Sure! For now though you're gonna have
-to rely on the ones I've created for information on how. But, if you create
-a plugin you can submit a pull request on github.com.
+to rely on the ones I've created for information on how.
+
+Requirements
+===============================================================================
+For `wpmaker` to work you need the following:
+
+- Python version 2.5 to 2.7
+- pygame
+- For linux you'll need `python-xlib`, or another `get_resolution` plugin
 
 Configuration
 ===============================================================================
 
 Configuring `wpmaker` is easy, run `python wpmaker.py --help` for a list of
-configuration files. Then create one of them. The options are the same as the
-longer named option used in the command line.
+configuration files. Then create one of them, (1) is user-specific, (2) is
+installation-specific. The options are the same as the longer named options
+used in the command line.
 
 ```
 #############################################################
@@ -56,7 +64,7 @@ update_period=30
 
 #############################################################
 # Below are descriptions and default values for each option #
-#         This section does not need to be included         #
+#            This section should not be included            #
 #############################################################
 
 [default_options]
@@ -97,7 +105,8 @@ How do I use this thing anyways?
 ===============================================================================
 
 You can run `wpmaker` in the console by running `python wpmaker.py [options]`.
-You can also run `wpmaker` without the console by running `wpmaker.pyw`.
+You can also run `wpmaker` without the console by running `python wpmaker.pyw
+[options]`, but the `--verbose` option won't work.
 
 The default help message(on Windows 7) goes something like this:
 
@@ -118,8 +127,8 @@ Options:
     -h --help                 Displays this help message
 
 Configuration files:
-    D:\Users\viktor\AppData\Local\viktor\wpmaker\wpmaker.conf
-    C:\ProgramData\viktor\wpmaker\wpmaker.conf
+    (0) D:\Users\viktor\AppData\Local\viktor\wpmaker\wpmaker.conf
+    (1) C:\ProgramData\viktor\wpmaker\wpmaker.conf
 
 See sample.conf for information on options and examples
 ```

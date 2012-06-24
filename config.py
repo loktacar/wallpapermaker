@@ -49,8 +49,8 @@ Options:
     doc += """
 Configuration files:
 """
-    for dir in get_appdirs_paths():
-        doc += ' '*4 + dir + '\n'
+    for i, dir in enumerate(get_appdirs_paths()):
+        doc +=  (' '*4) + ('(%d) '%i) + dir + '\n'
 
     doc += """
 See sample.conf for information on options and examples"""
