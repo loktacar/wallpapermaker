@@ -1,4 +1,4 @@
-`wpmaker`
+wpmaker
 ===============================================================================
 
 Tired of having a folder full of wallpapers and only seeing one at a time?
