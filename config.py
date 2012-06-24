@@ -52,9 +52,6 @@ Configuration files:
     for i, dir in enumerate(get_appdirs_paths()):
         doc +=  (' '*4) + ('(%d) '%i) + dir + '\n'
 
-    doc += """
-See sample.conf for information on options and examples"""
-
     return doc
 
 def get_config(ioptions, iarguments):

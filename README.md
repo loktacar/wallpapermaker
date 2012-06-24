@@ -39,10 +39,10 @@ For `wpmaker` to work you need the following:
 Configuration
 ===============================================================================
 
-Configuring `wpmaker` is easy, run `python wpmaker.py --help` for a list of
-configuration files. Then create one of them, (1) is user-specific, (2) is
-installation-specific. The options are the same as the longer named options
-used in the command line.
+To configure `wpmaker`, run `python wpmaker.py --help` for a list of
+configuration files. Then create either or both of them, (0) is user-specific, (1) is
+installation-specific. The options in the configuration files are the same as
+the longer named options used in the command line.
 
 ```
 #############################################################
@@ -73,7 +73,7 @@ update_period=30
 # a tilde, ~, in paths is replaced with user directory path
 path=Notset
 
-# time between wallpaper updates
+# time between wallpaper switching
 update=300
 
 # path and filename of generated wallpaper image
@@ -130,6 +130,5 @@ Configuration files:
     (0) D:\Users\viktor\AppData\Local\viktor\wpmaker\wpmaker.conf
     (1) C:\ProgramData\viktor\wpmaker\wpmaker.conf
 
-See sample.conf for information on options and examples
 ```
 
