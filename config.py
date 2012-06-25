@@ -24,37 +24,29 @@ def get_appdirs_paths():
     return [os.path.join(dir, config_file_name) for dir in dirs]
 
 def get_doc():
-    doc = """Usage wpmaker.py [options]
+    doc = """Usage: wpmaker.py [options]
 
 Options:
 """
     for op in sorted(options, key=lambda op: op.option):
-        doc += op.get_doc_line()
-        doc += '\n'
+        doc += """%s
+""" % op.get_doc_line()
 
-    verbose_doc = ' '*4
-    verbose_doc += '-v '
-    verbose_doc += '--verbose'
-    verbose_doc += ' ' * (30 - len(verbose_doc))
-    verbose_doc += 'Debugging output'
-    doc += verbose_doc + '\n'
+    doc += """    -v --verbose              Debugging output
+    -h --help                 Displays this help message
 
-    help_doc = ' '*4
-    help_doc += '-h '
-    help_doc += '--help'
-    help_doc += ' ' * (30 - len(help_doc))
-    help_doc += 'Displays this help message'
-    doc += help_doc + '\n'
-
-    doc += """
 Configuration files:
 """
     for i, dir in enumerate(get_appdirs_paths()):
-        doc +=  (' '*4) + ('(%d) '%i) + dir + '\n'
+        doc += """    (%s) %s
+""" % (i, str(dir)) # dir converted to string from unicode since docopt failes when doc string is in unicode
 
     return doc
 
-def get_config(ioptions, iarguments):
+def get_config():
+    from docopt import docopt
+    doc_options = docopt(get_doc())
+
     config = {}
 
     # Set config to defaults
@@ -71,7 +63,7 @@ def get_config(ioptions, iarguments):
     cfg_files = cfg.read(files)
 
     # Set config file section and read files
-    file_section = ioptions.section if ioptions.section else default_section
+    file_section = doc_options['--section'] if doc_options['--section'] else default_section
     files_read = cfg.read(files)
 
     # Parse config file
@@ -84,8 +76,10 @@ def get_config(ioptions, iarguments):
                 config[op.option] = op.parse(cfg.get(file_section, op.option))
 
     # Parse command line options
-    for op in options:
-        if op.option in ioptions.__dict__.keys() and ioptions.__dict__[op.option] is not False:
-            config[op.option] = op.parse(ioptions.__dict__[op.option])
+    for key in doc_options:
+        if key[:2] == '--' and doc_options[key] is not None:
+            for op in options:
+                if op.option == key[2:]:
+                    config[key[2:]] = op.parse(doc_options[key])
 
     return config

@@ -5,7 +5,6 @@ from wallpaper_queue import WallpaperQueue
 
 class Wallpapers:
     """ Handles the wallpaper queues, reads folder contents and fills the queues """
-    # TODO: Only one queue implemented, make so that each folder gets a seperate queue
 
     def __init__(self, config):
         self.config = config

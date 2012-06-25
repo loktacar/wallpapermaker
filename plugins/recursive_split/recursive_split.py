@@ -44,11 +44,10 @@ class RecursiveSplit(Collage):
         wallpapers = []
 
         # get a random amount of images no greater than 4
-        if i == self.config['recursion-depth']:
+        if i >= self.config['recursion-depth']:
             i_wp_count = 4
         else:
-            # TODO: Fine tune the random range
-            i_wp_count = random.randint(0, 6 + i*3)
+            i_wp_count = random.randint(0, 4 + i*4)
 
         wallpapers = wallpaper_queues.pop(i_wp_count if i_wp_count <= 4 else 4)
 

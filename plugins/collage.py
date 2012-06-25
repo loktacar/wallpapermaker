@@ -56,7 +56,7 @@ class Collage(object):
         try:
             wallpaper = pygame.transform.smoothscale(wallpaper, new_size)
         except ValueError:
-            print 'bit-depth error, using crappy scaling'
+            self.logger.debug('bit-depth error, using crappy scaling')
             wallpaper = pygame.transform.scale(wallpaper, new_size)
 
         # Height or width might be too large
