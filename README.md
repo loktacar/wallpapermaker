@@ -7,7 +7,7 @@ Tired of having a folder full of wallpapers and only seeing one at a time?
 that folder. Also it can do the standard one-at-a-time thing, keeping the aspect
 ratio and cropping instead of stretching.
 
-Here is an [example](http://i.imgur.com/BnZTn.jpg)
+[Here are some examples](http://imgur.com/a/9MFjX#0)
 
 Why is this a better solution than other *leading brands*?
 
