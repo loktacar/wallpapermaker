@@ -32,8 +32,7 @@ Options:
         doc += """%s
 """ % op.get_doc_line()
 
-    doc += """    -v --verbose              Debugging output
-    -h --help                 Displays this help message
+    doc += """    -h --help                 Displays this help message
 
 Configuration files:
 """

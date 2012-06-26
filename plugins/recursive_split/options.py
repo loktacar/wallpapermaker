@@ -7,7 +7,7 @@ class RecursionDepthOption(Option):
         default = 3
         self.option = 'recursion-depth'
         self.cmd_argument = 'INT'
-        self.description = 'Split can be split INT times'
+        self.description = 'Each split can be split INT times'
 
     def parse(self, value):
         return int(value)

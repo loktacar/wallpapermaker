@@ -21,7 +21,7 @@ class UpdatePeriodOption(Option):
         self.default = 300
         self.option = 'update'
         self.cmd_argument = 'SEC'
-        self.description = 'Time in seconds between generating and updating wallpaper'
+        self.description = 'SEC seconds between generating and updating wallpaper'
 
     def parse(self, value):
         return int(value)
@@ -98,4 +98,13 @@ class CollageSelectionOption(Option):
         self.option = 'collage-plugin'
         self.cmd_argument = 'COLLAGE'
         self.description = 'Which collage plugin should be used'
+
+class VerboseOption(Option):
+    def __init__(self):
+        super(VerboseOption, self).__init__()
+
+        self.default = 'False'
+        self.option = 'verbose'
+        self.cmd_short = 'v'
+        self.description = 'Debugging output'
 

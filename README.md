@@ -115,17 +115,17 @@ files to run them.
 The default help message(on Windows 7) goes something like this:
 
 ```
-Usage wpmaker.py [options]
+Usage: wpmaker.py [options]
 
 Options:
     --collage-plugin=COLLAGE  Which collage plugin should be used
     --fs-interval=INT         Check wallpaper folder every INT updates
     --path=PATH               PATH to the wallpaper folder
-    --recursion-depth=INT     Split can be split INT times
+    --recursion-depth=INT     Each split can be split INT times
     -r --resolution=RES       Forces resolution of generated wallpaper
     --section=SECTION         SECTION of configuration file to be used
     -s --single-run           Generate wallpaper once then exit
-    --update=SEC              Time in seconds between generating and updating wallpaper
+    --update=SEC              SEC seconds between generating and updating wallpaper
     --wallpaper=PATH          PATH to generated wallpaper
     -v --verbose              Debugging output
     -h --help                 Displays this help message
@@ -138,7 +138,7 @@ Configuration files:
 Installation
 ===============================================================================
 There is no standard installation yet. For now you'll need to start by
-installing python and pygame.
+installing python 2.7 and respective pygame distribution.
 
 Then, go to the downloads tab of wpmakers github page,
 [https://github.com/loktacar/wallpapermaker](https://github.com/loktacar/wallpapermaker)
