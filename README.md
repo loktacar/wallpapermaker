@@ -108,6 +108,9 @@ You can run `wpmaker` in the console by running `python wpmaker.py [options]`.
 You can also run `wpmaker` without the console by running `python wpmaker.pyw
 [options]`, but the `--verbose` option won't work.
 
+Note: On many systems you can double click the wpmaker.py and wpmaker.pyw files
+to run them.
+
 The default help message(on Windows 7) goes something like this:
 
 ```
@@ -129,6 +132,16 @@ Options:
 Configuration files:
     (0) D:\Users\viktor\AppData\Local\viktor\wpmaker\wpmaker.conf
     (1) C:\ProgramData\viktor\wpmaker\wpmaker.conf
-
 ```
 
+Installation
+===============================================================================
+There is no standard installation yet. For not you'll need to start by
+installing python, and pygame.
+
+Then you'll need to go to the downloads tab the github page for the project,
+[https://github.com/loktacar/wallpapermaker](https://github.com/loktacar/wallpapermaker)
+and download the project in either zip or tar.gz format.
+
+Uncompress the project and then you can follow the 'How do I use this thing
+anyways?' section of this readme.
