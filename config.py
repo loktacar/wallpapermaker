@@ -38,7 +38,7 @@ Configuration files:
 """
     for i, dir in enumerate(get_appdirs_paths()):
         doc += """    (%s) %s
-""" % (i, str(dir)) # dir converted to string from unicode since docopt failes when doc string is in unicode
+""" % (i, dir)
 
     return doc
 
