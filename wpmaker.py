@@ -21,7 +21,6 @@ from plugins import collage_plugins, get_resolution_plugins, set_wallpaper_plugi
 logger.debug('Reading config file and parsing options')
 from config import get_config
 config = get_config()
-print 'config: ', config
 
 # Find wallpapers
 logger.debug('Initialize wallpapers')
