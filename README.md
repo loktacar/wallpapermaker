@@ -7,6 +7,7 @@ ratio and cropping instead of stretching.
 ### Here are some examples
 [![Example](http://i.imgur.com/XLNHpl.jpg)](http://i.imgur.com/XLNHp.jpg)
 [![Example](http://i.imgur.com/YHrL4l.jpg)](http://i.imgur.com/YHrL4.jpg)
+
 [A few more examples](http://imgur.com/a/9MFjX#0)
 
 Why is this a better solution than other *leading brands*?
