@@ -17,6 +17,10 @@ class Option(object):
         # Description, duhh
         self.description = ''
 
+        # Config file description
+        self.conf_description = """"""
+        self.conf_default = None # if option is set to none, self.default is used
+
     def parse(self, value):
         return value
 

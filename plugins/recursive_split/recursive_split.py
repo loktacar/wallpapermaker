@@ -6,6 +6,10 @@ import pygame
 from .. import Collage
 
 class RecursiveSplit(Collage):
+
+    def __init__(self, config):
+        super(RecursiveSplit, self).__init__(config)
+
     def generate(self, size, wallpaper_queues):
         wallpapers = self._get_wallpapers(wallpaper_queues)
 
@@ -43,22 +47,24 @@ class RecursiveSplit(Collage):
         # Get wallpaper for each split, breadth-first
         wallpapers = []
 
-        # get a random amount of images no greater than 4
+        # get a random amount of images
         if i >= self.config['recursion-depth']:
             i_wp_count = 4
         else:
             i_wp_count = random.randint(0, 4 + i*4)
 
-        wallpapers = wallpaper_queues.pop(i_wp_count if i_wp_count <= 4 else 4)
+        wallpapers = wallpaper_queues.pop(i_wp_count if i_wp_count >= 4 else 4)
 
         # add empty list where splits will happen, i.e. where actual images are missing
         if i_wp_count < 4:
             i_splits = 4 - i_wp_count
+            self.logger.debug('%s - %d' % (i, i_splits))
             for j in range(i_splits):
                 wallpapers.insert(random.randint(0, len(wallpapers)), [])
 
         # fill the lists
         for index, wp in enumerate(wallpapers):
+            self.logger.debug('%s.%s %s' % (i, index, wp))
             if type(wp) is list:
                 wallpapers[index] = self._get_wallpapers(wallpaper_queues, i+1)
 

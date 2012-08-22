@@ -33,7 +33,7 @@ class WallpaperQueue:
                 if wallpaper.get_width() == 0 or wallpaper.get_height() == 0:
                     raise IOError
             except IOError:
-                print 'Failed to find wallpaper %s' % wallpaper
+                self.logger.debug('Failed to find wallpaper %s' % wallpaper)
                 self.wallpapers.remove(wallpaper)
                 continue
 

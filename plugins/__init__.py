@@ -38,5 +38,6 @@ from collage import Collage
 from get_resolution import GetResolution
 from set_wallpaper import SetWallpaper
 from option import Option
+from ui import UI
 
-collage_plugins, get_resolution_plugins, set_wallpaper_plugins, option_plugins = find_plugins('plugins/', [Collage, GetResolution, SetWallpaper, Option])
+collage_plugins, get_resolution_plugins, set_wallpaper_plugins, option_plugins, ui_plugins = find_plugins('plugins/', [Collage, GetResolution, SetWallpaper, Option, UI])

@@ -19,7 +19,8 @@ class Wallpapers:
     def find_wallpapers(self):
         os.path.walk(self.config['path'], self._folder_visit, [])
 
-        self.logger.debug('%d image in queue' % self.count())
+        count = self.count()
+        self.logger.debug('%d image%s in queue' % (count, '' if count == 1 else 's'))
 
     def _folder_visit(self, arg, dirpath, filenames):
         wallpaper_paths = [os.path.join(dirpath, filename) for filename in filenames]
