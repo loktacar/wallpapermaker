@@ -73,12 +73,21 @@ class Application:
 
         return using_plugins_dict
 
+    def pause(self, paused_value=None):
+        if paused_value is None:
+            self.is_paused = not self.is_paused
+        else:
+            self.is_paused = paused_value
+
+        self.logger.debug('app is %spaused' % ('' if self.is_paused else 'un'))
+
     def ui_hook(self, hook_name, *args, **kwargs):
-        self.logger.debug('searching for UI hook %s' % hook_name)
         if self.ui is not None:
             if hook_name in self.ui.__class__.__dict__:
-                self.logger.debug('%s called' % (hook_name))
+                self.logger.debug('ui hook %s called' % hook_name)
                 getattr(self.ui, hook_name)(*args, **kwargs)
+            else:
+                self.logger.debug('ui hook %s not implemented' % hook_name)
 
     def get_resolution(self):
         for g in self.get_resolution_plugins:
@@ -94,7 +103,7 @@ class Application:
 
     def main(self):
         while(self.running):
-            if self.time_since_generation >=  self.config['update'] and not self.is_paused:
+            if self.time_since_generation >= self.config['update'] and not self.is_paused:
                 self.logger.debug('Loop start')
 
                 # Get resolution

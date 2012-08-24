@@ -7,11 +7,13 @@ class UI(object):
 
         self.initialized = False
 
-    # function hooks
+    # ui control functions
 
-    def app_started(self):
-        """ Run before app initialization """
-        pass
+    def start_app(self):
+        """ Starts the application main thread """
+        self.app.main()
+
+    # function hooks
 
     def app_initialized(self):
         """ Run after app initialization
@@ -20,26 +22,35 @@ class UI(object):
         """
         self.initialized = True
 
-    def app_quitting(self):
-        """  """
+    def app_started(self):
+        """ Run before app initialization """
         pass
 
-    def generate_started(self):
-        """ Run right before generating a new collage """
+    def app_quitting(self):
+        """  """
         pass
 
     def generate_finished(self):
         """ Run after generating a collage """
         pass
 
-    # control functions
+    def generate_started(self):
+        """ Run right before generating a new collage """
+        pass
 
-    def start_app(self):
-        """ Starts the application main thread """
-        self.app.main()
+    def wallpaper_search_finished(self):
+        """ Run after wallpaper search plugin is finished """
+        pass
 
-    def start_generating(self):
-        self.app.time_since_generation = 100 * self.app.config['update']
+    def wallpaper_search_sterted(self):
+        """ Run right before using wallpaper search plugins """
+        pass
+
+    # app control functions
+
+    def start_generating(self, *args, **kwargs):
+        """ Starts generation of new wallpaper """
+        self.app.time_since_generation = self.app.config['update']
 
     def loaded_plugins(self):
         """ Shows which plugins have been loaded """
