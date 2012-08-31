@@ -30,9 +30,8 @@ if config['ui'] is not None:
             ui = plugin()
 
 # Check if ui is set
-#if ui is None and config['ui'] is not None:
-    #logger.debug("ui plugin not set, couldn't find plugin")
-    #raise RuntimeError("Couldn't start ui '%s'" % config['ui'])
+if ui is None and config['ui'] is not None:
+    raise RuntimeError("Couldn't start ui '%s'" % config['ui'])
 
 app = Application(config, ui)
 

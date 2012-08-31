@@ -7,12 +7,19 @@ class Application:
         self.logger = logging.getLogger('root')
 
         # Load plugins
-        self.logger.debug('Loading plugins') # Move log call to find plugins funciton
+        self.logger.debug('Loading plugins')
         from plugins import collage_plugins, get_resolution_plugins, set_wallpaper_plugins, ui_plugins
         self.collage_plugins = collage_plugins
         self.get_resolution_plugins = get_resolution_plugins
         self.set_wallpaper_plugins = set_wallpaper_plugins
         self.ui_plugins = ui_plugins
+
+        self.loaded_plugins = {
+            'collage': [p.__name__ for p in self.collage_plugins],
+            'get_resolution': [p.__name__ for p in self.get_resolution_plugins],
+            'set_wallpaper': [p.__name__ for p in self.set_wallpaper_plugins],
+            'ui': [p.__name__ for p in self.ui_plugins] }
+
 
         # Call ui hooks
         self.ui = ui
@@ -43,14 +50,6 @@ class Application:
         self.next_collage_plugin = None
 
         self.ui_hook('app_initialized')
-
-    @property
-    def loaded_plugins(self):
-        return {
-            'collage': [p.__name__ for p in self.collage_plugins],
-            'get_resolution': [p.__name__ for p in self.get_resolution_plugins],
-            'set_wallpaper': [p.__name__ for p in self.set_wallpaper_plugins],
-            'ui': [p.__name__ for p in self.ui_plugins] }
 
     def using_plugins(self):
         using_plugins_dict = {}
@@ -127,7 +126,7 @@ class Application:
                     raise ValueError('Resolution invalid')
 
                 # Check for wallpapers
-                if self.file_check_counter == self.config['fs-interval']:
+                if self.file_check_counter == self.config['fs-interval'] or self.wps.count() == 0:
                     self.logger.debug('Searching for new wallpapers')
                     self.ui_hook('wallpaper_search_starting')
 
@@ -138,6 +137,9 @@ class Application:
                     self.file_check_counter = 1
                 else:
                     self.file_check_counter += 1
+
+                if self.wps.count() == 0:
+                    raise ValueError('No wallpapers found')
 
                 # Create new collage
                 collage_plugin = None
@@ -168,6 +170,7 @@ class Application:
                 self.wps.shuffle_if_needed()
 
                 if self.config['single-run']:
+                    self.logger.debug('Single run, exiting')
                     break
 
                 self.logger.debug('Loop end, waiting %ds' % self.config['update'])
@@ -186,10 +189,3 @@ class Application:
 
         self.ui_hook('app_quitting')
 
-#if __name__ == '__main__':
-#    app = Application(ui=ui)
-#    ui.app = app
-#    try:
-#        ui.start_app()
-#    except KeyboardInterrupt:
-#        pass

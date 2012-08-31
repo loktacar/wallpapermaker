@@ -80,17 +80,12 @@ class wxPython(UI):
     def OnUpdateTick(self, event):
         self.menu.Check(self.pitem.GetId(), self.app.is_paused)
 
-        #self.collage_submenu.Check(
-        #        self.collage_submenu_items[self.app.config['collage-plugin']].GetId(), True)
-
         for csi in self.collage_submenu_items:
             if self.collage_submenu_items[csi] == self.app.config['collage-plugin']:
                 self.collage_submenu.Check(csi, True)
 
     def OnCollage(self, event):
         self.switch_collage_plugin(self.collage_submenu_items[event.GetId()])
-        #print event.GetId()
-        #print event.GetText()
 
     # Following methods are called from the application, via ui hooks
 
