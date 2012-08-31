@@ -1,3 +1,5 @@
+import logging
+
 class UI(object):
     """
         Base class of ui plugins
@@ -7,13 +9,23 @@ class UI(object):
 
         self.initialized = False
 
+        self.logger = logging.getLogger('root')
+
     # ui control functions
 
     def start_app(self):
         """ Starts the application main thread """
         self.app.main()
 
-    # function hooks
+    def pause_app_toggle(self):
+        """ Pauses the application loop, starts generating upon resume """
+        self.app.pause()
+
+    def switch_collage_plugin(self, collage):
+        self.app.switch_collage_plugin(collage)
+        self.logger.debug(collage)
+
+    # ui hooks
 
     def app_initialized(self):
         """ Run after app initialization

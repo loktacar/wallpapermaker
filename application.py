@@ -39,8 +39,12 @@ class Application:
         self.is_paused = False
         self.running = True
 
+        # Variables relating to ui changes
+        self.next_collage_plugin = None
+
         self.ui_hook('app_initialized')
 
+    @property
     def loaded_plugins(self):
         return {
             'collage': [p.__name__ for p in self.collage_plugins],
@@ -80,6 +84,9 @@ class Application:
             self.is_paused = paused_value
 
         self.logger.debug('app is %spaused' % ('' if self.is_paused else 'un'))
+
+    def switch_collage_plugin(self, collage):
+        self.next_collage_plugin = collage
 
     def ui_hook(self, hook_name, *args, **kwargs):
         if self.ui is not None:
@@ -172,6 +179,10 @@ class Application:
                 self.time_since_generation += self.sleep_increment
             else:
                 self.time_since_generation = self.config['update']
+
+            if self.next_collage_plugin is not None:
+                self.config['collage-plugin'] = self.next_collage_plugin
+                self.next_collage_plugin = None
 
         self.ui_hook('app_quitting')
 

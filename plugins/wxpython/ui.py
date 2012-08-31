@@ -1,5 +1,4 @@
 import threading
-import logging
 
 import wx
 
@@ -8,7 +7,6 @@ from .. import UI
 class wxPython(UI):
     def __init__(self):
         super(wxPython, self).__init__()
-        self.logger = logging.getLogger('root')
 
     def initialize_gui(self):
         self.logger.debug('initializing gui...')
@@ -27,10 +25,28 @@ class wxPython(UI):
         self.menu = wx.Menu()
 
         self.gitem = self.menu.Append(wx.ID_ANY, '&Generate', 'Generate new wallpaper')
-        self.menu.Append(wx.ID_SEPARATOR)
-
         self.pitem = self.menu.Append(wx.ID_ANY, '&Pause', 'Pause wallpaper generation', kind=wx.ITEM_CHECK)
         self.menu.Check(self.pitem.GetId(), True)
+        self.menu.Append(wx.ID_SEPARATOR)
+
+        # TODO: Need to implement a better way to store and use the collage submenu
+        submenu_item_index_start = 4000
+        submenu_item_index = submenu_item_index_start
+        self.collage_submenu = wx.Menu()
+        csi_all = self.collage_submenu.Append(submenu_item_index, 'all', 'all', kind=wx.ITEM_RADIO)
+        self.collage_submenu_items = {submenu_item_index: 'all'}
+
+        for cp in self.app.loaded_plugins['collage']:
+            submenu_item_index += 1
+            self.collage_submenu_items[submenu_item_index] = cp
+            self.collage_submenu.Append(submenu_item_index,
+                                        cp,
+                                        cp,
+                                        kind=wx.ITEM_RADIO)
+
+        self.ui_app.Bind(wx.EVT_MENU_RANGE, self.OnCollage, id=submenu_item_index_start, id2=submenu_item_index)
+
+        self.menu.AppendMenu(wx.ID_ANY, '&Collage', self.collage_submenu)
         self.menu.Append(wx.ID_SEPARATOR)
 
         self.qitem = self.menu.Append(wx.ID_EXIT, '&Quit', 'Quit application')
@@ -59,10 +75,22 @@ class wxPython(UI):
         self.tbicon.PopupMenu(self.menu)
 
     def OnPauseSelected(self, event):
-        self.app.pause()
+        self.pause_app_toggle()
 
     def OnUpdateTick(self, event):
         self.menu.Check(self.pitem.GetId(), self.app.is_paused)
+
+        #self.collage_submenu.Check(
+        #        self.collage_submenu_items[self.app.config['collage-plugin']].GetId(), True)
+
+        for csi in self.collage_submenu_items:
+            if self.collage_submenu_items[csi] == self.app.config['collage-plugin']:
+                self.collage_submenu.Check(csi, True)
+
+    def OnCollage(self, event):
+        self.switch_collage_plugin(self.collage_submenu_items[event.GetId()])
+        #print event.GetId()
+        #print event.GetText()
 
     # Following methods are called from the application, via ui hooks
 
