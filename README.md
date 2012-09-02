@@ -36,7 +36,7 @@ Then read the `How do I use this thing anyways?` section.
 ## Windows
 - Install python 2.7 ([download link](http://python.org/download/releases/2.7.3/))
 - Install pygame ([download link](http://www.pygame.org/download.shtml))
-- Install wxPython ([download link](http://wxpython.org/download.php), get the 32-bit python 2.7 binaries)
+- Install wxPython ([download link](http://wxpython.org/download.php), get the windows binaries for python 2.7 )
 
 ## Linux
 - Install python 2.7
@@ -73,7 +73,7 @@ Options:
     -h --help                 Displays this help message
 
 Configuration files:
-    (0) D:\Users\viktor\AppData\Local\viktor\wpmaker\wpmaker.conf
+    (0) C:\Users\username\AppData\Local\viktor\wpmaker\wpmaker.conf
     (1) C:\ProgramData\viktor\wpmaker\wpmaker.conf
 ```
 
