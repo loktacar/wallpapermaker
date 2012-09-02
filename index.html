@@ -1,37 +1,40 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>wpmaker by loktacar</title>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="wpmaker : Creates randomly generated wallpaper collages." />
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>wpmaker</title>
   </head>
+
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>wpmaker</h1>
-        <p>Creates randomly generated wallpaper collages.</p>
 
-        <p class="view"><a href="https://github.com/loktacar/wallpapermaker">View the Project on GitHub <small>loktacar/wallpapermaker</small></a></p>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/loktacar/wallpapermaker">View on GitHub</a>
 
+          <h1 id="project_title">wpmaker</h1>
+          <h2 id="project_tagline">Creates randomly generated wallpaper collages.</h2>
 
-        <ul>
-          <li><a href="https://github.com/loktacar/wallpapermaker/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/loktacar/wallpapermaker/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/loktacar/wallpapermaker">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/loktacar/wallpapermaker/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/loktacar/wallpapermaker/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
         <p>Tired of having a folder full of wallpapers and only seeing one at a time?</p>
 
 <p><code>wpmaker</code> has the ability to create collages of randomly selected images from
-that folder. Also it can do the standard one-at-a-time thing, keeping the aspect
+that folder. It can also do the standard one-at-a-time thing, keeping the aspect
 ratio and cropping instead of stretching.</p>
 
 <h3>Here are some examples</h3>
@@ -43,12 +46,12 @@ ratio and cropping instead of stretching.</p>
 
 <p>Why is this a better solution than those from other <em>leading brands</em>?</p>
 
-<p><code>wpmaker</code> is cross-compatible, it works on:</p>
+<p><code>wpmaker</code> is currently cross-compatible, it works on:</p>
 
 <ul>
 <li>Windows XP/Vista/7</li>
-<li>Mac OS/X</li>
-<li>Gnome Linux</li>
+<li>Mac OS/X (untested)</li>
+<li>Linux, but only Gnome (untested)</li>
 </ul><p><code>wpmaker</code> can be configured either by command line options or configuration file, 
 see usage directions in the <code>How do I use this thing anyways?</code> section. </p>
 
@@ -59,55 +62,57 @@ see usage directions in the <code>How do I use this thing anyways?</code> sectio
 <li>Easy to create new collages, just add plugins</li>
 <li>Do you want a completely new type of plugin? Well <code>wpmaker</code> is completely 
 open source and you can just write it yourself.</li>
-</ul><p>Well, this sounds way too good to be true, there must be something missing.
-You're in luck, <code>wpmaker</code> is still missing a GUI.</p>
+</ul><p>What about these plugins, how do I create one? For now though you
+have to rely on the ones I've created for documentation.</p>
 
-<p>What about these plugins, can I create one? Sure! For now though you're gonna have
-to rely on the ones I've created for information on how.</p>
-
-<h2>Requirements</h2>
+<h1>Requirements</h1>
 
 <p>For <code>wpmaker</code> to work you need the following:</p>
 
 <ul>
 <li><a href="http://python.org/download/releases/2.7.3/">Python version 2.5 to 2.7</a></li>
-<li><a href="http://www.pygame.org/download.shtml">pygame</a></li>
+<li>
+<a href="http://www.pygame.org/download.shtml">pygame</a> (<code>python-pygame</code> package on most linux distros)</li>
 <li>For linux you'll need <code>python-xlib</code>, or another <code>get_resolution</code> plugin</li>
-</ul><h2>Installation</h2>
+<li>the wxPython ui plugin requires wxPython to be installed on your system, see installation for more info. </li>
+</ul><h1>Installation</h1>
 
-<p>First read the requirements list above and make sure they are installed.</p>
+<p>First read the requirements list above and make sure they are installed.<br>
+Then, download and uncompress the project and follow the instructions below.</p>
 
-<p>Then, download and uncompress the project and follow the instructions below.</p>
+<h2>Windows</h2>
 
-<h2>How do I use this thing anyways?</h2>
+<ul>
+<li>Install python 2.7 (<a href="http://python.org/download/releases/2.7.3/">download link</a>)</li>
+<li>Install pygame (<a href="http://www.pygame.org/download.shtml">download link</a>)</li>
+<li>Install wxPython (<a href="http://www.pygame.org/download.shtml">download link</a>, get the python 2.7 binaries)</li>
+</ul><h1>How do I use this thing anyways?</h1>
 
 <p>You can run <code>wpmaker</code> in the console by running <code>python wpmaker.py [options]</code>.
 You can also run <code>wpmaker</code> without the console by running <code>python wpmaker.pyw
-[options]</code>, but the <code>--verbose</code> option won't work.</p>
+[options]</code>.</p>
 
 <p>Note: You'll need to be in wpmakers installation path in the console.<br>
 Also note: On many systems you can double click the wpmaker.py and wpmaker.pyw
-files to run them.</p>
+files to run them. They will only run if you've set the wp folder path in the
+configuration file.</p>
 
-<p>The default help message(on Windows 7) goes something like this:</p>
+<h2>Help message</h2>
 
 <pre><code>Usage: wpmaker.py [options]
 
 Options:
     --collage-plugin=COLLAGE  Which collage plugin should be used
-    --fs-interval=INT         Check wallpaper folder every INT
-                                updates
+    --fs-interval=INT         Check wallpaper folder every INT updates
     --path=PATH               PATH to the wallpaper folder
     --recursion-depth=INT     Each split can be split INT times
-    -r --resolution=RES       Forces resolution of generated
-                                wallpaper
-    --section=SECTION         SECTION of configuration file to be
-                                used
+    -r --resolution=RES       Forces resolution of generated wallpaper
+    --section=SECTION         SECTION of configuration file to be used
     -s --single-run           Generate wallpaper once then exit
-    --update=SEC              SEC seconds between generating and
-                                updating wallpaper
-    --wallpaper=PATH          PATH to generated wallpaper
+    --ui=UI                   Select which plugin, UI, should be used for ui purposes
+    --update=SEC              SEC seconds between generating and updating wallpaper
     -v --verbose              Debugging output
+    --wallpaper=PATH          PATH to generated wallpaper
     -h --help                 Displays this help message
 
 Configuration files:
@@ -115,12 +120,14 @@ Configuration files:
     (1) C:\ProgramData\viktor\wpmaker\wpmaker.conf
 </code></pre>
 
-<h2>Configuration</h2>
+<h1>Configuration</h1>
 
 <p>To configure <code>wpmaker</code>, run <code>python wpmaker.py --help</code> for a list of
 configuration files. Then create either or both of them, (0) is user-specific, (1) is
 installation-specific. The options in the configuration files are the same as
 the longer name of options described in the help message.</p>
+
+<h3>Sample configuration</h3>
 
 <pre><code>#############################################################
 #           This is a sample configuration file             #
@@ -128,29 +135,57 @@ the longer name of options described in the help message.</p>
 
 [default]
 # The 'default' section is read unless another is specified
-# as a command line option (ex. wpmaker --section=debug)
+#   as a command line option (ex. wpmaker --section=debug)
 
-# This must either set in configuration file or command-line
+# This must be set in either a configuration file or in
+#   command-line
 path=~\Pictures\wp
 
-# Time between wallpaper switching
+# Time between wallpaper switching, in seconds
 update=180
 # personal preference
 
+# Set which ui plugin to use
+ui=wxPython
+
 [debug]
 path=~\Pictures\wp
-update_period=30
+update=30
+verbose=True
 
 #############################################################
 # Below are descriptions and default values for each option #
 #            This section should not be included            #
 #############################################################
 
-[default_options]
+[default_values]
+
+# how many wallpapers will be generated between checking of
+#   wallpaper folder
+fs-interval=5
+
+# create and set a single wallpaper then exit
+single-run=False
+
+# Debugging info displayed in the command line
+verbose=False
 
 # path to the wallpaper folder. Not set by default
 #   a tilde, ~, in paths is replaced with user directory path
-path=Notset
+path=None
+
+# which collage plugin should be used, acceptable values are:
+#     - 'SimpleResize'
+#     - 'RecursiveSplit'
+#     - 'all', plugin chosen at random
+collage-plugin=all
+
+# forces resolution of generated wallpaper
+# i.e. desktop resolution is not queried, useful if
+#   get_resolution plugins fail
+# e.x. setting:
+#   resolution=1680x1050
+resolution=(0, 0)
 
 # time between wallpaper switching
 update=300
@@ -158,25 +193,10 @@ update=300
 # path and filename of generated wallpaper image
 wallpaper=~/.wp.bmp
 
-# create and set a single wallpaper then exit
-single-run=False
-
-# forces resolution of generated wallpaper
-# i.e. desktop resolution is not queried, useful if
-#   get_resolution plugins fail
-# e.x. setting:
-#   resolution=1680x1050
-resolution=None
-
-# how many wallpapers will be generated between checking of
-#   wallpaper folder
-fs-interval=5
-
-# which collage plugin should be used, acceptable values are:
-#     - 'SimpleResize'
-#     - 'RecursiveSplit'
-#     - 'all', plugin chosen at random
-collage-plugin=all
+# Which ui plugin should be used, acceptable values are:
+#     - 'Console'
+#     - 'wxPython'
+ui=Console
 
 # This options is specifically for RecursiveSplit plugin
 # recursion_depth: maximum number of times each split can be
@@ -185,12 +205,17 @@ recursion-depth=3
 
 </code></pre>
       </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/loktacar">loktacar</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">wpmaker maintained by <a href="https://github.com/loktacar">loktacar</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
-    <script src="javascripts/scale.fix.js"></script>
+
     
+
   </body>
 </html>
