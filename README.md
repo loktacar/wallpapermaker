@@ -14,8 +14,8 @@ Why is this a better solution than those from other *leading brands*?
 
 `wpmaker` is currently cross-compatible, it works on:
 - Windows XP/Vista/7
-- Mac OS/X
-- Linux, but only Gnome
+- Mac OS/X (untested)
+- Linux, but only Gnome (untested)
 
 `wpmaker` can be configured either by command line options or configuration file, 
 see usage directions in the `How do I use this thing anyways?` section. 
@@ -26,7 +26,7 @@ see usage directions in the `How do I use this thing anyways?` section.
 - Do you want a completely new type of plugin? Well `wpmaker` is completely 
 open source and you can just write it yourself.
 
-What about these plugins, can I create one? Sure! For now though you
+What about these plugins, how do I create one? For now though you
 have to rely on the ones I've created for documentation.
 
 ## Requirements
@@ -39,6 +39,11 @@ For `wpmaker` to work you need the following:
 ## Installation
 First read the requirements list above and make sure they are installed.  
 Then, download and uncompress the project and follow the instructions below.
+
+# Windows
+- Install python 2.7 ([download link](http://python.org/download/releases/2.7.3/)
+- Install pygame ([download link](http://www.pygame.org/download.shtml)
+- Install wxPython ([download link](http://www.pygame.org/download.shtml), get the python 2.7 binaries)
 
 ## How do I use this thing anyways?
 You can run `wpmaker` in the console by running `python wpmaker.py [options]`.
@@ -97,6 +102,9 @@ path=~\Pictures\wp
 update=180
 # personal preference
 
+# Set which ui plugin to use
+ui=wxPython
+
 [debug]
 path=~\Pictures\wp
 update=30
@@ -144,7 +152,7 @@ wallpaper=~/.wp.bmp
 
 # Which ui plugin should be used, acceptable values are:
 #     - 'Console'
-#     - 'GTK'
+#     - 'wxPython'
 ui=Console
 
 # This options is specifically for RecursiveSplit plugin
