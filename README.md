@@ -1,10 +1,10 @@
-Tired of having a folder full of wallpapers and only seeing one at a time?
+*Tired of having a folder full of wallpapers and only seeing one at a time?*
 
 `wpmaker` has the ability to create collages of randomly selected images from
 that folder. It can also do the standard one-at-a-time thing, keeping the aspect
 ratio and cropping instead of stretching.
 
-### Here are some examples
+## Here are some examples
 [![Example](http://i.imgur.com/XLNHpl.jpg)](http://i.imgur.com/XLNHp.jpg)
 [![Example](http://i.imgur.com/YHrL4l.jpg)](http://i.imgur.com/YHrL4.jpg)
 
@@ -29,29 +29,28 @@ open source and you can just write it yourself.
 What about these plugins, how do I create one? For now though you
 have to rely on the ones I've created for documentation.
 
-## Requirements
-For `wpmaker` to work you need the following:
+# Installation
+Follow the platform specific instructions and then download and extract the project. 
+Then read the `How do I use this thing anyways?` section. 
 
-- [Python version 2.5 to 2.7](http://python.org/download/releases/2.7.3/)
-- [pygame](http://www.pygame.org/download.shtml) (`python-pygame` package on most linux distros)
-- For linux you'll need `python-xlib`, or another `get_resolution` plugin
+## Windows
+- Install python 2.7 ([download link](http://python.org/download/releases/2.7.3/))
+- Install pygame ([download link](http://www.pygame.org/download.shtml))
+- Install wxPython ([download link](http://wxpython.org/download.php), get the 32-bit python 2.7 binaries)
 
-## Installation
-First read the requirements list above and make sure they are installed.  
-Then, download and uncompress the project and follow the instructions below.
+## Linux
+- Install python 2.7
+- Install pygame (`python-pygame` package in most repositories)
+- Install `python-xlib`, for the get resolution plugin
+- Install wxPython ([info](http://wiki.wxpython.org/How%20to%20install%20wxPython#Linux_-_Redhat))
 
-# Windows
-- Install python 2.7 ([download link](http://python.org/download/releases/2.7.3/)
-- Install pygame ([download link](http://www.pygame.org/download.shtml)
-- Install wxPython ([download link](http://www.pygame.org/download.shtml), get the python 2.7 binaries)
-
-## How do I use this thing anyways?
+# How do I use this thing anyways?
 You can run `wpmaker` in the console by running `python wpmaker.py [options]`.
 You can also run `wpmaker` without the console by running `python wpmaker.pyw
 [options]`.
 
-Note: You'll need to be in wpmakers installation path in the console.  
-Also note: On many systems you can double click the wpmaker.py and wpmaker.pyw
+Note: You'll need to be in `wpmaker`s installation path in the console.  
+Also note: On many systems you can double click the `wpmaker.py` and `wpmaker.pyw`
 files to run them. They will only run if you've set the wp folder path in the
 configuration file.
 
@@ -78,7 +77,7 @@ Configuration files:
     (1) C:\ProgramData\viktor\wpmaker\wpmaker.conf
 ```
 
-## Configuration
+# Configuration
 To configure `wpmaker`, run `python wpmaker.py --help` for a list of
 configuration files. Then create either or both of them, (0) is user-specific, (1) is
 installation-specific. The options in the configuration files are the same as
@@ -102,9 +101,7 @@ path=~\Pictures\wp
 update=180
 # personal preference
 
-# Set which ui plugin to use
-ui=wxPython
-
+# Set which ui plugin to useui=wxPython
 [debug]
 path=~\Pictures\wp
 update=30
@@ -161,3 +158,4 @@ ui=Console
 recursion-depth=3
 
 ```
+``

@@ -135,5 +135,5 @@ class UIOption(Option):
         self.description = 'Select which plugin, UI, should be used for ui purposes'
         self.conf_description = ['# Which ui plugin should be used, acceptable values are:\n',
                                  "#     - 'Console'\n",
-                                 "#     - 'GTK'\n"]
+                                 "#     - 'wxPython'\n"]
 
