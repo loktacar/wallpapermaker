@@ -64,15 +64,3 @@ class UI(object):
         """ Starts generation of new wallpaper """
         self.app.time_since_generation = self.app.config['update']
 
-    def loaded_plugins(self):
-        """ Shows which plugins have been loaded """
-        if not self.initialized :
-            raise AttributeError("Application not initialized, cannot comply")
-        return self.app.loaded_plugins()
-
-    def using_plugins(self):
-        """ Shows which plugins are going to be used """
-        if not self.initialized:
-            raise AttributeError("Application not initialized, cannot comply")
-        return self.app.using_plugins()
-

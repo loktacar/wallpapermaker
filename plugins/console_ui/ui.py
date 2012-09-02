@@ -14,8 +14,8 @@ class Console(UI):
         print 'Application initialized.'
         print 
         print 'Plugins loaded.'
-        loaded_plugins = self.loaded_plugins()
-        using_plugins = self.using_plugins()
+        loaded_plugins = self.app.loaded_plugins
+        using_plugins = self.app.using_plugins()
         for plugins_key in loaded_plugins:
             print plugins_key + ' plugins'
             print '\t' + ("using '%s', " % using_plugins[plugins_key] if plugins_key in using_plugins else ' ')
