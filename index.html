@@ -28,7 +28,7 @@
         </ul>
       </header>
       <section>
-        <p>Tired of having a folder full of wallpapers and only seeing one at a time?</p>
+        <p><em>Tired of having a folder full of wallpapers and only seeing one at a time?</em></p>
 
 <p><code>wpmaker</code> has the ability to create collages of randomly selected images from
 that folder. It can also do the standard one-at-a-time thing, keeping the aspect
@@ -62,39 +62,36 @@ open source and you can just write it yourself.</li>
 </ul><p>What about these plugins, how do I create one? For now though you
 have to rely on the ones I've created for documentation.</p>
 
-<h1>Requirements</h1>
+<h1>Installation</h1>
 
-<p>For <code>wpmaker</code> to work you need the following:</p>
-
-<ul>
-<li><a href="http://python.org/download/releases/2.7.3/">Python version 2.5 to 2.7</a></li>
-<li>
-<a href="http://www.pygame.org/download.shtml">pygame</a> (<code>python-pygame</code> package on most linux distros)</li>
-<li>For linux you'll need <code>python-xlib</code>, or another <code>get_resolution</code> plugin</li>
-<li>the wxPython ui plugin requires wxPython to be installed on your system, see installation for more info. </li>
-</ul><h1>Installation</h1>
-
-<p>First read the requirements list above and make sure they are installed.<br>
-Then, download and uncompress the project and follow the instructions below.</p>
+<p>Follow the platform specific instructions and then download and extract the project. 
+Then read the <code>How do I use this thing anyways?</code> section. </p>
 
 <h2>Windows</h2>
 
 <ul>
 <li>Install python 2.7 (<a href="http://python.org/download/releases/2.7.3/">download link</a>)</li>
 <li>Install pygame (<a href="http://www.pygame.org/download.shtml">download link</a>)</li>
-<li>Install wxPython (<a href="http://www.pygame.org/download.shtml">download link</a>, get the python 2.7 binaries)</li>
+<li>Install wxPython (<a href="http://wxpython.org/download.php">download link</a>, get the windows binaries for python 2.7 )</li>
+</ul><h2>Linux</h2>
+
+<ul>
+<li>Install python 2.7</li>
+<li>Install pygame (<code>python-pygame</code> package in most repositories)</li>
+<li>Install <code>python-xlib</code>, for the get resolution plugin</li>
+<li>Install wxPython (<a href="http://wiki.wxpython.org/How%20to%20install%20wxPython#Linux_-_Redhat">info</a>)</li>
 </ul><h1>How do I use this thing anyways?</h1>
 
 <p>You can run <code>wpmaker</code> in the console by running <code>python wpmaker.py [options]</code>.
 You can also run <code>wpmaker</code> without the console by running <code>python wpmaker.pyw
 [options]</code>.</p>
 
-<p>Note: You'll need to be in wpmakers installation path in the console.<br>
-Also note: On many systems you can double click the wpmaker.py and wpmaker.pyw
+<p>Note: You'll need to be in <code>wpmaker</code>s installation path in the console.<br>
+Also note: On many systems you can double click the <code>wpmaker.py</code> and <code>wpmaker.pyw</code>
 files to run them. They will only run if you've set the wp folder path in the
 configuration file.</p>
 
-<h2>Help message</h2>
+<h3>Help message</h3>
 
 <pre><code>Usage: wpmaker.py [options]
 
@@ -113,7 +110,7 @@ Options:
     -h --help                 Displays this help message
 
 Configuration files:
-    (0) D:\Users\viktor\AppData\Local\viktor\wpmaker\wpmaker.conf
+    (0) C:\Users\username\AppData\Local\viktor\wpmaker\wpmaker.conf
     (1) C:\ProgramData\viktor\wpmaker\wpmaker.conf
 </code></pre>
 
@@ -142,9 +139,7 @@ path=~\Pictures\wp
 update=180
 # personal preference
 
-# Set which ui plugin to use
-ui=wxPython
-
+# Set which ui plugin to useui=wxPython
 [debug]
 path=~\Pictures\wp
 update=30
