@@ -4,7 +4,7 @@
 that folder. It can also do the standard one-at-a-time thing, keeping the aspect
 ratio and cropping instead of stretching.
 
-## Here are some examples
+# Here are some examples
 [![Example](http://i.imgur.com/XLNHpl.jpg)](http://i.imgur.com/XLNHp.jpg)
 [![Example](http://i.imgur.com/YHrL4l.jpg)](http://i.imgur.com/YHrL4.jpg)
 
@@ -29,29 +29,29 @@ open source and you can just write it yourself.
 What about these plugins, how do I create one? For now though you
 have to rely on the ones I've created for documentation.
 
-# Installation
+## Installation
 Follow the platform specific instructions and then download and extract the project. 
 Then read the `How do I use this thing anyways?` section. 
 
-## Windows
+### Windows
 - Install python 2.7 ([download link](http://python.org/download/releases/2.7.3/))
 - Install pygame ([download link](http://www.pygame.org/download.shtml))
 - Install wxPython ([download link](http://wxpython.org/download.php), get the windows binaries for python 2.7 )
 
-## Linux
+### Linux
 - Install python 2.7
 - Install pygame (`python-pygame` package in most repositories)
 - Install `python-xlib`, for the get resolution plugin
 - Install wxPython ([info](http://wiki.wxpython.org/How%20to%20install%20wxPython#Linux_-_Redhat))
 
-### Fedora 17 (F17)
+#### Fedora 17 (F17)
 - You should already have python 2.7 installed
 - Run `yum install pygame`
 - Run `yum install wxPython`
 - If you get a warning about `Gtk-Message: Failed to load module "pk-gtk-module"`,
 you also need to run `yum update PackageKit-gtk3-module`
 
-# How do I use this thing anyways?
+## How do I use this thing anyways?
 You can run `wpmaker` in the console by running `python wpmaker.py [options]`.
 You can also run `wpmaker` without the console by running `python wpmaker.pyw
 [options]`.
@@ -84,7 +84,7 @@ Configuration files:
     (1) C:\ProgramData\viktor\wpmaker\wpmaker.conf
 ```
 
-# Configuration
+## Configuration
 To configure `wpmaker`, run `python wpmaker.py --help` for a list of
 configuration files. Then create either or both of them, (0) is user-specific, (1) is
 installation-specific. The options in the configuration files are the same as
