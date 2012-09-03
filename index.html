@@ -34,7 +34,7 @@
 that folder. It can also do the standard one-at-a-time thing, keeping the aspect
 ratio and cropping instead of stretching.</p>
 
-<h2>Here are some examples</h2>
+<h1>Here are some examples</h1>
 
 <p><a href="http://i.imgur.com/XLNHp.jpg"><img src="http://i.imgur.com/XLNHpl.jpg" alt="Example"></a>
 <a href="http://i.imgur.com/YHrL4.jpg"><img src="http://i.imgur.com/YHrL4l.jpg" alt="Example"></a></p>
@@ -62,25 +62,36 @@ open source and you can just write it yourself.</li>
 </ul><p>What about these plugins, how do I create one? For now though you
 have to rely on the ones I've created for documentation.</p>
 
-<h1>Installation</h1>
+<h2>Installation</h2>
 
 <p>Follow the platform specific instructions and then download and extract the project. 
 Then read the <code>How do I use this thing anyways?</code> section. </p>
 
-<h2>Windows</h2>
+<h3>Windows</h3>
 
 <ul>
 <li>Install python 2.7 (<a href="http://python.org/download/releases/2.7.3/">download link</a>)</li>
 <li>Install pygame (<a href="http://www.pygame.org/download.shtml">download link</a>)</li>
 <li>Install wxPython (<a href="http://wxpython.org/download.php">download link</a>, get the windows binaries for python 2.7 )</li>
-</ul><h2>Linux</h2>
+</ul><h3>Linux</h3>
 
 <ul>
 <li>Install python 2.7</li>
 <li>Install pygame (<code>python-pygame</code> package in most repositories)</li>
 <li>Install <code>python-xlib</code>, for the get resolution plugin</li>
 <li>Install wxPython (<a href="http://wiki.wxpython.org/How%20to%20install%20wxPython#Linux_-_Redhat">info</a>)</li>
-</ul><h1>How do I use this thing anyways?</h1>
+</ul><h4>Fedora 17 (F17)</h4>
+
+<ul>
+<li>You should already have python 2.7 installed</li>
+<li>Run <code>yum install pygame</code>
+</li>
+<li>Run <code>yum install wxPython</code>
+</li>
+<li>If you get a warning about <code>Gtk-Message: Failed to load module "pk-gtk-module"</code>,
+you also need to run <code>yum update PackageKit-gtk3-module</code>
+</li>
+</ul><h2>How do I use this thing anyways?</h2>
 
 <p>You can run <code>wpmaker</code> in the console by running <code>python wpmaker.py [options]</code>.
 You can also run <code>wpmaker</code> without the console by running <code>python wpmaker.pyw
@@ -114,7 +125,7 @@ Configuration files:
     (1) C:\ProgramData\viktor\wpmaker\wpmaker.conf
 </code></pre>
 
-<h1>Configuration</h1>
+<h2>Configuration</h2>
 
 <p>To configure <code>wpmaker</code>, run <code>python wpmaker.py --help</code> for a list of
 configuration files. Then create either or both of them, (0) is user-specific, (1) is
