@@ -44,6 +44,13 @@ Then read the `How do I use this thing anyways?` section.
 - Install `python-xlib`, for the get resolution plugin
 - Install wxPython ([info](http://wiki.wxpython.org/How%20to%20install%20wxPython#Linux_-_Redhat))
 
+### Fedora 17 (F17)
+- You should already have python 2.7 installed
+- Run `yum install pygame`
+- Run `yum install wxPython`
+- If you get a warning about `Gtk-Message: Failed to load module "pk-gtk-module"`,
+you also need to run `yum update PackageKit-gtk3-module`
+
 # How do I use this thing anyways?
 You can run `wpmaker` in the console by running `python wpmaker.py [options]`.
 You can also run `wpmaker` without the console by running `python wpmaker.pyw

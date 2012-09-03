@@ -14,7 +14,7 @@ class wxPython(UI):
         self.ui_app = wx.PySimpleApp()
 
         #setup icon object
-        icon = wx.Icon("favico.ico", wx.BITMAP_TYPE_ICO)
+        icon = wx.Icon("monitor-wallpaper-icon.png", wx.BITMAP_TYPE_PNG)
 
         #setup taskbar icon
         self.tbicon = wx.TaskBarIcon()
