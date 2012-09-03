@@ -5,7 +5,7 @@ from .. import SetWallpaper
 class GnomeSetWallpaper(SetWallpaper):
     @staticmethod
     def platform_check(config):
-        return sys.platform == 'linux2' and config['desktop_environment'] == 'gnome'
+        return sys.platform == 'linux2' and config['desktop-environment'] == 'gnome'
 
     @staticmethod
     def set(config):
