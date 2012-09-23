@@ -2,6 +2,7 @@ class Option(object):
     """
         Base class for option plugins
     """
+
     def __init__(self):
         # Default value, if default is None, option is required to be set to something else
         self.default = None

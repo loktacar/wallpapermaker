@@ -7,8 +7,8 @@ from .. import Collage
 
 class RecursiveSplit(Collage):
 
-    def __init__(self, wallpaper_queue, config):
-        super(RecursiveSplit, self).__init__(wallpaper_queue, config)
+    def __init__(self):
+        super(RecursiveSplit, self).__init__()
 
     def generate(self, size):
         wallpapers = self._get_wallpapers()

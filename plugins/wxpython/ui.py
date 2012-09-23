@@ -38,12 +38,13 @@ class wxPython(UI):
         csi_all = self.collage_submenu.Append(submenu_item_index, 'all', 'all', kind=wx.ITEM_RADIO)
         self.collage_submenu_items = {submenu_item_index: 'all'}
 
-        for cp in self.app.loaded_plugins['collage']:
+        for cp in self.app.plugin_manager['Collage']:
+            cp_name = cp.__class__.__name__
             submenu_item_index += 1
-            self.collage_submenu_items[submenu_item_index] = cp
+            self.collage_submenu_items[submenu_item_index] = cp_name
             self.collage_submenu.Append(submenu_item_index,
-                                        cp,
-                                        cp,
+                                        cp_name,
+                                        cp_name,
                                         kind=wx.ITEM_RADIO)
 
         self.ui_app.Bind(wx.EVT_MENU_RANGE, self.OnCollage, id=submenu_item_index_start, id2=submenu_item_index)

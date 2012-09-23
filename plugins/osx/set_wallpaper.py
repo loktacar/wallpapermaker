@@ -3,12 +3,13 @@ import sys
 from .. import SetWallpaper
 
 class DarwinSetWallpaper(SetWallpaper):
-    @staticmethod
-    def platform_check(config):
+    def __init__(self):
+        super(DarwinSetWallpaper, self).__init__()
+
+    def platform_check(self):
         return sys.platform == 'darwin'
 
-    @staticmethod
-    def set(config):
+    def set(self):
         import subprocess
 
         DARWIN_SCRIPT = """/usr/bin/osascript << END

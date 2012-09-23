@@ -1,21 +1,26 @@
 ### Base class for Collage plugins ###
 import math
-import logging
 
 import pygame
 
-class Collage(object):
+from plugin import Plugin
+
+class Collage(Plugin):
     """
         Base class for collage plugins
             See simple_resize.py or recursive_split.py for example implementation of a plugin
     """
-    def __init__(self, wallpaper_queue, config):
-        self.config = config
-        self.wallpaper_queue = wallpaper_queue
 
-        self.logger = logging.getLogger('root')
+    def __init__(self):
+        super(Collage, self).__init__()
+
+        self.wallpaper_queue = None
 
         self.output = None
+
+    def set_config(self, config):
+        self.config = config
+        #self.wallpaper_queue = self.config['wallpaper_queue']
 
     def generate(self, size, wallpaper_queue):
         """

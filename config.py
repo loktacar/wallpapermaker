@@ -8,13 +8,12 @@ from appdirs import AppDirs
 from docopt import docopt
 import ConfigParser
 
-from plugins import option_plugins
-
 appname = 'wpmaker'
 appauthor = 'viktor'
 config_file_name = '%s.conf' % appname
 
-options = [op() for op in option_plugins]
+from plugins import plugin_manager
+options = plugin_manager['Option']
 
 logger = logging.getLogger('root')
 

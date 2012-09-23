@@ -8,18 +8,8 @@ class Application:
 
         # Load plugins
         self.logger.debug('Loading plugins')
-        from plugins import collage_plugins, get_resolution_plugins, set_wallpaper_plugins, ui_plugins
-        self.collage_plugins = collage_plugins
-        self.get_resolution_plugins = get_resolution_plugins
-        self.set_wallpaper_plugins = set_wallpaper_plugins
-        self.ui_plugins = ui_plugins
-
-        self.loaded_plugins = {
-            'collage': [p.__name__ for p in self.collage_plugins],
-            'get_resolution': [p.__name__ for p in self.get_resolution_plugins],
-            'set_wallpaper': [p.__name__ for p in self.set_wallpaper_plugins],
-            'ui': [p.__name__ for p in self.ui_plugins] }
-
+        from plugins import plugin_manager
+        self.plugin_manager = plugin_manager
 
         # Call ui hooks
         self.ui = ui
@@ -36,7 +26,9 @@ class Application:
         from wallpapers import Wallpapers
         self.wps = Wallpapers(self.config)
 
-        self.collages = [c(self.wps, self.config) for c in self.collage_plugins]
+        self.collages = self.plugin_manager['Collage']
+        for collage in self.collages:
+            collage.wallpaper_queue = self.wps
 
         self.resolution = (0,0)
 
@@ -51,31 +43,6 @@ class Application:
         self.next_collage_plugin = None
 
         self.ui_hook('app_initialized')
-
-    def using_plugins(self):
-        using_plugins_dict = {}
-
-        if self.ui is not None:
-            using_plugins_dict['ui'] = self.config['ui']
-        else:
-            using_plugins_dict['ui'] = 'None'
-
-        if self.config['collage-plugin'] == 'all':
-            using_plugins_dict['collage'] = [p.__name__ for p in self.collage_plugins]
-        else:
-            using_plugins_dict['collage'] = self.config['collage-plugin']
-
-        for g in self.get_resolution_plugins:
-            if g.platform_check():
-                using_plugins_dict['get_resolution'] = g.__name__
-                break
-
-        for s in self.set_wallpaper_plugins:
-            if s.platform_check(self.config):
-                using_plugins_dict['set_wallpaper'] = s.__name__
-                break
-
-        return using_plugins_dict
 
     def pause(self, paused_value=None):
         if paused_value is None:
@@ -97,16 +64,16 @@ class Application:
                 self.logger.debug('ui hook %s not implemented' % hook_name)
 
     def get_resolution(self):
-        for g in self.get_resolution_plugins:
+        for g in self.plugin_manager['GetResolution']:
             if g.platform_check():
                 return g.get()
 
         return (0,0)
 
     def set_wallpaper(self):
-        for s in self.set_wallpaper_plugins:
-            if s.platform_check(self.config):
-                return s.set(self.config)
+        for s in self.plugin_manager['SetWallpaper']:
+            if s.platform_check():
+                return s.set()
 
     def main(self):
         while(self.running):

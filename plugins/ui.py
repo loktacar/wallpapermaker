@@ -1,15 +1,14 @@
-import logging
+from plugin import Plugin
 
-class UI(object):
+class UI(Plugin):
     """
         Base class of ui plugins
     """
+
     def __init__(self):
+        super(UI, self).__init__()
+
         self.app = None
-
-        self.logger = logging.getLogger('root')
-
-        self.logger.debug('UI plugin %s started' % self.__class__.__name__)
 
     # ui control functions
 

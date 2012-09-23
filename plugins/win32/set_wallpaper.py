@@ -3,12 +3,13 @@ import sys
 from .. import SetWallpaper
 
 class Win32SetWallpaper(SetWallpaper):
-    @staticmethod
-    def platform_check(config):
+    def __init__(self):
+        super(Win32SetWallpaper, self).__init__()
+
+    def platform_check(self):
         return sys.platform == 'win32'
 
-    @staticmethod
-    def set(config):
+    def set(self):
         import ctypes
 
         ctypes.windll.user32.SystemParametersInfoA(20, 0, config['wallpaper'], 0)

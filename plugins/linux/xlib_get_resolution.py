@@ -3,12 +3,18 @@ import sys
 from .. import GetResolution
 
 class XlibGetResolution(GetResolution):
-    @staticmethod
-    def platform_check():
-        return sys.platform == 'linux2'
+    def __init__(self):
+        super(XlibGetResolution, self).__init__()
 
-    @staticmethod
-    def get():
+    def platform_check(self):
+        try:
+            import Xlib
+            import Xlib.display
+            return True
+        except:
+            return False
+
+    def get(self):
         import Xlib
         import Xlib.display
 

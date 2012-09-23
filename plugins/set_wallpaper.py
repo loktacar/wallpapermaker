@@ -1,13 +1,16 @@
-class SetWallpaper(object):
+from plugin import Plugin
+
+class SetWallpaper(Plugin):
     """
         Base class for the set_wallpaper plugins
     """
 
-    @staticmethod
-    def platform_check(config):
+    def __init__(self):
+        super(SetWallpaper, self).__init__()
+
+    def platform_check(self):
         raise NotImplementedError
 
-    @staticmethod
-    def set(config):
+    def set(self):
         raise NotImplementedError
 

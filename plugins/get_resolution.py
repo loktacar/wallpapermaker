@@ -1,13 +1,16 @@
-class GetResolution(object):
+from plugin import Plugin
+
+class GetResolution(Plugin):
     """
         Base class for get_resolution plugins
     """
 
-    @staticmethod
-    def platform_check():
+    def __init__(self):
+        super(GetResolution, self).__init__()
+
+    def platform_check(self):
         raise NotImplementedError
 
-    @staticmethod
-    def get():
+    def get(self):
         raise NotImplementedError
 

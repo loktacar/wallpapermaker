@@ -14,22 +14,26 @@ import log
 import logging
 logger = log.setup_custom_logger('root', logging.DEBUG if verbose else logging.ERROR)
 
-from plugins import ui_plugins
+# Load all plugins
+from plugins import plugin_manager
 
 # Read options and arguments
 from config import get_config
 config = get_config()
 
+# Set plugins' config
+plugin_manager.set_config(config)
+
 # Find and set ui
 ui = None
 if config['ui'] is not None:
-    for plugin in ui_plugins:
-        if plugin.__name__ == config['ui']:
-            ui = plugin()
+    for plugin in plugin_manager['UI']:
+        if plugin.__class__.__name__ == config['ui']:
+            ui = plugin
 
 # Check if ui is set
 if ui is None and config['ui'] is not None:
-    raise RuntimeError("Couldn't start ui '%s'" % config['ui'])
+    raise RuntimeError("Couldn't find ui plugin '%s'" % config['ui'])
 
 app = Application(config, ui)
 

@@ -3,15 +3,16 @@ import sys
 from .. import SetWallpaper
 
 class GnomeSetWallpaper(SetWallpaper):
-    @staticmethod
-    def platform_check(config):
-        return sys.platform == 'linux2' and config['desktop-environment'] == 'gnome'
+    def __init__(self):
+        super(GnomeSetWallpaper, self).__init__()
 
-    @staticmethod
-    def set(config):
+    def platform_check(self):
+        return sys.platform == 'linux2' and self.config['desktop-environment'] == 'gnome'
+
+    def set(self):
         import os
 
         os.system(\
                 'gsettings set org.gnome.desktop.background picture-uri "file://%s"' \
-                    % config['wallpaper'])
+                    % self.config['wallpaper'])
 
