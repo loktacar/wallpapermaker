@@ -9,8 +9,10 @@ class Collage(object):
         Base class for collage plugins
             See simple_resize.py or recursive_split.py for example implementation of a plugin
     """
-    def __init__(self, config):
+    def __init__(self, wallpaper_queue, config):
         self.config = config
+        self.wallpaper_queue = wallpaper_queue
+
         self.logger = logging.getLogger('root')
 
         self.output = None
@@ -19,21 +21,13 @@ class Collage(object):
         """
             Generates the wallpaper collage
         """
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def save(self, collage, filepath):
         """
             Save collage as image
         """
         pygame.image.save(collage, filepath)
-
-    def _get_wallpapers(self, wallpapers):
-        """
-            Get wallpapers that will be used in generation of collage
-            For recursive or multi-layered collages, return lists of lists of wallpapers
-                see recursive split collage plugin
-        """
-        raise NotImplementedError
 
     def _resize_wallpaper(self, wallpaper, size):
         """

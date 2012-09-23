@@ -14,18 +14,15 @@ import log
 import logging
 logger = log.setup_custom_logger('root', logging.DEBUG if verbose else logging.ERROR)
 
-logger.debug('Loading UI plugins')
 from plugins import ui_plugins
 
 # Read options and arguments
-logger.debug('Reading config file and parsing options') # Move log call to get_config()
 from config import get_config
 config = get_config()
 
 # Find and set ui
 ui = None
 if config['ui'] is not None:
-    logger.debug('Setting ui to %s plugin' % config['ui'])
     for plugin in ui_plugins:
         if plugin.__name__ == config['ui']:
             ui = plugin()

@@ -4,26 +4,20 @@ class UI(object):
     """
         Base class of ui plugins
     """
-    def __init__(self, app=None):
-        self.app = app
-
-        self.initialized = False
+    def __init__(self):
+        self.app = None
 
         self.logger = logging.getLogger('root')
+
+        self.logger.debug('UI plugin %s started' % self.__class__.__name__)
 
     # ui control functions
 
     def start_app(self):
-        """ Starts the application main thread """
         self.app.main()
 
-    def pause_app_toggle(self):
-        """ Pauses the application loop, starts generating upon resume """
-        self.app.pause()
-
-    def switch_collage_plugin(self, collage):
-        self.app.switch_collage_plugin(collage)
-        self.logger.debug(collage)
+    def exit_app(self):
+        raise NotImplementedError()
 
     # ui hooks
 
@@ -32,7 +26,6 @@ class UI(object):
 
             config and plugin information available now
         """
-        self.initialized = True
 
     def app_started(self):
         """ Run before app initialization """

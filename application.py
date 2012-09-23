@@ -25,6 +25,7 @@ class Application:
         self.ui = ui
         if self.ui is not None:
             self.ui.app = self
+
         self.ui_hook('app_started')
 
         # Set config
@@ -35,7 +36,7 @@ class Application:
         from wallpapers import Wallpapers
         self.wps = Wallpapers(self.config)
 
-        self.collages = [c(self.config) for c in self.collage_plugins]
+        self.collages = [c(self.wps, self.config) for c in self.collage_plugins]
 
         self.resolution = (0,0)
 
@@ -161,7 +162,7 @@ class Application:
                 self.ui_hook('generate_starting', collage_plugin.__class__.__name__)
 
                 # Generate collage
-                wp = collage_plugin.generate(self.resolution, self.wps)
+                wp = collage_plugin.generate(self.resolution)
                 collage_plugin.save(wp, self.config['wallpaper'])
                 self.set_wallpaper()
 

@@ -15,6 +15,8 @@ class wxPython(UI):
 
         #setup icon object
         icon = wx.Icon("monitor-wallpaper-icon.png", wx.BITMAP_TYPE_PNG)
+        icon.SetHeight(32)
+        icon.SetWidth(32)
 
         #setup taskbar icon
         self.tbicon = wx.TaskBarIcon()
@@ -53,21 +55,29 @@ class wxPython(UI):
 
         wx.EVT_MENU(self.tbicon, self.gitem.GetId(), self.start_generating)
         wx.EVT_MENU(self.tbicon, self.pitem.GetId(), self.OnPauseSelected)
-        wx.EVT_MENU(self.tbicon, self.qitem.GetId(), self.quit_ui)
+        wx.EVT_MENU(self.tbicon, self.qitem.GetId(), self.exit_app)
 
         #gui update timer
         self.timer = wx.Timer()
         self.ui_app.Bind(wx.EVT_TIMER, self.OnUpdateTick, self.timer)
         self.timer.Start(1000.0/24)
 
-        self.ui_app.MainLoop()
-        self.logger.debug('ui MainLoop started')
+    # App Control functions
 
-    def quit_ui(self, *args, **kwargs):
+    def start_app(self):
+        self.logger.debug('Application and UI starting')
+        self.thread = threading.Thread(target=self.app.main)
+        self.thread.setDaemon(True)
+        self.thread.start()
+
+        self.ui_app.MainLoop()
+
+    def exit_app(self, *args, **kwargs):
         self.tbicon.RemoveIcon()
         self.ui_app.ExitMainLoop()
         self.ui_app.Exit()
-        self.logger.debug('ui quit')
+
+        self.logger.debug('Application exited, goodbye!')
 
     # wxEvents
 
@@ -75,7 +85,7 @@ class wxPython(UI):
         self.tbicon.PopupMenu(self.menu)
 
     def OnPauseSelected(self, event):
-        self.pause_app_toggle()
+        self.app.pause()
 
     def OnUpdateTick(self, event):
         self.menu.Check(self.pitem.GetId(), self.app.is_paused)
@@ -85,19 +95,15 @@ class wxPython(UI):
                 self.collage_submenu.Check(csi, True)
 
     def OnCollage(self, event):
-        self.switch_collage_plugin(self.collage_submenu_items[event.GetId()])
+        self.app.switch_collage_plugin(self.collage_submenu_items[event.GetId()])
+        self.logger.debug('Changing collage to %s' % collage)
 
     # Following methods are called from the application, via ui hooks
 
     def app_quitting(self):
         # Using CallAfter because app_quitting is called from another thread, and that's bad
-        wx.CallAfter(self.quit_ui)
+        wx.CallAfter(self.exit_app)
 
-    def start_app(self):
-        self.thread = threading.Thread(target=self.app.main)
-        self.thread.setDaemon(True)
-        self.thread.start()
-        self.logger.debug('app thread started')
-
+    def app_initialized(self):
         self.initialize_gui()
 

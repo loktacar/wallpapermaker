@@ -7,11 +7,11 @@ class SimpleResize(Collage):
         Example class for collage plugins
             - Takes a single image and resizes it
     """
+    def __init__(self, wallpaper_queue, config):
+        super(SimpleResize, self).__init__(wallpaper_queue, config)
 
-    def generate(self, size, wallpaper_queues):
-        self.output = None
-
-        wallpapers = self._get_wallpapers(wallpaper_queues)
+    def generate(self, size):
+        wallpapers = self._get_wallpapers()
 
         self.logger.debug('Generating...')
 
@@ -27,6 +27,6 @@ class SimpleResize(Collage):
 
         return collage
 
-    def _get_wallpapers(self, wallpapers):
-        return wallpapers.pop()
+    def _get_wallpapers(self):
+        return self.wallpaper_queue.pop()
 

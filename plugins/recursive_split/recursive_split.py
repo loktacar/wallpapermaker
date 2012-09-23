@@ -7,11 +7,11 @@ from .. import Collage
 
 class RecursiveSplit(Collage):
 
-    def __init__(self, config):
-        super(RecursiveSplit, self).__init__(config)
+    def __init__(self, wallpaper_queue, config):
+        super(RecursiveSplit, self).__init__(wallpaper_queue, config)
 
-    def generate(self, size, wallpaper_queues):
-        wallpapers = self._get_wallpapers(wallpaper_queues)
+    def generate(self, size):
+        wallpapers = self._get_wallpapers()
 
         self.logger.debug('Generating...')
         collage = self.generate_split(size, wallpapers)
@@ -43,7 +43,7 @@ class RecursiveSplit(Collage):
 
         return split
 
-    def _get_wallpapers(self, wallpaper_queues, i=1):
+    def _get_wallpapers(self, i=1):
         # Get wallpaper for each split, breadth-first
         wallpapers = []
 
@@ -53,7 +53,7 @@ class RecursiveSplit(Collage):
         else:
             i_wp_count = random.randint(0, 4 + i*4)
 
-        wallpapers = wallpaper_queues.pop(i_wp_count if i_wp_count >= 4 else 4)
+        wallpapers = self.wallpaper_queue.pop(i_wp_count if i_wp_count >= 4 else 4)
 
         # add empty list where splits will happen, i.e. where actual images are missing
         if i_wp_count < 4:
@@ -66,6 +66,6 @@ class RecursiveSplit(Collage):
         for index, wp in enumerate(wallpapers):
             self.logger.debug('%s.%s %s' % (i, index, wp))
             if type(wp) is list:
-                wallpapers[index] = self._get_wallpapers(wallpaper_queues, i+1)
+                wallpapers[index] = self._get_wallpapers(i+1)
 
         return wallpapers

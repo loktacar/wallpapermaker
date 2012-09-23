@@ -67,6 +67,7 @@ Usage: wpmaker.py [options]
 
 Options:
     --collage-plugin=COLLAGE  Which collage plugin should be used
+    --desktop-environment=DE  Linux Desktop Environment
     --fs-interval=INT         Check wallpaper folder every INT updates
     --path=PATH               PATH to the wallpaper folder
     --recursion-depth=INT     Each split can be split INT times
@@ -80,8 +81,8 @@ Options:
     -h --help                 Displays this help message
 
 Configuration files:
-    (0) C:\Users\username\AppData\Local\viktor\wpmaker\wpmaker.conf
-    (1) C:\ProgramData\viktor\wpmaker\wpmaker.conf
+    (0) /home/loktacar/.config/wpmaker/wpmaker.conf
+    (1) /etc/xdg/wpmaker/wpmaker.conf
 ```
 
 ## Configuration
@@ -121,6 +122,14 @@ verbose=True
 
 [default_values]
 
+# This options is specifically for RecursiveSplit plugin
+# recursion_depth: maximum number of times each split can be
+#   split
+recursion-depth=3
+
+# This option specifies which desktop environment should be manhandled into displaying the output wallpaper
+desktop-environment=none
+
 # how many wallpapers will be generated between checking of
 #   wallpaper folder
 fs-interval=5
@@ -158,11 +167,6 @@ wallpaper=~/.wp.bmp
 #     - 'Console'
 #     - 'wxPython'
 ui=Console
-
-# This options is specifically for RecursiveSplit plugin
-# recursion_depth: maximum number of times each split can be
-#   split
-recursion-depth=3
 
 ```
 ``

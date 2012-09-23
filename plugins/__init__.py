@@ -9,6 +9,8 @@ def find_plugins(path, base_class):
 
     logger = logging.getLogger('root')
 
+    logger.debug('Searching for Plugins')
+
     if type(base_class) is not list:
         base_class = [base_class]
 

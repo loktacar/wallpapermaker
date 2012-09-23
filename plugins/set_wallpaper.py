@@ -5,9 +5,9 @@ class SetWallpaper(object):
 
     @staticmethod
     def platform_check(config):
-        pass
+        raise NotImplementedError
 
     @staticmethod
     def set(config):
-        pass
+        raise NotImplementedError
 

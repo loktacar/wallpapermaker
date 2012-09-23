@@ -43,6 +43,8 @@ Configuration files:
     return doc
 
 def get_config():
+    logger.debug('Reading config file and parsing options')
+
     from docopt import docopt
     doc_options = docopt(get_doc())
 

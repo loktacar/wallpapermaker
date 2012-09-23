@@ -5,9 +5,9 @@ class GetResolution(object):
 
     @staticmethod
     def platform_check():
-        pass
+        raise NotImplementedError
 
     @staticmethod
     def get():
-        pass
+        raise NotImplementedError
 
