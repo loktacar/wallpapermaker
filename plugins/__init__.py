@@ -8,13 +8,15 @@ from get_resolution import GetResolution
 from set_wallpaper import SetWallpaper
 from option import Option
 from ui import UI
+from wallpaper_search import WallpaperSearch
 
 base_plugin_classes = [
         Collage,
         GetResolution,
         SetWallpaper,
         Option,
-        UI
+        UI,
+        WallpaperSearch
     ]
 
 class PluginManager:

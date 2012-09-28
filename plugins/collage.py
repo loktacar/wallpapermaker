@@ -14,13 +14,7 @@ class Collage(Plugin):
     def __init__(self):
         super(Collage, self).__init__()
 
-        self.wallpaper_queue = None
-
-        self.output = None
-
-    def set_config(self, config):
-        self.config = config
-        #self.wallpaper_queue = self.config['wallpaper_queue']
+        self.wallpaper_source = None
 
     def generate(self, size, wallpaper_queue):
         """

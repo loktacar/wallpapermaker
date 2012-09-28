@@ -28,5 +28,5 @@ class SimpleResize(Collage):
         return collage
 
     def _get_wallpapers(self):
-        return self.wallpaper_queue.pop()
+        return self.wallpaper_source.pop()
 

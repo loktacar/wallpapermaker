@@ -24,18 +24,16 @@ class Application:
         # Initialize wallpaper class
         self.logger.debug('Initialize wallpapers')
         from wallpapers import Wallpapers
-        self.wps = Wallpapers(self.config)
+        self.wallpaper_source = Wallpapers(self.config)
 
-        self.collages = self.plugin_manager['Collage']
-        for collage in self.collages:
-            collage.wallpaper_queue = self.wps
+        for collage in self.plugin_manager['Collage']:
+            collage.wallpaper_source = self.wallpaper_source
 
         self.resolution = (0,0)
 
         # Variables for counting, timing, etc. in main loop
-        self.time_since_generation = self.config['update'] # in milliseconds
+        self.next_generation = time.time()
         self.sleep_increment = 0.10 # in milliseconds
-        self.file_check_counter = self.config['fs-interval']
         self.is_paused = False
         self.running = True
 
@@ -77,7 +75,7 @@ class Application:
 
     def main(self):
         while(self.running):
-            if self.time_since_generation >= self.config['update'] and not self.is_paused:
+            if time.time() >= self.next_generation and not self.is_paused:
                 self.logger.debug('Loop start')
 
                 # Get resolution
@@ -93,31 +91,15 @@ class Application:
                 if self.resolution == (0,0):
                     raise ValueError('Resolution invalid')
 
-                # Check for wallpapers
-                if self.file_check_counter == self.config['fs-interval'] or self.wps.count() == 0:
-                    self.logger.debug('Searching for new wallpapers')
-                    self.ui_hook('wallpaper_search_starting')
-
-                    self.wps.find_wallpapers()
-
-                    self.ui_hook('wallpaper_search_finished')
-
-                    self.file_check_counter = 1
-                else:
-                    self.file_check_counter += 1
-
-                if self.wps.count() == 0:
-                    raise ValueError('No wallpapers found')
-
                 # Create new collage
                 collage_plugin = None
                 # Find a random collage
                 if self.config['collage-plugin'] == 'all':
-                    collage_index = random.randint(0, len(self.collages) - 1)
-                    collage_plugin = self.collages[collage_index]
+                    collage_index = random.randint(0, len(self.plugin_manager['Collage']) - 1)
+                    collage_plugin = self.plugin_manager['Collage'][collage_index]
                 # Find configured collage
                 else:
-                    for c in self.collages:
+                    for c in self.plugin_manager['Collage']:
                         if c.__class__.__name__ == self.config['collage-plugin']:
                             collage_plugin = c
 
@@ -135,21 +117,15 @@ class Application:
 
                 self.ui_hook('generate_finished')
 
-                self.wps.shuffle_if_needed()
-
                 if self.config['single-run']:
                     self.logger.debug('Single run, exiting')
                     break
 
-                self.logger.debug('Loop end, waiting %ds' % self.config['update'])
-                self.time_since_generation = 0
+                self.next_generation = time.time() + self.config['update']
+                self.logger.debug('Loop end, waiting untill %s' %
+                        time.strftime('%X', time.localtime(self.next_generation)))
 
             time.sleep(self.sleep_increment)
-
-            if not self.is_paused:
-                self.time_since_generation += self.sleep_increment
-            else:
-                self.time_since_generation = self.config['update']
 
             if self.next_collage_plugin is not None:
                 self.config['collage-plugin'] = self.next_collage_plugin

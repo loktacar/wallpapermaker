@@ -1,38 +1,29 @@
 import os
 import logging
 
-from wallpaper_queue import WallpaperQueue
+from plugins import plugin_manager
 
 class Wallpapers:
-    """ Handles the wallpaper queues, reads folder contents and fills the queues """
 
     def __init__(self, config):
+        # TODO: Maybe shuffle the wallpaper_plugins list each time the last one in the list is used.
         self.config = config
 
-        self.queues = [WallpaperQueue(config)]
+        self.wallpaper_plugins = plugin_manager['WallpaperSearch']
+        self.plugin_index = 0
 
         self.logger = logging.getLogger('root')
 
     def pop(self, count=1):
-        return [wp for wp in self.queues[0].pop(count)]
+        if self.plugin_index >= len(self.wallpaper_plugins):
+            self.plugin_index = 0
 
-    def find_wallpapers(self):
-        os.path.walk(self.config['path'], self._folder_visit, [])
+        wallpaper_plugin = self.wallpaper_plugins[self.plugin_index]
 
-        count = self.count()
-        self.logger.debug('%d image%s in queue' % (count, '' if count == 1 else 's'))
+        self.plugin_index += 1
 
-    def _folder_visit(self, arg, dirpath, filenames):
-        wallpaper_paths = [os.path.join(dirpath, filename) for filename in filenames]
-        pushed_count = self.queues[0].push(wallpaper_paths)
-
-        if pushed_count:
-            rel_dirpath = dirpath[len(self.config['path']):]
-            self.logger.debug('%d wps pushed from %s' % (pushed_count, rel_dirpath if rel_dirpath else '\\'))
+        return [wp for wp in wallpaper_plugin.pop(count)]
 
     def count(self):
-        return sum([q.count() for q in self.queues])
+        return sum([q.count() for q in self.wallpaper_plugins])
 
-    def shuffle_if_needed(self):
-        for q in self.queues:
-            q.shuffle_if_needed()

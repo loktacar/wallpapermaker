@@ -53,7 +53,7 @@ class RecursiveSplit(Collage):
         else:
             i_wp_count = random.randint(0, 4 + i*4)
 
-        wallpapers = self.wallpaper_queue.pop(i_wp_count if i_wp_count >= 4 else 4)
+        wallpapers = self.wallpaper_source.pop(i_wp_count if i_wp_count >= 4 else 4)
 
         # add empty list where splits will happen, i.e. where actual images are missing
         if i_wp_count < 4:

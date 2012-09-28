@@ -37,9 +37,7 @@ if ui is None and config['ui'] is not None:
 
 app = Application(config, ui)
 
-# ui and app should both be set, logging started and config read.
-# Let's start this thing
-if __name__ == '__main__':
+def main():
     try:
         if ui is not None:
             ui.start_app()
@@ -47,3 +45,8 @@ if __name__ == '__main__':
             app.main()
     except KeyboardInterrupt:
         pass
+
+# ui and app should both be set, logging started and config read.
+# Let's start this thing
+if __name__ == '__main__':
+    main()

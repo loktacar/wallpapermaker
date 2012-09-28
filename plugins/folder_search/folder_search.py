@@ -1,22 +1,23 @@
 import random
-import logging
+import os
 
 import pygame
 
-class WallpaperQueue:
-    def __init__(self, config):
-        self.config = config
+from .. import WallpaperSearch
 
-        self.wallpapers = []
+class FolderSearch(WallpaperSearch):
+    def __init__(self):
+        super(FolderSearch, self).__init__()
+
         self.index = -1
 
-        self.logger = logging.getLogger('root')
-
     def pop(self, count=1):
-        """ Pops wallpapers off the list, returns a generator of pygame wallpapers """
+        self.logger.debug('popping %d images' % count)
+
+        self._find_wallpapers()
 
         if self.index == -1:
-            self.shuffle()
+            self._shuffle()
 
         i = 0
         while i < count:
@@ -25,15 +26,11 @@ class WallpaperQueue:
             else:
                 wallpaper_path = self.wallpapers[self.index % len(self.wallpapers)]
 
-            self.logger.debug('%d - %s' % (self.index, wallpaper_path[len(self.config['path']):]))
-
             # Create pygame image
             try:
-                wallpaper = pygame.image.load(wallpaper_path)
-                if wallpaper.get_width() == 0 or wallpaper.get_height() == 0:
-                    raise IOError
+                wallpaper = self._image_from_path(wallpaper_path)
             except IOError:
-                self.logger.debug('Failed to find wallpaper %s' % wallpaper)
+                self.logger.Error('Failed to find wallpaper %s' % wallpaper)
                 self.wallpapers.remove(wallpaper)
                 continue
 
@@ -42,7 +39,21 @@ class WallpaperQueue:
 
             yield wallpaper
 
-    def push(self, wallpaper_paths):
+    def _find_wallpapers(self):
+        os.path.walk(self.config['path'], self._folder_visit, [])
+
+        count = self.count()
+        self.logger.debug('%s image%s in FolderSearch' % (count, '' if count == 1 else 's'))
+
+    def _folder_visit(self, arg, dirpath, filenames):
+        wallpaper_paths = [os.path.join(dirpath, filename) for filename in filenames]
+        pushed_count = self._push(wallpaper_paths)
+
+        if pushed_count:
+            rel_dirpath = dirpath[len(self.config['path']):]
+            self.logger.debug('%d wps pushed from %s' % (pushed_count, rel_dirpath if rel_dirpath else '\\'))
+
+    def _push(self, wallpaper_paths):
         """ Push wallpaper paths on to the list, wallpaper_paths can be a single filepath or a list of paths """
 
         if not type(wallpaper_paths) is list:
@@ -58,7 +69,6 @@ class WallpaperQueue:
         return c
 
     def _check_extension(self, filepath):
-        """ Checks if the file has an extension found in config['extensions'] """
         extensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'pcx', 'tga', 'tiff', 'tif', 'iff', 'xpm']
         for extension in extensions:
             try:
@@ -69,22 +79,10 @@ class WallpaperQueue:
 
         return False
 
-    def count(self):
-        """ Returns the number of wallpapers on queue """
-        return len(self.wallpapers)
-
-    def shuffle(self):
+    def _shuffle(self):
         """ Shuffles the wallpaper queue """
         self.logger.debug('Shuffling wallpaper queue')
 
         random.shuffle(self.wallpapers)
         self.index = 0
-
-    def shuffle_if_needed(self):
-        """ Check if it's time for another shuffle of the wallpapers, if so shuffle 'em """
-        if self.index >= len(self.wallpapers):
-            self.shuffle()
-            return True
-        else:
-            return False
 

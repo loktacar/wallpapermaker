@@ -31,7 +31,7 @@ class UI(Plugin):
         pass
 
     def app_quitting(self):
-        """  """
+        """ Run after app initialization """
         pass
 
     def generate_finished(self):

@@ -79,20 +79,6 @@ class ResolutionOption(Option):
 
         return tuple([int(i) for i in res])
 
-class FileCheckOption(Option):
-    def __init__(self):
-        super(FileCheckOption, self).__init__()
-
-        self.default = 5
-        self.option = 'fs-interval'
-        self.cmd_argument = 'INT'
-        self.description = 'Check wallpaper folder every INT updates'
-        self.conf_description = ['# how many wallpapers will be generated between checking of\n',
-                                 '#   wallpaper folder\n']
-
-    def parse(self, value):
-        return int(value)
-
 class ConfigSectionOption(Option):
     def __init__(self):
         super(ConfigSectionOption, self).__init__()
