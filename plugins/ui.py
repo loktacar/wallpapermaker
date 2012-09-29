@@ -1,3 +1,5 @@
+import time
+
 from plugin import Plugin
 
 class UI(Plugin):
@@ -54,5 +56,5 @@ class UI(Plugin):
 
     def start_generating(self, *args, **kwargs):
         """ Starts generation of new wallpaper """
-        self.app.time_since_generation = self.app.config['update']
+        self.app.next_generation = time.time()
 
