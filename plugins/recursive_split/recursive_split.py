@@ -43,7 +43,7 @@ class RecursiveSplit(Collage):
 
         return split
 
-    def _get_wallpapers(self, i=1):
+    def _get_wallpapers(self, i=0):
         # Get wallpaper for each split, breadth-first
         wallpapers = []
 
