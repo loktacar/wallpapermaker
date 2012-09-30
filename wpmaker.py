@@ -3,6 +3,7 @@ import sys
 
 from application import Application
 
+
 # Check if verbose
 verbose = False
 for arg in sys.argv:
@@ -46,7 +47,33 @@ def main():
     except KeyboardInterrupt:
         pass
 
+def lowpriority():
+    """ Set the priority of the process to below-normal."""
+
+    import sys
+    try:
+        sys.getwindowsversion()
+    except:
+        isWindows = False
+    else:
+        isWindows = True
+
+    if isWindows:
+        # Based on:
+        #   "Recipe 496767: Set Process Priority In Windows" on ActiveState
+        #   http://code.activestate.com/recipes/496767/
+        import win32api,win32process,win32con
+
+        pid = win32api.GetCurrentProcessId()
+        handle = win32api.OpenProcess(win32con.PROCESS_ALL_ACCESS, True, pid)
+        win32process.SetPriorityClass(handle, win32process.BELOW_NORMAL_PRIORITY_CLASS)
+    else:
+        import os
+
+        os.nice(1)
+
 # ui and app should both be set, logging started and config read.
 # Let's start this thing
 if __name__ == '__main__':
+    lowpriority()
     main()
