@@ -77,7 +77,7 @@ class ResolutionOption(Option):
         if type(res) == str:
             res = value.split('X')
 
-        return tuple([int(i) for i in res])
+        return [tuple([int(i) for i in res])]
 
 class ConfigSectionOption(Option):
     def __init__(self):

@@ -12,5 +12,7 @@ class Win32GetResolution(GetResolution):
     def get(self):
         import ctypes
 
-        return (ctypes.windll.user32.GetSystemMetrics(0),
-                ctypes.windll.user32.GetSystemMetrics(1))
+        return [(ctypes.windll.user32.GetSystemMetrics(0),
+                ctypes.windll.user32.GetSystemMetrics(1))]
+
+# Check EnumDisplatMonitors function in windll's for each screens offset from top-left screen

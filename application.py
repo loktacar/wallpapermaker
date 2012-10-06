@@ -2,6 +2,8 @@ import time
 import random
 import logging
 
+import pygame
+
 class Application:
     def __init__(self, config, ui=None):
         self.logger = logging.getLogger('root')
@@ -66,7 +68,7 @@ class Application:
             if g.platform_check():
                 return g.get()
 
-        return (0,0)
+        return None
 
     def set_wallpaper(self):
         for s in self.plugin_manager['SetWallpaper']:
@@ -79,40 +81,79 @@ class Application:
                 self.logger.debug('Loop start')
 
                 # Get resolution
+                # (width, height, x-offset, y-offset)
                 res_log_message = ''
-                if self.config['resolution'] == (0,0):
-                    self.resolution = self.get_resolution()
-                    res_log_message = 'Resolution plugin returned %dx%d'
+                if self.config['resolution'] == [(0,0)]:
+                    self.resolutions = self.get_resolution()
+                    res_log_message = 'Resolution plugin returned %s' % self.resolutions
                 else:
                     self.resolution = self.config['resolution']
-                    res_log_message = 'Resolution set to %dx%d by config'
-                self.logger.debug(res_log_message % (self.resolution[0], self.resolution[1]))
+                    res_log_message = 'Resolution set to %s by config' % self.resolutions[0]
+                self.logger.debug(res_log_message)
 
-                if self.resolution == (0,0):
+                if self.resolution == None:
                     raise ValueError('Resolution invalid')
 
-                # Create new collage
-                collage_plugin = None
-                # Find a random collage
-                if self.config['collage-plugin'] == 'all':
-                    collage_index = random.randint(0, len(self.plugin_manager['Collage']) - 1)
-                    collage_plugin = self.plugin_manager['Collage'][collage_index]
-                # Find configured collage
-                else:
-                    for c in self.plugin_manager['Collage']:
-                        if c.__class__.__name__ == self.config['collage-plugin']:
-                            collage_plugin = c
+                wps = []
+                total_width = 0
+                total_height = 0
 
-                    if collage_plugin == None:
-                        raise ValueError('Collage plugin not found')
+                # Find the maximum width + x-offset and height + y-offset
+                # Also create a wallpaper collage for each resolution
+                for i, resolution in enumerate(self.resolutions):
+                    if resolution[0] + resolution[2] > total_width:
+                        total_width = resolution[0] + resolution[2]
 
-                self.logger.debug('Generating collage, using plugin %s' % collage_plugin.__class__.__name__)
+                    if resolution[1] + resolution[3] > total_height:
+                        total_height = resolution[1] + resolution[3]
 
-                self.ui_hook('generate_starting', collage_plugin.__class__.__name__)
+                    # Create new collage
+                    collage_plugin = None
+                    # Find a random collage
+                    if self.config['collage-plugin'] == 'all':
+                        collage_index = random.randint(0, len(self.plugin_manager['Collage']) - 1)
+                        collage_plugin = self.plugin_manager['Collage'][collage_index]
+                    # Find configured collage
+                    else:
+                        for c in self.plugin_manager['Collage']:
+                            if c.__class__.__name__ == self.config['collage-plugin']:
+                                collage_plugin = c
 
-                # Generate collage
-                wp = collage_plugin.generate(self.resolution)
-                collage_plugin.save(wp, self.config['wallpaper'])
+                        if collage_plugin == None:
+                            raise ValueError('Collage plugin not found')
+
+                    self.logger.debug('Generating collage, using plugin %s' % collage_plugin.__class__.__name__)
+
+                    self.ui_hook('generate_starting', collage_plugin.__class__.__name__)
+
+                    # Generate collage
+                    wps.append(collage_plugin.generate(resolution[:2]))
+
+                # Merge collages
+                wallpaper = pygame.Surface((total_width, total_height))
+                wallpaper.lock()
+
+                print '%dx%d' % (total_width, total_height)
+
+                for i, resolution in enumerate(self.resolutions):
+                    #print 'wp %dx%d' % (wps[i].get_width(), wps[i].get_height())
+                    # Paste the corresponding wp in wps to wallpaper
+                    #for x1, x2 in enumerate(range(resolution[2], resolution[2] + resolution[0])):
+                        #for y1, y2 in enumerate(range(resolution[3], resolution[3] + resolution[1])):
+                            ##print '(%d, %d) and (%d, %d)' % (x1, y1, x2, y2)
+                            ##try:
+                                #wallpaper.set_at((x2, y2), wps[i].get_at((x1, y1)))
+                            ##except:
+                    #            #wallpaper.set_at((x2, y2), (0,0,0))
+                    for x1, x2 in enumerate(range(resolution[2], resolution[2] + resolution[0])):
+                        for y1, y2 in enumerate(range(resolution[3], resolution[3] + resolution[1])):
+                            #print '(%d, %d) and (%d, %d)' % (x1, y1, x2, y2)
+                            wallpaper.set_at((x2, y2), wps[i].get_at((x1, y1)))
+
+                    print i, resolution
+
+                wallpaper.unlock()
+                collage_plugin.save(wallpaper, self.config['wallpaper'])
                 self.set_wallpaper()
 
                 self.ui_hook('generate_finished')

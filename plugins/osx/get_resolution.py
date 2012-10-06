@@ -13,5 +13,8 @@ class DarwinGetResolution(GetResolution):
 
     def get(self):
         from AppKit import NSScreen
-        frame = NSScreen.mainScreen().frame()
-        return (int(frame.size.width), int(frame.size.height))
+
+        return [(int(screen.frame().size.width), int(screen.frame().size.height))
+            for screen in NSScreen.screens()]
+
+# TODO: Check AppKit documentation for NSScreen.screens().frame()'s offset from top left frame
