@@ -50,15 +50,7 @@ def main():
 def lowpriority():
     """ Set the priority of the process to below-normal."""
 
-    import sys
-    try:
-        sys.getwindowsversion()
-    except:
-        isWindows = False
-    else:
-        isWindows = True
-
-    if isWindows:
+    if sys.platform == 'win32':
         # Based on:
         #   "Recipe 496767: Set Process Priority In Windows" on ActiveState
         #   http://code.activestate.com/recipes/496767/
