@@ -13,14 +13,6 @@ class Console(UI):
         super(Console, self).app_initialized()
         print 'Application initialized.'
         print 
-        print 'Plugins loaded.'
-        loaded_plugins = self.app.loaded_plugins
-        using_plugins = self.app.using_plugins()
-        for plugins_key in loaded_plugins:
-            print plugins_key + ' plugins'
-            print '\t' + ("using '%s', " % using_plugins[plugins_key] if plugins_key in using_plugins else ' ')
-            print '\tloaded %s' % loaded_plugins[plugins_key]
-        print
 
     def app_quitting(self):
         print 'Application Quitting.'

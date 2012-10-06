@@ -75,10 +75,12 @@ class RectangleIterator(Collage):
             # calculate position (bounding box of same type as placement)
             pos = RectangleIterator.get_cell_position(i, size)
 
+            split.lock()
             # Add image to split
             for x1, x2 in enumerate(range(pos[0], pos[2]), offset[0]):
                 for y1, y2 in enumerate(range(pos[1], pos[3]), offset[1]):
                     split.set_at((x2, y2), wp.get_at((x1, y1)))
+            split.unlock()
 
         return split
 
@@ -119,9 +121,11 @@ class RectangleIterator(Collage):
         else:
             offset, wp = self._resize_wallpaper(new_wallpaper, cell_size)
 
+            self.last_collage.lock()
             for x1, x2 in enumerate(range(cell_pos[0], cell_pos[2]), offset[0]):
                 for y1, y2 in enumerate(range(cell_pos[1], cell_pos[3]), offset[1]):
                     self.last_collage.set_at((x2, y2), wp.get_at((x1, y1)))
+            self.last_collage.unlock()
 
             return self.last_collage
 

@@ -133,24 +133,11 @@ class Application:
                 wallpaper = pygame.Surface((total_width, total_height))
                 wallpaper.lock()
 
-                print '%dx%d' % (total_width, total_height)
-
                 for i, resolution in enumerate(self.resolutions):
-                    #print 'wp %dx%d' % (wps[i].get_width(), wps[i].get_height())
-                    # Paste the corresponding wp in wps to wallpaper
-                    #for x1, x2 in enumerate(range(resolution[2], resolution[2] + resolution[0])):
-                        #for y1, y2 in enumerate(range(resolution[3], resolution[3] + resolution[1])):
-                            ##print '(%d, %d) and (%d, %d)' % (x1, y1, x2, y2)
-                            ##try:
-                                #wallpaper.set_at((x2, y2), wps[i].get_at((x1, y1)))
-                            ##except:
-                    #            #wallpaper.set_at((x2, y2), (0,0,0))
                     for x1, x2 in enumerate(range(resolution[2], resolution[2] + resolution[0])):
                         for y1, y2 in enumerate(range(resolution[3], resolution[3] + resolution[1])):
                             #print '(%d, %d) and (%d, %d)' % (x1, y1, x2, y2)
                             wallpaper.set_at((x2, y2), wps[i].get_at((x1, y1)))
-
-                    print i, resolution
 
                 wallpaper.unlock()
                 collage_plugin.save(wallpaper, self.config['wallpaper'])
