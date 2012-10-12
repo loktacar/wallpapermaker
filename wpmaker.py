@@ -20,14 +20,14 @@ from plugins import plugin_manager
 
 # Read options and arguments
 from config import get_config
-config = get_config()
+config = get_config(plugin_manager['Option'])
 
 # Set plugins' config
 plugin_manager.set_config(config)
 
 # Find and set ui
 ui = None
-if config['ui'] is not None:
+if 'ui' in config and config['ui'] is not None:
     for plugin in plugin_manager['UI']:
         if plugin.__class__.__name__ == config['ui']:
             ui = plugin
@@ -67,5 +67,9 @@ def lowpriority():
 # ui and app should both be set, logging started and config read.
 # Let's start this thing
 if __name__ == '__main__':
-    lowpriority()
+    try:
+        lowpriority()
+    except:
+        pass
+
     main()

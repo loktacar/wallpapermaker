@@ -12,5 +12,5 @@ class Win32SetWallpaper(SetWallpaper):
     def set(self):
         import ctypes
 
-        ctypes.windll.user32.SystemParametersInfoA(20, 0, config['wallpaper'], 0)
+        ctypes.windll.user32.SystemParametersInfoA(20, 0, self.config['wallpaper'], 0)
 

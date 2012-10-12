@@ -35,7 +35,8 @@ class PluginManager:
             self.plugins[plugin_type] = []
 
         self.logger.debug('Searching for plugins')
-        plugins_found = self.find_plugins('plugins/', base_plugin_classes)
+
+        plugins_found = self.find_plugins(base_plugin_classes)
 
         for i, plugin_base in enumerate(base_plugin_classes):
             plugin_type = plugin_base.__name__
@@ -53,7 +54,7 @@ class PluginManager:
                 if issubclass(p.__class__, Plugin):
                     p.set_config(config)
 
-    def find_plugins(self, path, base_class):
+    def find_plugins(self, base_class):
         """
             finds all classes in path which inherit from base_class
         """
@@ -63,12 +64,37 @@ class PluginManager:
 
         subclasses = [[] for x in base_class]
 
+        path = os.path.dirname(os.path.realpath(__file__))
+
+        dir_seperator = ''
+
+        try:
+            path.index('/')
+            dir_seperator = '/'
+        except:
+            pass
+
+        try:
+            path.index('\\')
+            dir_seperator = '\\'
+        except:
+            pass
+
+        root_dir = path
+        if root_dir.rindex(dir_seperator) == len(root_dir) - 1:
+            root_dir = path[:path[:-1].rindex(dir_seperator) + 1]
+        else:
+            root_dir = path[:path.rindex(dir_seperator) + 1]
+
+
         # walk through files within path
         for root, dirs, files in os.walk(path):
             for name in files:
                 if name.endswith(".py") and not name.startswith("__"):
-                    path = os.path.join(root, name)
-                    modulename = path.rsplit('.', 1)[0].replace('/', '.').replace('\\', '.')
+                    curr_path = os.path.join(root, name).replace(root_dir, '')
+                    modulename = curr_path.rsplit('.', 1)[0]\
+                            .replace('/', '.')\
+                            .replace('\\', '.')
 
                     module = __import__(modulename, level=-1, fromlist=['*'])
 

@@ -22,12 +22,6 @@ class Collage(Plugin):
         """
         raise NotImplementedError()
 
-    def save(self, collage, filepath):
-        """
-            Save collage as image
-        """
-        pygame.image.save(collage, filepath)
-
     def _resize_wallpaper(self, wallpaper, size):
         """
             Resizes wallpaper to set size, conserves aspect ratio

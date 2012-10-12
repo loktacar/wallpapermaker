@@ -91,7 +91,7 @@ class Application:
                     res_log_message = 'Resolution set to %s by config' % self.resolutions[0]
                 self.logger.debug(res_log_message)
 
-                if self.resolution == None:
+                if self.resolution == None or self.resolution == []:
                     raise ValueError('Resolution invalid')
 
                 wps = []
@@ -136,11 +136,10 @@ class Application:
                 for i, resolution in enumerate(self.resolutions):
                     for x1, x2 in enumerate(range(resolution[2], resolution[2] + resolution[0])):
                         for y1, y2 in enumerate(range(resolution[3], resolution[3] + resolution[1])):
-                            #print '(%d, %d) and (%d, %d)' % (x1, y1, x2, y2)
                             wallpaper.set_at((x2, y2), wps[i].get_at((x1, y1)))
 
                 wallpaper.unlock()
-                collage_plugin.save(wallpaper, self.config['wallpaper'])
+                pygame.image.save(wallpaper, self.config['wallpaper'])
                 self.set_wallpaper()
 
                 self.ui_hook('generate_finished')
