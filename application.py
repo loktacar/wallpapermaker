@@ -8,6 +8,10 @@ class Application:
     def __init__(self, config, ui=None):
         self.logger = logging.getLogger('root')
 
+        # Check if path is set in config
+        if config['path'] == None:
+            raise ValueError('Path is not set in configuration')
+
         # Load plugins
         self.logger.debug('Loading plugins')
         from plugins import plugin_manager

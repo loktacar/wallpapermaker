@@ -33,7 +33,7 @@ class OutputOption(Option):
     def __init__(self):
         super(OutputOption, self).__init__()
 
-        self.default = self.parse('~/.wp.bmp')
+        self.default = self.parse('~%s.wp.bmp' % os.sep)
         self.option = 'wallpaper'
         self.cmd_argument = 'PATH'
         self.description = 'PATH to generated wallpaper'

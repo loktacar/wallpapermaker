@@ -66,25 +66,11 @@ class PluginManager:
 
         path = os.path.dirname(os.path.realpath(__file__))
 
-        dir_seperator = ''
-
-        try:
-            path.index('/')
-            dir_seperator = '/'
-        except:
-            pass
-
-        try:
-            path.index('\\')
-            dir_seperator = '\\'
-        except:
-            pass
-
         root_dir = path
-        if root_dir.rindex(dir_seperator) == len(root_dir) - 1:
-            root_dir = path[:path[:-1].rindex(dir_seperator) + 1]
+        if root_dir.rindex(os.sep) == len(root_dir) - 1:
+            root_dir = path[:path[:-1].rindex(os.sep) + 1]
         else:
-            root_dir = path[:path.rindex(dir_seperator) + 1]
+            root_dir = path[:path.rindex(os.sep) + 1]
 
 
         # walk through files within path

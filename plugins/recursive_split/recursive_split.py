@@ -22,7 +22,6 @@ class RecursiveSplit(Collage):
     def generate_split(self, split_size, wallpapers, i=0):
         split = pygame.Surface(split_size)
 
-        # TODO: Check this out, also note, split.unlock() below
         split.lock()
 
         # get cell size

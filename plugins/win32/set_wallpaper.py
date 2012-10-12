@@ -10,7 +10,15 @@ class Win32SetWallpaper(SetWallpaper):
         return sys.platform == 'win32'
 
     def set(self):
-        import ctypes
+        from win32com.shell import shell, shellcon
+        import pythoncom
 
-        ctypes.windll.user32.SystemParametersInfoA(20, 0, self.config['wallpaper'], 0)
+
+        pythoncom.CoInitialize()
+        iad = pythoncom.CoCreateInstance(shell.CLSID_ActiveDesktop, None,
+                pythoncom.CLSCTX_INPROC_SERVER, shell.IID_IActiveDesktop)
+        print self.config['wallpaper']
+        iad.SetWallpaper(self.config['wallpaper'], 0)
+        iad.SetWallpaperOptions(1, 0)
+        iad.ApplyChanges(shellcon.AD_APPLY_ALL)
 
