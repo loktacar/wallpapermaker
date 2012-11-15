@@ -10,6 +10,8 @@ class RecursiveSplit(Collage):
     def __init__(self):
         super(RecursiveSplit, self).__init__()
 
+        self.name = 'recursive split'
+
     def generate(self, size):
         wallpapers = self._get_wallpapers()
 
@@ -54,6 +56,10 @@ class RecursiveSplit(Collage):
         if i >= self.config['recursion-depth']:
             i_wp_count = 4
         else:
+            # This is a high split chance, create low and medium also
+            # MAYBE:
+            # (0, 4 + i*5) = medium
+            # (0, 4 + i*6) = low
             i_wp_count = random.randint(0, 4 + i*4)
             i_wp_count = i_wp_count if i_wp_count <= 4 else 4
 

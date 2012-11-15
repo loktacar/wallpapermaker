@@ -6,10 +6,9 @@ from plugins import plugin_manager
 class Wallpapers:
 
     def __init__(self, config):
-        # TODO: Maybe shuffle the wallpaper_plugins list each time the last one in the list is used.
         self.config = config
 
-        self.wallpaper_plugins = plugin_manager['WallpaperSearch']
+        self.wallpaper_plugins = plugin_manager['Source']
         self.plugin_index = 0
 
         self.logger = logging.getLogger('root')

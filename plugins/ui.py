@@ -56,5 +56,6 @@ class UI(Plugin):
 
     def start_generating(self, *args, **kwargs):
         """ Starts generation of new wallpaper """
+        self.app.pause(False)
         self.app.next_generation = time.time()
 

@@ -2,11 +2,16 @@ import pygame
 
 from plugin import Plugin
 
-class WallpaperSearch(Plugin):
+class Source(Plugin):
     def __init__(self):
-        super(WallpaperSearch, self).__init__()
+        super(Source, self).__init__()
 
         self.wallpapers = []
+
+    @staticmethod
+    def handles_path(path):
+        """ Checks if this implementation of Source plugin can handle a particular path """
+        raise NotImplementedError()
 
     def pop(self, count=1):
         raise NotImplementedError()

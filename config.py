@@ -65,7 +65,6 @@ def get_config(options):
         file_section = doc_options['--section']
     files_read = cfg.read(files)
 
-    print 'section:', file_section
     # Parse config file
     if len(files_read):
         if not cfg.has_section(file_section):

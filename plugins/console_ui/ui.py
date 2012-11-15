@@ -23,8 +23,8 @@ class Console(UI):
     def wallpaper_search_finished(self):
         print 'Search complete. Wallpaper count now at %d.' % self.app.wps.count()
 
-    def generate_starting(self, collage_name=''):
-        print 'Generating wallpaper%s... ' % (' using '+collage_name if collage_name else ''),
+    def generate_starting(self):
+        print 'Generating wallpaper... '
 
     def generate_finished(self):
         print 'Generation complete.'

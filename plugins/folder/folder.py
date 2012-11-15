@@ -3,13 +3,25 @@ import os
 
 import pygame
 
-from .. import WallpaperSearch
+from .. import Source
 
-class FolderSearch(WallpaperSearch):
-    def __init__(self):
-        super(FolderSearch, self).__init__()
+class Folder(Source):
+    def __init__(self, path):
+        super(Folder, self).__init__()
 
+        self.path = os.path.expanduser(path)
         self.index = -1
+
+    @staticmethod
+    def handles_path(path):
+        # Unix
+        if path[0] == '/' or path[0] == '~':
+            return True
+        # Windows local and network
+        elif path[1:3] == ':\\' or path[:2] == '\\\\':
+            return True
+
+        return False
 
     def pop(self, count=1):
         self.logger.debug('popping %d images' % count)
@@ -40,18 +52,17 @@ class FolderSearch(WallpaperSearch):
             yield wallpaper
 
     def _find_wallpapers(self):
-        os.path.walk(self.config['path'], self._folder_visit, [])
+        os.path.walk(self.path, self._folder_visit, [])
 
         count = self.count()
-        self.logger.debug('%s image%s in FolderSearch' % (count, '' if count == 1 else 's'))
+        self.logger.debug('%s image%s in %s' % (count, '' if count == 1 else 's', self.path))
 
     def _folder_visit(self, arg, dirpath, filenames):
         wallpaper_paths = [os.path.join(dirpath, filename) for filename in filenames]
         pushed_count = self._push(wallpaper_paths)
 
         if pushed_count:
-            rel_dirpath = dirpath[len(self.config['path']):]
-            self.logger.debug('%d wps pushed from %s' % (pushed_count, rel_dirpath if rel_dirpath else '\\'))
+            self.logger.debug('%d wps pushed from %s' % (pushed_count, dirpath))
 
     def _push(self, wallpaper_paths):
         """ Push wallpaper paths on to the list, wallpaper_paths can be a single filepath or a list of paths """

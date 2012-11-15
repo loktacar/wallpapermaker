@@ -2,19 +2,20 @@ import os
 
 from .. import Option
 
-class PathOption(Option):
+class SourceOption(Option):
     def __init__(self):
-        super(PathOption, self).__init__()
+        super(SourceOption, self).__init__()
 
         self.default = None
-        self.option = 'path'
-        self.cmd_argument = 'PATH'
-        self.description = 'PATH to the wallpaper folder'
-        self.conf_description = ['# path to the wallpaper folder. Not set by default\n',
+        self.option = 'sources'
+        self.cmd_argument = 'PATHS'
+        self.description = 'Sources of wallpapers'
+        self.conf_description = ['# Source of wallpapers, can be path or subreddit url. \n',
+                                 '# See source plugin documentation \n',
                                  '#   a tilde, ~, in paths is replaced with user directory path\n']
 
     def parse(self, value):
-        return os.path.expanduser(value)
+        return value
 
 class UpdatePeriodOption(Option):
     def __init__(self):
@@ -93,12 +94,12 @@ class CollageSelectionOption(Option):
         super(CollageSelectionOption, self).__init__()
 
         self.default = 'all'
-        self.option = 'collage-plugin'
+        self.option = 'collage-plugins'
         self.cmd_argument = 'COLLAGE'
         self.description = 'Which collage plugin should be used'
         self.conf_description = ['# which collage plugin should be used, acceptable values are:\n',
-                                 "#     - 'SimpleResize'\n",
-                                 "#     - 'RecursiveSplit'\n",
+                                 "#     - 'simple resize'\n",
+                                 "#     - 'recursive split'\n",
                                  "#     - 'all', plugin chosen at random\n"]
 
 class VerboseOption(Option):

@@ -10,6 +10,8 @@ class SimpleResize(Collage):
     def __init__(self):
         super(SimpleResize, self).__init__()
 
+        self.name = 'simple resize'
+
     def generate(self, size):
         wallpapers = self._get_wallpapers()
 

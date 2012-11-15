@@ -8,7 +8,7 @@ from get_resolution import GetResolution
 from set_wallpaper import SetWallpaper
 from option import Option
 from ui import UI
-from wallpaper_search import WallpaperSearch
+from source import Source
 
 base_plugin_classes = [
         Collage,
@@ -16,7 +16,7 @@ base_plugin_classes = [
         SetWallpaper,
         Option,
         UI,
-        WallpaperSearch
+        Source
     ]
 
 class PluginManager:
@@ -42,12 +42,43 @@ class PluginManager:
             plugin_type = plugin_base.__name__
 
             for plugin in plugins_found[i]:
-                self.plugins[plugin_type].append(plugin())
+                # I will create multiple instances of the Source plugins
+                if plugin_type == 'Source':
+                    self.plugins[plugin_type].append(plugin)
+                else:
+                    self.plugins[plugin_type].append(plugin())
 
     def __getitem__(self, key):
         return self.plugins[key]
 
     def set_config(self, config):
+        # Remove plugins not selected in the config
+
+        # Collage plugins
+        if not config['collage-plugins'] == 'all':
+            collages = config['collage-plugins'].lower().split(',')
+            collage_plugins = []
+
+            for p in self.plugins['Collage']:
+                if p.name in collages:
+                    collage_plugins.append(p)
+
+            if not len(collage_plugins):
+                raise ValueError('No collage plugins found.')
+
+            self.plugins['Collage'] = collage_plugins
+
+        # Source plugins
+        sources = config['sources'].split(',')
+        source_classes = self.plugins['Source']
+        self.plugins['Source'] = []
+
+        for s in sources:
+            for c in source_classes:
+                if c.handles_path(s):
+                    self.plugins['Source'].append(c(s))
+
+        # Now set the configuration
         for plu_type in self.plugins:
             plugins = self.plugins[plu_type]
             for p in plugins:
@@ -75,6 +106,7 @@ class PluginManager:
 
         # walk through files within path
         for root, dirs, files in os.walk(path):
+            # Go through files
             for name in files:
                 if name.endswith(".py") and not name.startswith("__"):
                     curr_path = os.path.join(root, name).replace(root_dir, '')
@@ -82,8 +114,10 @@ class PluginManager:
                             .replace('/', '.')\
                             .replace('\\', '.')
 
+                    # This is a python module, import it
                     module = __import__(modulename, level=-1, fromlist=['*'])
 
+                    # Go through each item in the list and check if they inherit from the base_classes
                     for key in module.__dict__:
                         possible_class = module.__dict__[key]
                         if inspect.isclass(possible_class):

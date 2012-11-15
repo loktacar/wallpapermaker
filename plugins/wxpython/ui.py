@@ -92,7 +92,8 @@ class wxPython(UI):
         self.menu.Check(self.pitem.GetId(), self.app.is_paused)
 
         for csi in self.collage_submenu_items:
-            if self.collage_submenu_items[csi] == self.app.config['collage-plugin']:
+            plugins = self.app.config['collage-plugins'].split(',')
+            if self.collage_submenu_items[csi] in plugins:
                 self.collage_submenu.Check(csi, True)
 
     def OnCollage(self, event):

@@ -9,8 +9,8 @@ class Application:
         self.logger = logging.getLogger('root')
 
         # Check if path is set in config
-        if config['path'] == None:
-            raise ValueError('Path is not set in configuration')
+        if config['sources'] == None:
+            raise ValueError('Sources is not set in configuration')
 
         # Load plugins
         self.logger.debug('Loading plugins')
@@ -102,6 +102,8 @@ class Application:
                 total_width = 0
                 total_height = 0
 
+                self.ui_hook('generate_starting')
+
                 # Find the maximum width + x-offset and height + y-offset
                 # Also create a wallpaper collage for each resolution
                 for i, resolution in enumerate(self.resolutions):
@@ -112,23 +114,11 @@ class Application:
                         total_height = resolution[1] + resolution[3]
 
                     # Create new collage
-                    collage_plugin = None
-                    # Find a random collage
-                    if self.config['collage-plugin'] == 'all':
-                        collage_index = random.randint(0, len(self.plugin_manager['Collage']) - 1)
-                        collage_plugin = self.plugin_manager['Collage'][collage_index]
-                    # Find configured collage
-                    else:
-                        for c in self.plugin_manager['Collage']:
-                            if c.__class__.__name__ == self.config['collage-plugin']:
-                                collage_plugin = c
-
-                        if collage_plugin == None:
-                            raise ValueError('Collage plugin not found')
+                    collage_index = random.randint(0, len(self.plugin_manager['Collage']) - 1)
+                    collage_plugin = self.plugin_manager['Collage'][collage_index]
 
                     self.logger.debug('Generating collage, using plugin %s' % collage_plugin.__class__.__name__)
 
-                    self.ui_hook('generate_starting', collage_plugin.__class__.__name__)
 
                     # Generate collage
                     wps.append(collage_plugin.generate(resolution[:2]))
