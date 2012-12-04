@@ -26,3 +26,7 @@ class Wallpapers:
     def count(self):
         return sum([q.count() for q in self.wallpaper_plugins])
 
+    def wallpaper_complete(self):
+        """ Calls methods of the same name in each wallpaper source plugin """
+        for wpp in self.wallpaper_plugins:
+            wpp.shuffle_check()

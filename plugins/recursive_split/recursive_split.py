@@ -48,32 +48,13 @@ class RecursiveSplit(Collage):
         split.unlock()
         return split
 
-    def _get_wallpapers(self, i=0):
+    def _get_wallpapers(self, i=1):
         # Get wallpaper for each split, breadth-first
-        wallpapers = []
+        wallpapers = self.wallpaper_source.pop(4)
 
-        # get a random amount of images
-        if i >= self.config['recursion-depth']:
-            i_wp_count = 4
-        else:
-            # This is a high split chance, create low and medium also
-            # MAYBE:
-            # (0, 4 + i*5) = medium
-            # (0, 4 + i*6) = low
-            i_wp_count = random.randint(0, 4 + i*4)
-            i_wp_count = i_wp_count if i_wp_count <= 4 else 4
-
-        wallpapers = self.wallpaper_source.pop(i_wp_count)
-
-        # add empty list where splits will happen, i.e. where actual images are missing
-        if i_wp_count < 4:
-            i_splits = 4 - i_wp_count
-            for j in range(i_splits):
-                wallpapers.insert(random.randint(0, len(wallpapers)), [])
-
-        # fill the lists
-        for index, wp in enumerate(wallpapers):
-            if type(wp) is list:
-                wallpapers[index] = self._get_wallpapers(i+1)
+        if i < self.config['recursion-depth']:
+            for n in range(4):
+                if not random.randint(0, i*(3)):
+                    wallpapers[n] = self._get_wallpapers(i+1)
 
         return wallpapers

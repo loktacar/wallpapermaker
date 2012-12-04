@@ -142,6 +142,9 @@ class Application:
                     self.logger.debug('Single run, exiting')
                     break
 
+                # Shuffle wallpapers
+                self.wallpaper_source.wallpaper_complete()
+
                 self.next_generation = time.time() + self.config['update']
                 self.logger.debug('Loop end, waiting untill %s' %
                         time.strftime('%X', time.localtime(self.next_generation)))

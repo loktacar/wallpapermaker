@@ -26,22 +26,19 @@ class Folder(Source):
     def pop(self, count=1):
         self.logger.debug('popping %d images' % count)
 
-        self._find_wallpapers()
-
+        # If this is the first run, find images and shuffle
         if self.index == -1:
             self._shuffle()
+            self.index = 0
 
         i = 0
         while i < count:
-            if self.index < len(self.wallpapers):
-                wallpaper_path = self.wallpapers[self.index]
-            else:
-                wallpaper_path = self.wallpapers[self.index % len(self.wallpapers)]
+            wallpaper_path = self.wallpapers[self.index % len(self.wallpapers)]
 
             # Create pygame image
             try:
                 wallpaper = self._image_from_path(wallpaper_path)
-            except IOError:
+            except:
                 self.logger.Error('Failed to find wallpaper %s' % wallpaper)
                 self.wallpapers.remove(wallpaper)
                 continue
@@ -90,10 +87,15 @@ class Folder(Source):
 
         return False
 
+    def wallpaper_complete(self):
+        if self.index >= len(self.wallpapers):
+            self._shuffle()
+
     def _shuffle(self):
         """ Shuffles the wallpaper queue """
         self.logger.debug('Shuffling wallpaper queue')
 
+        self._find_wallpapers()
+
         random.shuffle(self.wallpapers)
         self.index = 0
-

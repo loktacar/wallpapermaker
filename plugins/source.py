@@ -27,3 +27,6 @@ class Source(Plugin):
 
         return wallpaper
 
+    def wallpaper_complete(self):
+        """ Called when the wallpaper is complete """
+        pass
