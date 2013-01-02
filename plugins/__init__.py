@@ -48,42 +48,86 @@ class PluginManager:
                 else:
                     self.plugins[plugin_type].append(plugin())
 
+        # list of active plugins
+        self.active = {}
+        for key in self.plugins:
+            self.active[key] = self.plugins[key]
+        # implemented like this, instead of
+        # self.active = self.plugins,
+        # to circumvent problems with setting
+        # self.active[key] would override self.plugins[key]
+
     def __getitem__(self, key):
-        return self.plugins[key]
+        return self.active[key]
 
     def set_config(self, config):
-        # Remove plugins not selected in the config
-
-        # Collage plugins
-        if not config['collage-plugins'] == 'all':
-            collages = config['collage-plugins'].lower().split(',')
-            collage_plugins = []
-
-            for p in self.plugins['Collage']:
-                if p.name in collages:
-                    collage_plugins.append(p)
-
-            if not len(collage_plugins):
-                raise ValueError('No collage plugins found.')
-
-            self.plugins['Collage'] = collage_plugins
-
-        # Source plugins
-        sources = config['sources'].split(',')
-        source_classes = self.plugins['Source']
-        self.plugins['Source'] = []
-
-        for s in sources:
-            for c in source_classes:
-                if c.handles_path(s):
-                    self.plugins['Source'].append(c(s))
-
-        # Now set the configuration
+        # Set the configuration
         for plu_type in self.plugins:
             plugins = self.plugins[plu_type]
             for p in plugins:
                 if issubclass(p.__class__, Plugin):
                     p.set_config(config)
+
+        # Activate the plugins selected in config
+
+        # Collage plugins
+        if not config['collage-plugins'] == 'all':
+            collages = config['collage-plugins'].lower().split(',')
+            self.active['Collage'] = []
+
+            for p in self.plugins['Collage']:
+                if p.name in collages:
+                    self.active['Collage'].append(p)
+
+            if not len(self.active['Collage']):
+                raise ValueError('No collage plugins found.')
+
+        # Source plugins
+        sources = config['sources'].split(',')
+        self.active['Source'] = []
+
+        for s in sources:
+            for c in self.plugins['Source']:
+                if c.handles_path(s):
+                    self.active['Source'].append(c(s))
+
+    def toggle_collage(self, collage_name, activate=True):
+        # Find the collage
+        collage = None
+        for c in self.plugins['Collage']:
+            if c.name == collage_name:
+                collage = c
+
+        if not collage:
+            raise ValueError("Collage, named '%s', not found" % collage_name)
+
+        # Check if (de)activation is redundant
+        if activate and collage in self.active['Collage']:
+            self.logger.debug('Failed to activate %s, %s is active' % (collage_name, collage_name))
+            return False
+        if not activate and not collage in self.active['Collage']:
+            self.logger.debug('Failed to deactivate %s, %s is inactive' % (collage_name, collage_name))
+            return False
+
+        # (De)activate
+        if activate:
+            self.active['Collage'].append(collage)
+            self.logger.debug('Activating %s' % collage_name)
+        else:
+            self.active['Collage'].remove(collage)
+            self.logger.debug('Deactivating %s' % collage_name)
+
+        # If none of the collages are active, activate all
+        if not len(self.active['Collage']):
+            self.logger.debug('No active collages, activating all of them')
+            self.active['Collage'] = self.plugins['Collage']
+            c_names = [c.name for c in self.active['Collage']]
+            activated = {}
+            for c in c_names:
+                activated[c] = True
+            return activated
+
+        return {collage_name: activate}
 
     def find_plugins(self, base_class):
         """

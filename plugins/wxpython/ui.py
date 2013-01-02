@@ -35,17 +35,19 @@ class wxPython(UI):
         submenu_item_index_start = 4000
         submenu_item_index = submenu_item_index_start
         self.collage_submenu = wx.Menu()
-        csi_all = self.collage_submenu.Append(submenu_item_index, 'all', 'all', kind=wx.ITEM_RADIO)
-        self.collage_submenu_items = {submenu_item_index: 'all'}
+        self.collage_submenu_items = {}
 
-        for cp in self.app.plugin_manager['Collage']:
-            cp_name = cp.__class__.__name__
+        for cp in self.app.plugin_manager.plugins['Collage']:
+            class_name = cp.__class__.__name__
+            collage_name = cp.name
             submenu_item_index += 1
-            self.collage_submenu_items[submenu_item_index] = cp_name
+            self.collage_submenu_items[submenu_item_index] = collage_name
             self.collage_submenu.Append(submenu_item_index,
-                                        cp_name,
-                                        cp_name,
-                                        kind=wx.ITEM_RADIO)
+                                              collage_name,
+                                              collage_name,
+                                              kind=wx.ITEM_CHECK)
+            if cp in self.app.plugin_manager['Collage']:
+                self.collage_submenu.Check(submenu_item_index, True)
 
         self.ui_app.Bind(wx.EVT_MENU_RANGE, self.OnCollage, id=submenu_item_index_start, id2=submenu_item_index)
 
@@ -91,14 +93,9 @@ class wxPython(UI):
     def OnUpdateTick(self, event):
         self.menu.Check(self.pitem.GetId(), self.app.is_paused)
 
-        for csi in self.collage_submenu_items:
-            plugins = self.app.config['collage-plugins'].split(',')
-            if self.collage_submenu_items[csi] in plugins:
-                self.collage_submenu.Check(csi, True)
-
     def OnCollage(self, event):
-        self.app.switch_collage_plugin(self.collage_submenu_items[event.GetId()])
-        self.logger.debug('Changing collage to %s' % collage)
+        collage = self.collage_submenu_items[event.GetId()]
+        self.app.toggle_collage(collage, activate=event.IsChecked())
 
     # Following methods are called from the application, via ui hooks
 
@@ -108,4 +105,11 @@ class wxPython(UI):
 
     def app_initialized(self):
         self.initialize_gui()
+
+    def toggle_collage(self, collage_name, activate):
+        """ Called when collage plugin is (de)activated """
+
+        for csi in self.collage_submenu_items:
+            if self.collage_submenu_items[csi] == collage_name:
+                self.collage_submenu.Check(csi, activate)
 
