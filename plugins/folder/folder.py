@@ -23,6 +23,12 @@ class Folder(Source):
 
         return False
 
+    def set_path(self, path):
+        self.wallpapers = []
+        self.index = -1
+        self.path = path
+        self.logger.debug('Changing folder path to %s' % self.path)
+
     def pop(self, count=1):
         self.logger.debug('popping %d images' % count)
 
@@ -39,7 +45,7 @@ class Folder(Source):
             try:
                 wallpaper = self._image_from_path(wallpaper_path)
             except:
-                self.logger.Error('Failed to find wallpaper %s' % wallpaper)
+                self.logger.error('Failed to find wallpaper %s' % wallpaper)
                 self.wallpapers.remove(wallpaper)
                 continue
 

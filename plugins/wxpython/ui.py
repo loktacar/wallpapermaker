@@ -1,3 +1,4 @@
+import os
 import threading
 
 import wx
@@ -31,6 +32,8 @@ class wxPython(UI):
         self.menu.Check(self.pitem.GetId(), True)
         self.menu.Append(wx.ID_SEPARATOR)
 
+        self.sel_dir_item = self.menu.Append(wx.ID_ANY, '&Select Folder', 'Select a new wallpaper folder')
+
         # TODO: Need to implement a better way to store and use the collage submenu
         submenu_item_index_start = 4000
         submenu_item_index = submenu_item_index_start
@@ -54,6 +57,7 @@ class wxPython(UI):
 
         self.qitem = self.menu.Append(wx.ID_EXIT, '&Quit', 'Quit application')
 
+        wx.EVT_MENU(self.tbicon, self.sel_dir_item.GetId(), self.OnFolderSelect)
         wx.EVT_MENU(self.tbicon, self.gitem.GetId(), self.start_generating)
         wx.EVT_MENU(self.tbicon, self.pitem.GetId(), self.OnPauseSelected)
         wx.EVT_MENU(self.tbicon, self.qitem.GetId(), self.exit_app)
@@ -99,6 +103,17 @@ class wxPython(UI):
     def OnCollage(self, event):
         self.app.switch_collage_plugin(self.collage_submenu_items[event.GetId()])
         self.logger.debug('Changing collage to %s' % collage)
+
+    def OnFolderSelect(self, event):
+        dialog = wx.DirDialog(None, message='Pick a directory', defaultPath=os.path.expanduser('~'))
+
+        if dialog.ShowModal() == wx.ID_OK:
+            path = dialog.GetPath()
+            for source in self.app.plugin_manager['Source']:
+                if source.__class__.handles_path(path):
+                    source.set_path(path)
+
+        dialog.Destroy()
 
     # Following methods are called from the application, via ui hooks
 
