@@ -32,7 +32,7 @@ class Application:
         from wallpapers import Wallpapers
         self.wallpaper_source = Wallpapers(self.config)
 
-        for collage in self.plugin_manager['Collage']:
+        for collage in self.plugin_manager.plugins['Collage']:
             collage.wallpaper_source = self.wallpaper_source
 
         self.resolution = (0,0)
@@ -56,8 +56,11 @@ class Application:
 
         self.logger.debug('app is %spaused' % ('' if self.is_paused else 'un'))
 
-    def switch_collage_plugin(self, collage):
-        self.next_collage_plugin = collage
+    def toggle_collage(self, collage_name, activate=True):
+        # Toggle the collage, if successful call the ui_hook
+        toggled_collage = self.plugin_manager.toggle_collage(collage_name, activate=activate)
+        for c in toggled_collage:
+            self.ui_hook('toggle_collage', c, activate=toggled_collage[c])
 
     def ui_hook(self, hook_name, *args, **kwargs):
         if self.ui is not None:
@@ -150,10 +153,6 @@ class Application:
                         time.strftime('%X', time.localtime(self.next_generation)))
 
             time.sleep(self.sleep_increment)
-
-            if self.next_collage_plugin is not None:
-                self.config['collage-plugin'] = self.next_collage_plugin
-                self.next_collage_plugin = None
 
         self.ui_hook('app_quitting')
 

@@ -3,7 +3,6 @@ import sys
 
 from application import Application
 
-
 # Check if verbose
 verbose = False
 for arg in sys.argv:
@@ -70,6 +69,7 @@ if __name__ == '__main__':
     try:
         lowpriority()
     except:
-        pass
+        # TODO: Make this a logger call not a direct print
+        print 'Low priority not set, exception occurred!'
 
     main()
