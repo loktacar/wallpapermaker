@@ -10,9 +10,11 @@ for arg in sys.argv:
         verbose = True
 
 # Start logger
-import log
 import logging
-logger = log.setup_custom_logger('root', logging.DEBUG if verbose else logging.ERROR)
+logging.basicConfig(format='%(asctime)s - %(thread)d - %(pathname)s:%(lineno)d - %(funcName)s()\n%(message)s\n',
+                    filename='last_run.log',
+                    filemode='w',
+                    level=logging.DEBUG)
 
 # Load all plugins
 from plugins import plugin_manager

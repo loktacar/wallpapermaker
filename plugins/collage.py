@@ -1,5 +1,6 @@
 ### Base class for Collage plugins ###
 import math
+import logging
 
 import pygame
 
@@ -43,7 +44,7 @@ class Collage(Plugin):
         try:
             wallpaper = pygame.transform.smoothscale(wallpaper, new_size)
         except ValueError:
-            self.logger.debug('bit-depth error, using crappy scaling')
+            logging.debug('bit-depth error, using crappy scaling')
             wallpaper = pygame.transform.scale(wallpaper, new_size)
 
         # Height or width might be too large

@@ -6,14 +6,12 @@ import pygame
 
 class Application:
     def __init__(self, config, ui=None):
-        self.logger = logging.getLogger('root')
-
         # Check if path is set in config
         if config['sources'] == None:
             raise ValueError('Sources is not set in configuration')
 
         # Load plugins
-        self.logger.debug('Loading plugins')
+        logging.debug('Loading plugins')
         from plugins import plugin_manager
         self.plugin_manager = plugin_manager
 
@@ -28,7 +26,7 @@ class Application:
         self.config = config
 
         # Initialize wallpaper class
-        self.logger.debug('Initialize wallpapers')
+        logging.debug('Initialize wallpapers')
         from wallpapers import Wallpapers
         self.wallpaper_source = Wallpapers(self.config)
 
@@ -54,7 +52,7 @@ class Application:
         else:
             self.is_paused = paused_value
 
-        self.logger.debug('app is %spaused' % ('' if self.is_paused else 'un'))
+        logging.debug('app is %spaused' % ('' if self.is_paused else 'un'))
 
     def toggle_collage(self, collage_name, activate=True):
         # Toggle the collage, if successful call the ui_hook
@@ -65,10 +63,10 @@ class Application:
     def ui_hook(self, hook_name, *args, **kwargs):
         if self.ui is not None:
             if hook_name in self.ui.__class__.__dict__:
-                self.logger.debug('ui hook %s called' % hook_name)
+                logging.debug('ui hook %s called' % hook_name)
                 getattr(self.ui, hook_name)(*args, **kwargs)
             else:
-                self.logger.debug('ui hook %s not implemented' % hook_name)
+                logging.debug('ui hook %s not implemented' % hook_name)
 
     def get_resolution(self):
         for g in self.plugin_manager['GetResolution']:
@@ -85,7 +83,7 @@ class Application:
     def main(self):
         while(self.running):
             if time.time() >= self.next_generation and not self.is_paused:
-                self.logger.debug('Loop start')
+                logging.debug('Loop start')
 
                 # Get resolution
                 # (width, height, x-offset, y-offset)
@@ -96,7 +94,7 @@ class Application:
                 else:
                     self.resolution = self.config['resolution']
                     res_log_message = 'Resolution set to %s by config' % self.resolutions[0]
-                self.logger.debug(res_log_message)
+                logging.debug(res_log_message)
 
                 if self.resolution == None or self.resolution == []:
                     raise ValueError('Resolution invalid')
@@ -120,7 +118,7 @@ class Application:
                     collage_index = random.randint(0, len(self.plugin_manager['Collage']) - 1)
                     collage_plugin = self.plugin_manager['Collage'][collage_index]
 
-                    self.logger.debug('Generating collage, using plugin %s' % collage_plugin.__class__.__name__)
+                    logging.debug('Generating collage, using plugin %s' % collage_plugin.__class__.__name__)
 
 
                     # Generate collage
@@ -142,14 +140,14 @@ class Application:
                 self.ui_hook('generate_finished')
 
                 if self.config['single-run']:
-                    self.logger.debug('Single run, exiting')
+                    logging.debug('Single run, exiting')
                     break
 
                 # Shuffle wallpapers
                 self.wallpaper_source.wallpaper_complete()
 
                 self.next_generation = time.time() + self.config['update']
-                self.logger.debug('Loop end, waiting untill %s' %
+                logging.debug('Loop end, waiting untill %s' %
                         time.strftime('%X', time.localtime(self.next_generation)))
 
             time.sleep(self.sleep_increment)

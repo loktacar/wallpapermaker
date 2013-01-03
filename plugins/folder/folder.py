@@ -1,5 +1,6 @@
 import random
 import os
+import logging
 
 import pygame
 
@@ -27,10 +28,10 @@ class Folder(Source):
         self.wallpapers = []
         self.index = -1
         self.path = path
-        self.logger.debug('Changing folder path to %s' % self.path)
+        logging.debug('Changing folder path to %s' % self.path)
 
     def pop(self, count=1):
-        self.logger.debug('popping %d images' % count)
+        logging.debug('popping %d images' % count)
 
         # If this is the first run, find images and shuffle
         if self.index == -1:
@@ -45,7 +46,7 @@ class Folder(Source):
             try:
                 wallpaper = self._image_from_path(wallpaper_path)
             except:
-                self.logger.error('Failed to find wallpaper %s' % wallpaper)
+                logging.error('Failed to find wallpaper %s' % wallpaper)
                 self.wallpapers.remove(wallpaper)
                 continue
 
@@ -58,14 +59,14 @@ class Folder(Source):
         os.path.walk(self.path, self._folder_visit, [])
 
         count = self.count()
-        self.logger.debug('%s image%s in %s' % (count, '' if count == 1 else 's', self.path))
+        logging.debug('%s image%s in %s' % (count, '' if count == 1 else 's', self.path))
 
     def _folder_visit(self, arg, dirpath, filenames):
         wallpaper_paths = [os.path.join(dirpath, filename) for filename in filenames]
         pushed_count = self._push(wallpaper_paths)
 
         if pushed_count:
-            self.logger.debug('%d wps pushed from %s' % (pushed_count, dirpath))
+            logging.debug('%d wps pushed from %s' % (pushed_count, dirpath))
 
     def _push(self, wallpaper_paths):
         """ Push wallpaper paths on to the list, wallpaper_paths can be a single filepath or a list of paths """
@@ -99,7 +100,7 @@ class Folder(Source):
 
     def _shuffle(self):
         """ Shuffles the wallpaper queue """
-        self.logger.debug('Shuffling wallpaper queue')
+        logging.debug('Shuffling wallpaper queue')
 
         self._find_wallpapers()
 

@@ -1,5 +1,6 @@
 import random
 import math
+import logging
 
 import pygame
 
@@ -15,9 +16,9 @@ class RecursiveSplit(Collage):
     def generate(self, size):
         wallpapers = self._get_wallpapers()
 
-        self.logger.debug('Generating...')
+        logging.debug('Generating...')
         collage = self.generate_split(size, wallpapers)
-        self.logger.debug('Generation complete')
+        logging.debug('Generation complete')
 
         return collage
 

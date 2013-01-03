@@ -1,5 +1,6 @@
 import os
 import threading
+import logging
 
 import wx
 
@@ -10,7 +11,7 @@ class wxPython(UI):
         super(wxPython, self).__init__()
 
     def initialize_gui(self):
-        self.logger.debug('initializing gui...')
+        logging.debug('initializing gui...')
         #setup app
         self.ui_app = wx.PySimpleApp()
 
@@ -72,7 +73,7 @@ class wxPython(UI):
     # App Control functions
 
     def start_app(self):
-        self.logger.debug('Application and UI starting')
+        logging.debug('Application and UI starting')
         self.thread = threading.Thread(target=self.app.main)
         self.thread.setDaemon(True)
         self.thread.start()
@@ -84,7 +85,7 @@ class wxPython(UI):
         self.ui_app.ExitMainLoop()
         self.ui_app.Exit()
 
-        self.logger.debug('Application exited, goodbye!')
+        logging.debug('Application exited, goodbye!')
 
     # wxEvents
 

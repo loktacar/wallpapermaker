@@ -26,15 +26,14 @@ class PluginManager:
     """
 
     def __init__(self):
-        self.logger = logging.getLogger('root')
-        self.logger.debug('Plugin manager initializing')
+        logging.debug('Plugin manager initializing')
 
         self.plugins = {}
         for plugin_base in base_plugin_classes:
             plugin_type = plugin_base.__name__
             self.plugins[plugin_type] = []
 
-        self.logger.debug('Searching for plugins')
+        logging.debug('Searching for plugins')
 
         plugins_found = self.find_plugins(base_plugin_classes)
 
@@ -103,23 +102,23 @@ class PluginManager:
 
         # Check if (de)activation is redundant
         if activate and collage in self.active['Collage']:
-            self.logger.debug('Failed to activate %s, %s is active' % (collage_name, collage_name))
+            logging.debug('Failed to activate %s, %s is active' % (collage_name, collage_name))
             return False
         if not activate and not collage in self.active['Collage']:
-            self.logger.debug('Failed to deactivate %s, %s is inactive' % (collage_name, collage_name))
+            logging.debug('Failed to deactivate %s, %s is inactive' % (collage_name, collage_name))
             return False
 
         # (De)activate
         if activate:
             self.active['Collage'].append(collage)
-            self.logger.debug('Activating %s' % collage_name)
+            logging.debug('Activating %s' % collage_name)
         else:
             self.active['Collage'].remove(collage)
-            self.logger.debug('Deactivating %s' % collage_name)
+            logging.debug('Deactivating %s' % collage_name)
 
         # If none of the collages are active, activate all
         if not len(self.active['Collage']):
-            self.logger.debug('No active collages, activating all of them')
+            logging.debug('No active collages, activating all of them')
             self.active['Collage'] = self.plugins['Collage']
             c_names = [c.name for c in self.active['Collage']]
             activated = {}
@@ -168,7 +167,7 @@ class PluginManager:
                             for i, b_class in enumerate(base_class):
                                 if issubclass(possible_class, b_class) and \
                                         not possible_class.__name__ == b_class.__name__:
-                                    self.logger.debug('add - %s.%s' % (modulename, possible_class.__name__))
+                                    logging.debug('add - %s.%s' % (modulename, possible_class.__name__))
                                     subclasses[i].append(possible_class)
 
         return subclasses

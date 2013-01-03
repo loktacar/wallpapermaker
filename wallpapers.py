@@ -11,8 +11,6 @@ class Wallpapers:
         self.wallpaper_plugins = plugin_manager['Source']
         self.plugin_index = 0
 
-        self.logger = logging.getLogger('root')
-
     def pop(self, count=1):
         if self.plugin_index >= len(self.wallpaper_plugins):
             self.plugin_index = 0

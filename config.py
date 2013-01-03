@@ -12,8 +12,6 @@ appname = 'wpmaker'
 appauthor = 'viktor'
 config_file_name = '%s.conf' % appname
 
-logger = logging.getLogger('root')
-
 def get_appdirs_paths():
     appdirs = AppDirs(appname, appauthor)
     dirs = (appdirs.user_data_dir, appdirs.site_data_dir)
@@ -39,7 +37,7 @@ Configuration files:
     return doc
 
 def get_config(options):
-    logger.debug('Reading config file and parsing options')
+    logging.debug('Reading config file and parsing options')
 
     from docopt import docopt
     doc_options = docopt(get_doc(options))

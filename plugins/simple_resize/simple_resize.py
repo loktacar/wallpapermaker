@@ -15,7 +15,7 @@ class SimpleResize(Collage):
     def generate(self, size):
         wallpapers = self._get_wallpapers()
 
-        self.logger.debug('Generating...')
+        logging.debug('Generating...')
 
         collage = pygame.Surface(size)
 
@@ -25,7 +25,7 @@ class SimpleResize(Collage):
             for y1, y2 in enumerate(range(size[1]), wp_offset[1]):
                 collage.set_at((x2, y2), wp.get_at((x1, y1)))
 
-        self.logger.debug('Generation complete')
+        logging.debug('Generation complete')
 
         return collage
 
