@@ -11,7 +11,7 @@ for arg in sys.argv:
 
 # Start logger
 import logging
-logging.basicConfig(format='%(asctime)s - %(thread)d - %(pathname)s:%(lineno)d - %(funcName)s()\n%(message)s\n',
+logging.basicConfig(format='%(levelname)s (%(threadName)s): %(message)s\n%(pathname)s:%(lineno)d @ %(asctime)s\n',
                     filename='last_run.log',
                     filemode='w',
                     level=logging.DEBUG)
