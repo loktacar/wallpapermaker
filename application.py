@@ -11,7 +11,6 @@ class Application:
             raise ValueError('Sources is not set in configuration')
 
         # Load plugins
-        logging.debug('Loading plugins')
         from plugins import plugin_manager
         self.plugin_manager = plugin_manager
 
@@ -20,18 +19,19 @@ class Application:
         if self.ui is not None:
             self.ui.app = self
 
-        self.ui_hook('app_started')
+        self.plugin_manager.plugin_hook('app_started')
 
         # Set config
         self.config = config
+        # Tell the plugins we've got a configuration
+        self.plugin_manager.plugin_hook('set_config', self.config)
 
         # Initialize wallpaper class
         logging.debug('Initialize wallpapers')
         from wallpapers import Wallpapers
         self.wallpaper_source = Wallpapers(self.config)
-
-        for collage in self.plugin_manager.plugins['Collage']:
-            collage.wallpaper_source = self.wallpaper_source
+        # Tell the plugins we've got a wallpaper source
+        self.plugin_manager.plugin_hook('set_source', self.wallpaper_source)
 
         self.resolution = (0,0)
 
@@ -44,7 +44,7 @@ class Application:
         # Variables relating to ui changes
         self.next_collage_plugin = None
 
-        self.ui_hook('app_initialized')
+        self.plugin_manager.plugin_hook('app_initialized')
 
     def pause(self, paused_value=None):
         if paused_value is None:
@@ -55,30 +55,10 @@ class Application:
         logging.debug('app is %spaused' % ('' if self.is_paused else 'un'))
 
     def toggle_collage(self, collage_name, activate=True):
-        # Toggle the collage, if successful call the ui_hook
+        # Toggle the collage, if successful call the plugin_hook
         toggled_collage = self.plugin_manager.toggle_collage(collage_name, activate=activate)
         for c in toggled_collage:
-            self.ui_hook('toggle_collage', c, activate=toggled_collage[c])
-
-    def ui_hook(self, hook_name, *args, **kwargs):
-        if self.ui is not None:
-            if hook_name in self.ui.__class__.__dict__:
-                logging.debug('ui hook %s called' % hook_name)
-                getattr(self.ui, hook_name)(*args, **kwargs)
-            else:
-                logging.debug('ui hook %s not implemented' % hook_name)
-
-    def get_resolution(self):
-        for g in self.plugin_manager['GetResolution']:
-            if g.platform_check():
-                return g.get()
-
-        return None
-
-    def set_wallpaper(self):
-        for s in self.plugin_manager['SetWallpaper']:
-            if s.platform_check():
-                return s.set()
+            self.plugin_manager.plugin_hook('toggle_collage', c, activate=toggled_collage[c])
 
     def main(self):
         while(self.running):
@@ -89,11 +69,11 @@ class Application:
                 # (width, height, x-offset, y-offset)
                 res_log_message = ''
                 if self.config['resolution'] == [(0,0)]:
-                    self.resolutions = self.get_resolution()
+                    self.resolutions = self.plugin_manager['GetResolution'][0].get()
                     res_log_message = 'Resolution plugin returned %s' % self.resolutions
                 else:
                     self.resolution = self.config['resolution']
-                    res_log_message = 'Resolution set to %s by config' % self.resolutions[0]
+                    res_log_message = 'Resolution set to %s by config' % self.resolutions
                 logging.debug(res_log_message)
 
                 if self.resolution == None or self.resolution == []:
@@ -103,7 +83,7 @@ class Application:
                 total_width = 0
                 total_height = 0
 
-                self.ui_hook('generate_starting')
+                self.plugin_manager.plugin_hook('generate_starting')
 
                 # Find the maximum width + x-offset and height + y-offset
                 # Also create a wallpaper collage for each resolution
@@ -135,9 +115,11 @@ class Application:
 
                 wallpaper.unlock()
                 pygame.image.save(wallpaper, self.config['wallpaper'])
-                self.set_wallpaper()
 
-                self.ui_hook('generate_finished')
+                if len(self.plugin_manager['SetWallpaper']):
+                    self.plugin_manager['SetWallpaper'][0].set()
+
+                self.plugin_manager.plugin_hook('generate_finished')
 
                 if self.config['single-run']:
                     logging.debug('Single run, exiting')
@@ -152,5 +134,5 @@ class Application:
 
             time.sleep(self.sleep_increment)
 
-        self.ui_hook('app_quitting')
+        self.plugin_manager.plugin_hook('app_quitting')
 

@@ -1,44 +1,47 @@
-class Option(object):
+from plugin import Plugin
+
+class Option(Plugin):
     """
         Base class for option plugins
     """
 
-    def __init__(self):
-        # Default value, if default is None, option is required to be set to something else
-        self.default = None
+    # Default value, if default is None, option is required to be set to something else
+    default = None
 
-        # Option name
-        self.option = None
+    # Option name
+    option = None
 
-        # Short command line option
-        self.cmd_short = None
-        # Command line argument name
-        self.cmd_argument = None
+    # Short command line option
+    cmd_short = None
+    # Command line argument name
+    cmd_argument = None
 
-        # Description, duhh
-        self.description = ''
+    # Description, duhh
+    description = ''
 
-        # Config file description
-        self.conf_description = """"""
-        self.conf_default = None # if option is set to none, self.default is used
+    # Config file description
+    conf_description = """"""
+    conf_default = None # if option is set to none, default is used
 
-    def parse(self, value):
+    @staticmethod
+    def parse(value):
         return value
 
-    def get_doc_line(self):
+    @classmethod
+    def get_doc_line(cls):
         s = ' '*4
 
-        if self.cmd_short is not None:
-            s += '-%s ' % self.cmd_short
+        if cls.cmd_short is not None:
+            s += '-%s ' % cls.cmd_short
 
-        if self.option is not None:
-            s += '--%s' % self.option
+        if cls.option is not None:
+            s += '--%s' % cls.option
 
-        if self.cmd_argument is not None:
-            s += '=%s' % self.cmd_argument
+        if cls.cmd_argument is not None:
+            s += '=%s' % cls.cmd_argument
 
         s += ' ' * (30 - len(s))
 
-        s += self.description
+        s += cls.description
 
         return s

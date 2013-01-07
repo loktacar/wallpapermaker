@@ -17,6 +17,24 @@ class Collage(Plugin):
 
         self.wallpaper_source = None
 
+    @staticmethod
+    def get_instances(plugins, config):
+        collages = config['collage-plugins']
+
+        if not collages == 'all':
+            collages = collages.split(',')
+            collages = [c.strip() for c in collages]
+
+        instances = []
+        for plugin in plugins:
+            if plugin.name in collages or collages == 'all':
+                instances.append(plugin())
+
+        return instances
+
+    def set_source(self, source):
+        self.wallpaper_source = source
+
     def generate(self, size, wallpaper_queue):
         """
             Generates the wallpaper collage

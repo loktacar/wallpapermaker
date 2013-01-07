@@ -3,10 +3,28 @@ import pygame
 from plugin import Plugin
 
 class Source(Plugin):
-    def __init__(self):
+    def __init__(self, path):
         super(Source, self).__init__()
 
+        self.path = path
         self.wallpapers = []
+
+    @staticmethod
+    def get_instances(plugins, config):
+        sources = config['sources'].split(',')
+
+        instances = []
+        for plugin in plugins:
+            for i, source in enumerate(sources):
+                if plugin.handles_path(source):
+                    instances.append(plugin(source))
+                    sources.pop(i)
+
+        if not instances:
+            raise ValueError("No plugins could handle your sources.")
+
+        return instances
+
 
     @staticmethod
     def handles_path(path):

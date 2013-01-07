@@ -3,8 +3,8 @@ import sys
 from .. import SetWallpaper
 
 class DarwinSetWallpaper(SetWallpaper):
-    def __init__(self):
-        super(DarwinSetWallpaper, self).__init__()
+    def __init__(self, config):
+        super(DarwinSetWallpaper, self).__init__(config)
 
     def platform_check(self):
         return sys.platform == 'darwin'

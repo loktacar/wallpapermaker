@@ -7,11 +7,10 @@ import pygame
 from .. import Collage
 
 class RecursiveSplit(Collage):
+    name = 'recursive split'
 
     def __init__(self):
         super(RecursiveSplit, self).__init__()
-
-        self.name = 'recursive split'
 
     def generate(self, size):
         wallpapers = self._get_wallpapers()

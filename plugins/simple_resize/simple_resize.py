@@ -1,3 +1,5 @@
+import logging
+
 import pygame
 
 from .. import Collage
@@ -7,10 +9,10 @@ class SimpleResize(Collage):
         Example class for collage plugins
             - Takes a single image and resizes it
     """
+    name = 'simple resize'
+
     def __init__(self):
         super(SimpleResize, self).__init__()
-
-        self.name = 'simple resize'
 
     def generate(self, size):
         wallpapers = self._get_wallpapers()

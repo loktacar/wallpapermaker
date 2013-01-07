@@ -3,6 +3,8 @@ import inspect
 import logging
 
 from plugin import Plugin
+
+# Base plugin classes need to be imported so that Plugin.__subclasses__() returns correct results
 from collage import Collage
 from get_resolution import GetResolution
 from set_wallpaper import SetWallpaper
@@ -10,85 +12,183 @@ from option import Option
 from ui import UI
 from source import Source
 
-base_plugin_classes = [
-        Collage,
-        GetResolution,
-        SetWallpaper,
-        Option,
-        UI,
-        Source
-    ]
-
 class PluginManager:
     """
-        Stores all plugins for each superclass
+        Stores all plugins for each base plugin
 
     """
 
     def __init__(self):
         logging.debug('Plugin manager initializing')
 
+        # This will be set later, unable to activate plugins untill set
+        self.config = None
+
         self.plugins = {}
-        for plugin_base in base_plugin_classes:
-            plugin_type = plugin_base.__name__
-            self.plugins[plugin_type] = []
+        self.plugin_bases = {}
+        for plugin_base in Plugin.__subclasses__():
+            plugin_name = plugin_base.__name__
+            self.plugin_bases[plugin_name] = plugin_base
+            self.plugins[plugin_name] = []
 
         logging.debug('Searching for plugins')
 
-        plugins_found = self.find_plugins(base_plugin_classes)
+        plugins_found = self.find_plugins(Plugin.__subclasses__())
 
-        for i, plugin_base in enumerate(base_plugin_classes):
+        for i, plugin_base in enumerate(Plugin.__subclasses__()):
             plugin_type = plugin_base.__name__
 
             for plugin in plugins_found[i]:
-                # I will create multiple instances of the Source plugins
-                if plugin_type == 'Source':
-                    self.plugins[plugin_type].append(plugin)
-                else:
-                    self.plugins[plugin_type].append(plugin())
+                self.plugins[plugin_type].append(plugin)
 
         # list of active plugins
         self.active = {}
         for key in self.plugins:
-            self.active[key] = self.plugins[key]
+            self.active[key] = []
         # implemented like this, instead of
         # self.active = self.plugins,
         # to circumvent problems with setting
         # self.active[key] would override self.plugins[key]
 
     def __getitem__(self, key):
-        return self.active[key]
+        if len(self.active[key]):
+            return self.active[key]
+        else:
+            return self.plugins[key]
 
-    def set_config(self, config):
-        # Set the configuration
-        for plu_type in self.plugins:
-            plugins = self.plugins[plu_type]
-            for p in plugins:
-                if issubclass(p.__class__, Plugin):
-                    p.set_config(config)
+    def plugin_hook(self, hook_name, *args, **kwargs):
+        calls = 0
 
-        # Activate the plugins selected in config
+        # Go through each plugin type
+        for plugin_type in self.plugin_bases:
+            # Find each active plugin of type plugin_type
+            for plugin in self.active[plugin_type]:
+                # Check if plugin has a hook_name method
+                if hasattr(plugin, hook_name):
+                    # Call that method with *args and **kwargs arguments
+                    getattr(plugin, hook_name)(*args, **kwargs)
+                    calls += 1
 
-        # Collage plugins
-        if not config['collage-plugins'] == 'all':
-            collages = config['collage-plugins'].lower().split(',')
-            self.active['Collage'] = []
+        if calls:
+            calls_str = ' in %s plugins' % calls
+            logging.debug('Plugin hook %s called%s.' % (hook_name, calls_str if calls > 1 else ''))
+        else:
+            logging.debug('Plugin hook %s not found in any plugins.' % hook_name)
 
-            for p in self.plugins['Collage']:
-                if p.name in collages:
-                    self.active['Collage'].append(p)
+    def activate_plugins(self, config=None):
+        logging.debug('Activating plugins.')
 
-            if not len(self.active['Collage']):
-                raise ValueError('No collage plugins found.')
+        # plugin_type is a string
 
-        # Source plugins
-        sources = config['sources'].split(',')
-        self.active['Source'] = []
+        if config:
+            self.config = config
+        elif not self.config: # if there is no configuration
+            raise RuntimeError("No plugins can be activated before configuration is set.")
 
-        for s in sources:
-            for c in self.plugins['Source']:
-                if c.handles_path(s):
-                    self.active['Source'].append(c(s))
+        for plugin_type in self.plugin_bases:
+            plugin_type_class = self.plugin_bases[plugin_type]
+            plugins = self.plugins[plugin_type]
+
+            if 'get_instances' not in plugin_type_class.__dict__:
+                continue
+
+            instances = plugin_type_class.get_instances(plugins, self.config)
+
+            if type(instances) is not list:
+                instances = [instances]
+
+            while instances:
+                try:
+                    instances.remove(None)
+                except ValueError:
+                    break
+
+            self.active[plugin_type] += instances
+            logging.debug("%d instances of plugin type %s activated" % (len(instances), plugin_type))
+
+    def activate_plugin(self, plugin_type, plugin_name, config=None):
+        # plugin_type and plugin_name are strings
+
+        if config:
+            self.config = config
+        elif not self.config: # if there is no configuration
+            raise RuntimeError("No plugins can be activated before configuration is set.")
+
+        if plugin_type not in self.plugin_bases:
+            raise ValueError("Plugin type %s not found." % plugin_type)
+
+        # Get plugin setting from base plugin
+        multiple_instances = self.plugin_bases[plugin_type].settings['multiple_instances']
+
+        # Find the plugin class
+        plugin = None
+        for p in self.plugins[plugin_type]:
+            if p.__name__ == plugin_name:
+                plugin = p
+
+        if not plugin:
+            raise ValueError("Plugin %s of type %s not found." % (plugin_name, plugin_type))
+
+        # Check if plugin has get_instance method
+        if 'get_instance' not in plugin.__dict__:
+            return False
+
+        # If multiple instances are not allowed check if it's already active
+        if not multiple_instances:
+            for plugin_instance in self.active[plugin_type]:
+                if plugin_instance.__class__ == plugin:
+                    logging.debug("Plugin %s of type %s already active." % (plugin_name, plugin_type))
+                    return False
+
+        # Get instance of plugin
+        instance = plugin.get_instance(config)
+        if not instance:
+            logging.debug("get_instance function of %s plugin did not return any instances.")
+            return False
+
+        # Make sure it's a list of instances
+        if not instance is type(list):
+            instance = [instance]
+
+        # Activate the plugin... nothing stands in your way!
+        self.active[plugin_type] += instance
+        logging.debug("%d instances of %s plugin of type %s activated" % (len(instance), plugin_name, plugin_type))
+
+        return True
+
+    def deactivate_plugin(self, plugin_instance=None, plugin_type=None, plugin_name=None):
+        # Check if arguments are correct
+        if not plugin_instance or (not plugin_type and not plugin_name):
+            raise ValueError("Either plugin_instance, or both plugin_type and plugin_name must be set")
+
+        # Remove specific instance
+        if plugin_instance:
+            plugin_name = plugin_instance.__class__.__name__
+            plugin_type = plugin_instance.__class__.__bases__[0].__name__
+
+            try:
+                self.active[plugin_type].remove(plugin_instance)
+            except ValueError:
+                logging.debug("The instance of %s plugin of type %s not found." % (plugin_name, plugin_type))
+                return False
+
+            return True
+        # Remove all instances of plugin
+        else:
+            plugin_instances = []
+            for prospect in self.active[plugin_type]:
+                if prospect.__class__.__name__ == plugin_name:
+                    plugin_instances.append(prospect)
+
+            if plugin_instances:
+                logging.debug("No instances of %s plugin of type %s active." % (plugin_name, plugin_type))
+                return False
+
+            for instance in plugin_instances:
+                self.active[plugin_type].remove(instance)
+
+            logging.debug("All %d instances of %s plugin of type %s deactivated." % (len(plugin_instances), plugin_name, plugin_type))
+            return True
 
     def toggle_collage(self, collage_name, activate=True):
         # Find the collage

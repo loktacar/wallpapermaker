@@ -7,10 +7,28 @@ class UI(Plugin):
         Base class of ui plugins
     """
 
-    def __init__(self):
+    settings = {
+            'multiple_instances': False,
+            'active_required':     True,
+            }
+
+    def __init__(self, config):
         super(UI, self).__init__()
 
         self.app = None
+        self.config = config
+
+    @staticmethod
+    def get_instances(plugins, config):
+        instance = None
+        for plugin in plugins:
+            if plugin.__name__ == config['ui']:
+                instance = plugin(config)
+
+        if not instance:
+            raise RuntimeError("No UI plugin activated.")
+
+        return instance
 
     # ui control functions
 
