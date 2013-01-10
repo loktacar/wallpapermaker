@@ -39,43 +39,44 @@ Configuration files:
 def get_config(options):
     logging.debug('Reading config file and parsing options')
 
-    from docopt import docopt
-    doc_options = docopt(get_doc(options))
-
+    # keys are "plugin_module.option_name"
     config = {}
+    # options in each plugin
+    module_options = {}
 
     # Set config to defaults
-    default_section = 'default'
     for op in options:
-        config[op.option] = op.default
+        op_module = op.__module__.split('.')[1]
 
-        if op.option == 'section':
-            default_section = op.default
+        # fill config dict
+        if op_module == 'options':
+            config[op.option] = op.default
+        else:
+            config['%s.%s' % (op_module, op.option)] = op.default
 
-    # Get config file configuration
+        # fill module_options dict
+        if op_module in module_options:
+            module_options[op_module].append(op)
+        else:
+            module_options[op_module] = [op]
+
     files = get_appdirs_paths()
     cfg = ConfigParser.SafeConfigParser()
     cfg_files = cfg.read(files)
 
-    # Set config file section and read files
-    file_section = default_section
-    if '--section' in doc_options and doc_options['--section'] is not None:
-        file_section = doc_options['--section']
-    files_read = cfg.read(files)
+    for section in cfg.sections():
+        module_pref = '' if section == 'options' else '%s.' % section
 
-    # Parse config file
-    if len(files_read):
-        if not cfg.has_section(file_section):
-            raise ValueError('Section %s not found' % file_section)
-
-    for op in options:
-        if cfg.has_option(file_section, op.option):
-            config[op.option] = op.parse(cfg.get(file_section, op.option))
+        for op in module_options[section]:
+            if cfg.has_option(section, op.option):
+                config[module_pref + op.option] = op.parse(cfg.get(section, op.option))
 
     # Parse command line options
+    from docopt import docopt
+    doc_options = docopt(get_doc(options))
     for key in doc_options:
         if key[:2] == '--' and doc_options[key] is not None:
-            for op in options:
+            for op in module_options['options']:
                 if op.option == key[2:]:
                     config[key[2:]] = op.parse(doc_options[key])
 

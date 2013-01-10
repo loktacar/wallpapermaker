@@ -80,15 +80,6 @@ class ResolutionOption(Option):
 
         return [tuple([int(i) for i in res])]
 
-class ConfigSectionOption(Option):
-    def __init__(self):
-        super(ConfigSectionOption, self).__init__()
-
-        self.default = 'default'
-        self.option = 'section'
-        self.cmd_argument = 'SECTION'
-        self.description = 'SECTION of configuration file to be used'
-
 class CollageSelectionOption(Option):
     def __init__(self):
         super(CollageSelectionOption, self).__init__()

@@ -53,7 +53,7 @@ class RecursiveSplit(Collage):
         # Get wallpaper for each split, breadth-first
         wallpapers = self.wallpaper_source.pop(4)
 
-        if i < self.config['recursion-depth']:
+        if i < self.config['recursive_split.recursion-depth']:
             for n in range(4):
                 if not random.randint(0, i*(3)):
                     wallpapers[n] = self._get_wallpapers(i+1)

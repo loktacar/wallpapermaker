@@ -7,7 +7,7 @@ class GnomeSetWallpaper(SetWallpaper):
         super(GnomeSetWallpaper, self).__init__()
 
     def platform_check(self):
-        return sys.platform == 'linux2' and self.config['desktop-environment'] == 'gnome'
+        return sys.platform == 'linux2' and self.config['linux.desktop-environment'] == 'gnome'
 
     def set(self):
         import os
