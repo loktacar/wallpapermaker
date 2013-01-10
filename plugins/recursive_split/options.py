@@ -9,6 +9,7 @@ class RecursionDepthOption(Option):
                              '# recursion_depth: maximum number of times each split can be\n',
                              '#   split\n']
 
+    @staticmethod
     def parse(value):
         return int(value)
 

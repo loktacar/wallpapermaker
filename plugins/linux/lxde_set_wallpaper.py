@@ -3,8 +3,8 @@ import sys
 from .. import SetWallpaper
 
 class LXDESetWallpaper(SetWallpaper):
-    def __init__(self):
-        super(LXDESetWallpaper, self).__init__()
+    def __init__(self, config):
+        super(LXDESetWallpaper, self).__init__(config)
         self.cycle = 0
 
     def platform_check(self):
