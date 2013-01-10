@@ -7,8 +7,8 @@ import wx
 from .. import UI
 
 class wxPython(UI):
-    def __init__(self):
-        super(wxPython, self).__init__()
+    def __init__(self, config):
+        super(wxPython, self).__init__(config)
 
     def initialize_gui(self):
         logging.debug('initializing gui...')

@@ -11,7 +11,7 @@ for arg in sys.argv:
 
 # Start logger
 import logging
-logging.basicConfig(format='%(levelname)s (%(threadName)s): %(message)s\n%(pathname)s:%(lineno)d @ %(asctime)s\n',
+logging.basicConfig(format='%(levelname)s (%(threadName)s): %(message)s | %(pathname)s:%(lineno)d @ %(asctime)s',
                     filename='last_run.log',
                     filemode='w',
                     level=logging.DEBUG)
@@ -23,15 +23,12 @@ from plugins import plugin_manager
 from config import get_config
 config = get_config(plugin_manager['Option'])
 
-# Set plugins' config
-plugin_manager.set_config(config)
+plugin_manager.activate_plugins(config)
 
 # Find and set ui
 ui = None
-if 'ui' in config and config['ui'] is not None:
-    for plugin in plugin_manager['UI']:
-        if plugin.__class__.__name__ == config['ui']:
-            ui = plugin
+if len(plugin_manager.active['UI']):
+    ui = plugin_manager.active['UI'][0]
 
 # Check if ui is set
 if ui is None and config['ui'] is not None:

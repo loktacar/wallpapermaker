@@ -3,8 +3,8 @@ import sys
 from .. import SetWallpaper
 
 class Win32SetWallpaper(SetWallpaper):
-    def __init__(self):
-        super(Win32SetWallpaper, self).__init__()
+    def __init__(self, config):
+        super(Win32SetWallpaper, self).__init__(config)
 
     def platform_check(self):
         return sys.platform == 'win32'

@@ -8,7 +8,7 @@ from .. import Source
 
 class Folder(Source):
     def __init__(self, path):
-        super(Folder, self).__init__()
+        super(Folder, self).__init__(path)
 
         self.path = os.path.expanduser(path)
         self.index = -1
@@ -64,9 +64,6 @@ class Folder(Source):
     def _folder_visit(self, arg, dirpath, filenames):
         wallpaper_paths = [os.path.join(dirpath, filename) for filename in filenames]
         pushed_count = self._push(wallpaper_paths)
-
-        if pushed_count:
-            logging.debug('%d wps pushed from %s' % (pushed_count, dirpath))
 
     def _push(self, wallpaper_paths):
         """ Push wallpaper paths on to the list, wallpaper_paths can be a single filepath or a list of paths """
