@@ -68,7 +68,6 @@ if __name__ == '__main__':
     try:
         lowpriority()
     except:
-        # TODO: Make this a logger call not a direct print
-        print 'Low priority not set, exception occurred!'
+        logging.warning('Low priority not set, exception occurred!')
 
     main()

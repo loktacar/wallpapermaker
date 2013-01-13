@@ -122,7 +122,7 @@ class wxPython(UI):
     def app_initialized(self):
         self.initialize_gui()
 
-    def toggle_collage(self, collage_name, activate):
+    def collage_toggled(self, collage_name, activate):
         """ Called when collage plugin is (de)activated """
 
         for csi in self.collage_submenu_items:

@@ -117,9 +117,6 @@ class PluginManager:
         if plugin_type not in self.plugin_bases:
             raise ValueError("Plugin type %s not found." % plugin_type)
 
-        # Get plugin setting from base plugin
-        multiple_instances = self.plugin_bases[plugin_type].settings['multiple_instances']
-
         # Find the plugin class
         plugin = None
         for p in self.plugins[plugin_type]:
@@ -132,13 +129,6 @@ class PluginManager:
         # Check if plugin has get_instance method
         if 'get_instance' not in plugin.__dict__:
             return False
-
-        # If multiple instances are not allowed check if it's already active
-        if not multiple_instances:
-            for plugin_instance in self.active[plugin_type]:
-                if plugin_instance.__class__ == plugin:
-                    logging.debug("Plugin %s of type %s already active." % (plugin_name, plugin_type))
-                    return False
 
         # Get instance of plugin
         instance = plugin.get_instance(config)

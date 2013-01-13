@@ -55,10 +55,18 @@ class Application:
         logging.debug('app is %spaused' % ('' if self.is_paused else 'un'))
 
     def toggle_collage(self, collage_name, activate=True):
-        # Toggle the collage, if successful call the plugin_hook
-        toggled_collage = self.plugin_manager.toggle_collage(collage_name, activate=activate)
-        for c in toggled_collage:
-            self.plugin_manager.plugin_hook('toggle_collage', c, activate=toggled_collage[c])
+        if activate:
+            if self.plugin_manager.activate_plugin('Collage', collage_name):
+                self.plugin_manager.plugin_hook('collage_toggled', collage_name, activated=True)
+        else:
+            if self.plugin_manager.deactivate_plugin('Collage', collage_name):
+                self.plugin_manager.plugin_hook('collage_toggled', collage_name, activated=False)
+
+                # dectivation complete, check if there are any other active collages
+                if not len(self.plugin_manager.active('Collage')):
+                    # if not then activate ALL OF THEM
+                    for c in self.plugin_manager.plugins['Collage']:
+                        self.toggle_collage(c.__name__, True)
 
     def main(self):
         while(self.running):
