@@ -126,12 +126,8 @@ class PluginManager:
         if not plugin:
             raise ValueError("Plugin %s of type %s not found." % (plugin_name, plugin_type))
 
-        # Check if plugin has get_instance method
-        if 'get_instance' not in plugin.__dict__:
-            return False
-
         # Get instance of plugin
-        instance = plugin.get_instance(config)
+        instance = plugin()
         if not instance:
             logging.debug("get_instance function of %s plugin did not return any instances.")
             return False
@@ -148,7 +144,7 @@ class PluginManager:
 
     def deactivate_plugin(self, plugin_instance=None, plugin_type=None, plugin_name=None):
         # Check if arguments are correct
-        if not plugin_instance or (not plugin_type and not plugin_name):
+        if plugin_instance is None and (plugin_type is None or plugin_name is None):
             raise ValueError("Either plugin_instance, or both plugin_type and plugin_name must be set")
 
         # Remove specific instance
@@ -170,7 +166,7 @@ class PluginManager:
                 if prospect.__class__.__name__ == plugin_name:
                     plugin_instances.append(prospect)
 
-            if plugin_instances:
+            if not plugin_instances:
                 logging.debug("No instances of %s plugin of type %s active." % (plugin_name, plugin_type))
                 return False
 

@@ -32,6 +32,7 @@ class Collage(Plugin):
 
         return instances
 
+
     def set_source(self, source):
         self.wallpaper_source = source
 

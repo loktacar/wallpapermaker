@@ -40,17 +40,21 @@ class wxPython(UI):
         submenu_item_index = submenu_item_index_start
         self.collage_submenu = wx.Menu()
         self.collage_submenu_items = {}
+        self.collage_submenu_class_names = {}
+        self.active_collages = [c.__class__.__name__ for c in self.app.plugin_manager['Collage']]
 
         for cp in self.app.plugin_manager.plugins['Collage']:
-            class_name = cp.__class__.__name__
+            class_name = cp.__name__
             collage_name = cp.name
             submenu_item_index += 1
             self.collage_submenu_items[submenu_item_index] = collage_name
+            self.collage_submenu_class_names[submenu_item_index] = class_name
             self.collage_submenu.Append(submenu_item_index,
                                               collage_name,
                                               collage_name,
                                               kind=wx.ITEM_CHECK)
-            if cp in self.app.plugin_manager['Collage']:
+
+            if class_name in self.active_collages:
                 self.collage_submenu.Check(submenu_item_index, True)
 
         self.ui_app.Bind(wx.EVT_MENU_RANGE, self.OnCollage, id=submenu_item_index_start, id2=submenu_item_index)
@@ -99,7 +103,7 @@ class wxPython(UI):
         self.menu.Check(self.pitem.GetId(), self.app.is_paused)
 
     def OnCollage(self, event):
-        collage = self.collage_submenu_items[event.GetId()]
+        collage = self.collage_submenu_class_names[event.GetId()]
         self.app.toggle_collage(collage, activate=event.IsChecked())
 
     def OnFolderSelect(self, event):
@@ -122,10 +126,10 @@ class wxPython(UI):
     def app_initialized(self):
         self.initialize_gui()
 
-    def collage_toggled(self, collage_name, activate):
+    def collage_toggled(self, collage_name, activated):
         """ Called when collage plugin is (de)activated """
 
         for csi in self.collage_submenu_items:
             if self.collage_submenu_items[csi] == collage_name:
-                self.collage_submenu.Check(csi, activate)
+                self.collage_submenu.Check(csi, activated)
 

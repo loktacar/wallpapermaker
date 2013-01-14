@@ -58,15 +58,19 @@ class Application:
         if activate:
             if self.plugin_manager.activate_plugin('Collage', collage_name):
                 self.plugin_manager.plugin_hook('collage_toggled', collage_name, activated=True)
+            else:
+                logging.warning('Failed to activate %s collage' % collage_name)
         else:
-            if self.plugin_manager.deactivate_plugin('Collage', collage_name):
+            if self.plugin_manager.deactivate_plugin(plugin_type='Collage', plugin_name=collage_name):
                 self.plugin_manager.plugin_hook('collage_toggled', collage_name, activated=False)
+            else:
+                logging.warning('Failed to deactivate %s collage' % collage_name)
 
-                # dectivation complete, check if there are any other active collages
-                if not len(self.plugin_manager.active('Collage')):
-                    # if not then activate ALL OF THEM
-                    for c in self.plugin_manager.plugins['Collage']:
-                        self.toggle_collage(c.__name__, True)
+            # dectivation complete, check if there are any other active collages
+            if not len(self.plugin_manager.active['Collage']):
+                # if not then activate ALL OF THEM
+                for c in self.plugin_manager.plugins['Collage']:
+                    self.toggle_collage(c.__name__, activate=True)
 
     def main(self):
         while(self.running):
