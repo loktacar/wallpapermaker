@@ -35,7 +35,11 @@ class Option(Plugin):
             s += '-%s ' % cls.cmd_short
 
         if cls.option is not None:
-            s += '--%s' % cls.option
+            folder_module = cls.__module__.split('.')[-2]
+            if folder_module == 'options':
+                s += '--%s' % cls.option
+            else:
+                s += '--%s.%s' % (folder_module, cls.option)
 
         if cls.cmd_argument is not None:
             s += '=%s' % cls.cmd_argument

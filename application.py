@@ -74,77 +74,83 @@ class Application:
 
     def main(self):
         while(self.running):
-            if time.time() >= self.next_generation and not self.is_paused:
-                logging.debug('Loop start')
-
-                # Get resolution
-                # (width, height, x-offset, y-offset)
-                res_log_message = ''
-                if self.config['resolution'] == [(0,0)]:
-                    self.resolutions = self.plugin_manager['GetResolution'][0].get()
-                    res_log_message = 'Resolution plugin returned %s' % self.resolutions
-                else:
-                    self.resolution = self.config['resolution']
-                    res_log_message = 'Resolution set to %s by config' % self.resolutions
-                logging.debug(res_log_message)
-
-                if self.resolution == None or self.resolution == []:
-                    raise ValueError('Resolution invalid')
-
-                wps = []
-                total_width = 0
-                total_height = 0
-
-                self.plugin_manager.plugin_hook('generate_starting')
-
-                # Find the maximum width + x-offset and height + y-offset
-                # Also create a wallpaper collage for each resolution
-                for i, resolution in enumerate(self.resolutions):
-                    if resolution[0] + resolution[2] > total_width:
-                        total_width = resolution[0] + resolution[2]
-
-                    if resolution[1] + resolution[3] > total_height:
-                        total_height = resolution[1] + resolution[3]
-
-                    # Create new collage
-                    collage_index = random.randint(0, len(self.plugin_manager['Collage']) - 1)
-                    collage_plugin = self.plugin_manager['Collage'][collage_index]
-
-                    logging.debug('Generating collage, using plugin %s' % collage_plugin.__class__.__name__)
-
-
-                    # Generate collage
-                    wps.append(collage_plugin.generate(resolution[:2]))
-
-                # Merge collages
-                wallpaper = pygame.Surface((total_width, total_height))
-                wallpaper.lock()
-
-                for i, resolution in enumerate(self.resolutions):
-                    for x1, x2 in enumerate(range(resolution[2], resolution[2] + resolution[0])):
-                        for y1, y2 in enumerate(range(resolution[3], resolution[3] + resolution[1])):
-                            wallpaper.set_at((x2, y2), wps[i].get_at((x1, y1)))
-
-                wallpaper.unlock()
-                pygame.image.save(wallpaper, self.config['wallpaper'])
-
-                if len(self.plugin_manager['SetWallpaper']):
-                    self.plugin_manager['SetWallpaper'][0].set()
-
-                self.plugin_manager.plugin_hook('generate_finished')
+            try:
+                self.generate()
 
                 if self.config['single-run']:
                     logging.debug('Single run, exiting')
                     break
 
-                # Shuffle wallpapers
-                self.wallpaper_source.wallpaper_complete()
-
-                self.next_generation = time.time() + self.config['update']
-                logging.debug('Loop end, waiting untill %s' %
-                        time.strftime('%X', time.localtime(self.next_generation)))
-
-            time.sleep(self.sleep_increment)
+                time.sleep(self.sleep_increment)
+            except:
+                pass
 
         self.plugin_manager.plugin_hook('app_quitting')
 
+    def get_resolution(self):
+        # (width, height, x-offset, y-offset)
+        res_log_message = ''
+        if self.config['resolution'] == [(0,0)]:
+            self.resolutions = self.plugin_manager['GetResolution'][0].get()
+            res_log_message = 'Resolution plugin returned %s' % self.resolutions
+        else:
+            self.resolutions = self.config['resolution']
+            res_log_message = 'Resolution set to %s by config' % self.resolutions
+        logging.debug(res_log_message)
+
+        if self.resolution == None or self.resolution == []:
+            raise ValueError('Resolution invalid')
+
+    def generate(self):
+        if time.time() >= self.next_generation and not self.is_paused:
+            logging.debug('Loop start')
+
+            # Get resolution
+            self.get_resolution()
+
+            wps = []
+            total_width = 0
+            total_height = 0
+
+            self.plugin_manager.plugin_hook('generate_starting')
+
+            # Find the maximum width + x-offset and height + y-offset
+            # Also create a wallpaper collage for each resolution
+            for i, resolution in enumerate(self.resolutions):
+                if resolution[0] + resolution[2] > total_width:
+                    total_width = resolution[0] + resolution[2]
+                if resolution[1] + resolution[3] > total_height:
+                    total_height = resolution[1] + resolution[3]
+
+                # Create new collage
+                collage_index = random.randint(0, len(self.plugin_manager['Collage']) - 1)
+                collage_plugin = self.plugin_manager['Collage'][collage_index]
+
+                logging.debug('Generating collage, using plugin %s' % collage_plugin.__class__.__name__)
+
+                # Generate collage
+                wps.append(collage_plugin.generate(resolution[:2]))
+
+            # Merge collages
+            wallpaper = pygame.Surface((total_width, total_height))
+            wallpaper.lock()
+
+            for i, resolution in enumerate(self.resolutions):
+                for x1, x2 in enumerate(range(resolution[2], resolution[2] + resolution[0])):
+                    for y1, y2 in enumerate(range(resolution[3], resolution[3] + resolution[1])):
+                        wallpaper.set_at((x2, y2), wps[i].get_at((x1, y1)))
+
+            wallpaper.unlock()
+            pygame.image.save(wallpaper, self.config['wallpaper'])
+
+            if len(self.plugin_manager['SetWallpaper']):
+                self.plugin_manager['SetWallpaper'][0].set()
+
+            self.plugin_manager.plugin_hook('generate_finished')
+
+            # Shuffle wallpapers
+            self.wallpaper_source.wallpaper_complete()
+
+            self.next_generation = time.time() + self.config['update']
+            logging.debug('Loop end, waiting untill %s' %
+                    time.strftime('%X', time.localtime(self.next_generation)))

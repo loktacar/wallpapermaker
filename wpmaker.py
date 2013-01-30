@@ -27,8 +27,8 @@ plugin_manager.activate_plugins(config)
 
 # Find and set ui
 ui = None
-if len(plugin_manager.active['UI']):
-    ui = plugin_manager.active['UI'][0]
+if len(plugin_manager['UI']):
+    ui = plugin_manager['UI'][0]
 
 # Check if ui is set
 if ui is None and config['ui'] is not None:

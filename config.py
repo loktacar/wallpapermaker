@@ -76,8 +76,15 @@ def get_config(options):
     doc_options = docopt(get_doc(options))
     for key in doc_options:
         if key[:2] == '--' and doc_options[key] is not None:
-            for op in module_options['options']:
-                if op.option == key[2:]:
+            option = key[2:]
+            module = 'options'
+            if '.' in key[2:]:
+                split_key = key[2:].split('.')
+                option = split_key[-1]
+                module = split_key[-2]
+
+            for op in module_options[module]:
+                if op.option == option:
                     config[key[2:]] = op.parse(doc_options[key])
 
     return config

@@ -88,7 +88,7 @@ class VerboseOption(Option):
     conf_description = ['# Debugging info displayed in the command line\n']
 
 class UIOption(Option):
-    default = 'Console'
+    default = 'wxPython'
     option = 'ui'
     cmd_argument = 'UI'
     description = 'Select which plugin, UI, should be used for ui purposes'

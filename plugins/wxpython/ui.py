@@ -1,6 +1,7 @@
 import os
 import threading
 import logging
+import time
 
 import wx
 
@@ -28,38 +29,31 @@ class wxPython(UI):
         #menu
         self.menu = wx.Menu()
 
+        # action menu items
         self.gitem = self.menu.Append(wx.ID_ANY, '&Generate', 'Generate new wallpaper')
         self.pitem = self.menu.Append(wx.ID_ANY, '&Pause', 'Pause wallpaper generation', kind=wx.ITEM_CHECK)
         self.menu.Check(self.pitem.GetId(), True)
         self.menu.Append(wx.ID_SEPARATOR)
 
+        # configuration menu items
         self.sel_dir_item = self.menu.Append(wx.ID_ANY, '&Select Folder', 'Select a new wallpaper folder')
 
-        # TODO: Need to implement a better way to store and use the collage submenu
-        submenu_item_index_start = 4000
+        self._create_collage_menu()
+
+        self.interval_submenu = wx.Menu()
+        self.interval_submenu_itervals = [1, 5, 10, 30, 60]
+        self.interval_submenu_items = {}
+        submenu_item_index_start = 6000
         submenu_item_index = submenu_item_index_start
-        self.collage_submenu = wx.Menu()
-        self.collage_submenu_items = {}
-        self.collage_submenu_class_names = {}
-        self.active_collages = [c.__class__.__name__ for c in self.app.plugin_manager['Collage']]
-
-        for cp in self.app.plugin_manager.plugins['Collage']:
-            class_name = cp.__name__
-            collage_name = cp.name
+        for interval in self.interval_submenu_itervals:
+            self.interval_submenu_items[submenu_item_index] = interval
+            self.interval_submenu.Append(id=submenu_item_index,
+                                         text='%d min' % interval,
+                                         kind=wx.ITEM_NORMAL)
             submenu_item_index += 1
-            self.collage_submenu_items[submenu_item_index] = collage_name
-            self.collage_submenu_class_names[submenu_item_index] = class_name
-            self.collage_submenu.Append(submenu_item_index,
-                                              collage_name,
-                                              collage_name,
-                                              kind=wx.ITEM_CHECK)
+        self.ui_app.Bind(wx.EVT_MENU_RANGE, self.OnInterval, id=submenu_item_index_start, id2=submenu_item_index)
+        self.menu.AppendMenu(wx.ID_ANY, '&Interval', self.interval_submenu)
 
-            if class_name in self.active_collages:
-                self.collage_submenu.Check(submenu_item_index, True)
-
-        self.ui_app.Bind(wx.EVT_MENU_RANGE, self.OnCollage, id=submenu_item_index_start, id2=submenu_item_index)
-
-        self.menu.AppendMenu(wx.ID_ANY, '&Collage', self.collage_submenu)
         self.menu.Append(wx.ID_SEPARATOR)
 
         self.qitem = self.menu.Append(wx.ID_EXIT, '&Quit', 'Quit application')
@@ -106,6 +100,18 @@ class wxPython(UI):
         collage = self.collage_submenu_class_names[event.GetId()]
         self.app.toggle_collage(collage, activate=event.IsChecked())
 
+    def OnInterval(self, event):
+        interval = self.interval_submenu_items[event.GetId()] * 60
+        self.app.next_generation += interval - self.app.config['update']
+        self.app.config['update'] = interval
+
+        if self.app.next_generation > time.time():
+            logging.debug('Generation interval changed, waiting until %s' %
+                    time.strftime('%X', time.localtime(self.app.next_generation)))
+        else:
+            logging.debug('Generation interval changed, starting generation...')
+
+
     def OnFolderSelect(self, event):
         dialog = wx.DirDialog(None, message='Pick a directory', defaultPath=os.path.expanduser('~'))
 
@@ -132,4 +138,33 @@ class wxPython(UI):
         for csi in self.collage_submenu_items:
             if self.collage_submenu_items[csi] == collage_name:
                 self.collage_submenu.Check(csi, activated)
+
+
+    def _create_collage_menu(self):
+        # TODO: Need to implement a better way to store and use the collage submenu
+        submenu_item_index_start = 4000
+        submenu_item_index = submenu_item_index_start
+        self.collage_submenu = wx.Menu()
+        self.collage_submenu_items = {}
+        self.collage_submenu_class_names = {}
+        self.active_collages = [c.__class__.__name__ for c in self.app.plugin_manager['Collage']]
+
+        for cp in self.app.plugin_manager.plugins['Collage']:
+            class_name = cp.__name__
+            collage_name = cp.name
+            submenu_item_index += 1
+            self.collage_submenu_items[submenu_item_index] = collage_name
+            self.collage_submenu_class_names[submenu_item_index] = class_name
+            self.collage_submenu.Append(submenu_item_index,
+                                              collage_name,
+                                              collage_name,
+                                              kind=wx.ITEM_CHECK)
+
+            if class_name in self.active_collages:
+                self.collage_submenu.Check(submenu_item_index, True)
+
+        self.ui_app.Bind(wx.EVT_MENU_RANGE, self.OnCollage, id=submenu_item_index_start, id2=submenu_item_index)
+
+        self.menu.AppendMenu(wx.ID_ANY, '&Collage', self.collage_submenu)
+
 
