@@ -9,8 +9,8 @@ from .. import Collage
 class RecursiveSplit(Collage):
     name = 'recursive split'
 
-    def __init__(self):
-        super(RecursiveSplit, self).__init__()
+    def __init__(self, config):
+        super(RecursiveSplit, self).__init__(config)
 
     def generate(self, size):
         wallpapers = self._get_wallpapers()

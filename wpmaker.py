@@ -3,12 +3,6 @@ import sys
 
 from application import Application
 
-# Check if verbose
-verbose = False
-for arg in sys.argv:
-    if arg == '--verbose' or arg == '-v':
-        verbose = True
-
 # Start logger
 import logging
 logging.basicConfig(format='%(levelname)s (%(threadName)s): %(message)s | %(pathname)s:%(lineno)d @ %(asctime)s',

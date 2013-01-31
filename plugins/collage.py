@@ -12,8 +12,9 @@ class Collage(Plugin):
             See simple_resize.py or recursive_split.py for example implementation of a plugin
     """
 
-    def __init__(self):
+    def __init__(self, config):
         super(Collage, self).__init__()
+        self.config = config
 
         self.wallpaper_source = None
 
@@ -28,7 +29,7 @@ class Collage(Plugin):
         instances = []
         for plugin in plugins:
             if plugin.name in collages or collages == 'all':
-                instances.append(plugin())
+                instances.append(plugin(config))
 
         return instances
 

@@ -131,10 +131,7 @@ class PluginManager:
             raise ValueError("Plugin %s of type %s not found." % (plugin_name, plugin_type))
 
         # Get instance of plugin
-        instance = plugin()
-        if not instance:
-            logging.debug("get_instance function of %s plugin did not return any instances.")
-            return False
+        instance = plugin(self.config)
 
         # Make sure it's a list of instances
         if not instance is type(list):

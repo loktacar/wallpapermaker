@@ -38,7 +38,11 @@ class wxPython(UI):
         self.app.pause()
 
     def OnUpdateTick(self, event):
+        # Set pause status tick
         self.menu.Check(self.pitem.GetId(), self.app.is_paused)
+
+        # Set collage activation status ticks
+        self._set_active_collage_tics()
 
     def OnCollage(self, event):
         collage = self.collage_submenu_class_names[event.GetId()]
@@ -57,19 +61,22 @@ class wxPython(UI):
 
 
     def OnFolderSelect(self, event):
-        path = _getWPFolder()
+        path = self._getWPFolder()
 
-        if path:
-            for source in self.app.plugin_manager['Source']:
-                if source.__class__.handles_path(path):
-                    source.set_path(path)
+        for source in self.app.plugin_manager['Source']:
+            # module name of the plugin
+            module = source.__module__.split('.')[1]
+
+            # set the folder source to path
+            if module == 'folder':
+                source.set_path(path)
 
     # Following methods are called from the application, via ui hooks
 
     def check_config(self):
-        if not self.config['sources']:
+        if not self.config['folder.source']:
             logging.debug('Sources not set, prompting for folder')
-            self.config['sources'] = self._getWPFolder()
+            self.config['folder.source'] = self._getWPFolder()
 
     def app_quitting(self):
         # Using CallAfter because app_quitting is called from another thread, and that's bad
@@ -152,7 +159,6 @@ class wxPython(UI):
         self.collage_submenu = wx.Menu()
         self.collage_submenu_items = {}
         self.collage_submenu_class_names = {}
-        self.active_collages = [c.__class__.__name__ for c in self.app.plugin_manager['Collage']]
 
         for cp in self.app.plugin_manager.plugins['Collage']:
             class_name = cp.__name__
@@ -165,12 +171,21 @@ class wxPython(UI):
                                               collage_name,
                                               kind=wx.ITEM_CHECK)
 
-            if class_name in self.active_collages:
-                self.collage_submenu.Check(submenu_item_index, True)
+        self._set_active_collage_tics()
 
         self.ui_app.Bind(wx.EVT_MENU_RANGE, self.OnCollage, id=submenu_item_index_start, id2=submenu_item_index)
 
         self.menu.AppendMenu(wx.ID_ANY, '&Collage', self.collage_submenu)
+
+    def _set_active_collage_tics(self):
+        self.active_collages = [c.__class__.__name__ for c in self.app.plugin_manager['Collage']]
+
+        for item_id in self.collage_submenu_class_names:
+            class_name = self.collage_submenu_class_names[item_id]
+
+            if class_name in self.active_collages:
+                self.collage_submenu.Check(item_id, True)
+
 
     def _getWPFolder(self):
         dialog = wx.DirDialog(None, message='Pick a directory', defaultPath=os.path.expanduser('~'))

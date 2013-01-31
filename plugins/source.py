@@ -1,3 +1,5 @@
+import logging
+
 import pygame
 
 from plugin import Plugin
@@ -11,18 +13,29 @@ class Source(Plugin):
 
     @staticmethod
     def get_instances(plugins, config):
-        if not config['sources']:
-            raise ValueError("No sources configured.")
-
-        sources = config['sources'].split(',')
-
+        # Find plugins that handle each source
         instances = []
+        source_config_found = False
         for plugin in plugins:
-            for i, source in enumerate(sources):
-                if plugin.handles_path(source):
-                    instances.append(plugin(source))
-                    sources.pop(i)
+            # module name of the plugin
+            module = plugin.__module__.split('.')[1]
 
+            # check if there is a source configured for this plugin
+            try:
+                source = config['%s.source' % module]
+            except:
+                continue
+            source_config_found = True
+
+            #for i, source in enumerate(sources):
+            if plugin.handles_path(source):
+                instances.append(plugin(source))
+            else:
+                logging.warning('Source in [%s] section not handled by corresponding plugin' %
+                                module)
+
+        if not source_config_found:
+            raise ValueError("No sources configured.")
         if not instances:
             raise ValueError("No plugins could handle your sources.")
 

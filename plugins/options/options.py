@@ -2,19 +2,6 @@ import os
 
 from .. import Option
 
-class SourceOption(Option):
-    default = None
-    option = 'sources'
-    cmd_argument = 'PATHS'
-    description = 'Sources of wallpapers'
-    conf_description = ['# Source of wallpapers, can be path or subreddit url. \n',
-                             '# See source plugin documentation \n',
-                             '#   a tilde, ~, in paths is replaced with user directory path\n']
-
-    @staticmethod
-    def parse(value):
-        return value
-
 class UpdatePeriodOption(Option):
     default = 300
     option = 'update'
@@ -79,13 +66,6 @@ class CollageSelectionOption(Option):
                              "#     - 'simple resize'\n",
                              "#     - 'recursive split'\n",
                              "#     - 'all', plugin chosen at random\n"]
-
-class VerboseOption(Option):
-    default = 'False'
-    option = 'verbose'
-    cmd_short = 'v'
-    description = 'Debugging output'
-    conf_description = ['# Debugging info displayed in the command line\n']
 
 class UIOption(Option):
     default = 'wxPython'
