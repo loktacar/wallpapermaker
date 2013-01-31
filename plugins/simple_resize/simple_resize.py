@@ -20,12 +20,8 @@ class SimpleResize(Collage):
         logging.debug('Generating...')
 
         collage = pygame.Surface(size)
-
         wp_offset, wp = self._resize_wallpaper(wallpapers[0], size)
-
-        for x1, x2 in enumerate(range(size[0]), wp_offset[0]):
-            for y1, y2 in enumerate(range(size[1]), wp_offset[1]):
-                collage.set_at((x2, y2), wp.get_at((x1, y1)))
+        collage.blit(wp, (0,0), pygame.Rect(wp_offset, size))
 
         logging.debug('Generation complete')
 

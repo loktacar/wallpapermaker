@@ -74,32 +74,37 @@ class Application:
 
     def main(self):
         while(self.running):
-            try:
-                self.generate()
+            self.generate()
 
-                if self.config['single-run']:
-                    logging.debug('Single run, exiting')
-                    break
+            if self.config['single-run']:
+                logging.debug('Single run, exiting')
+                break
 
-                time.sleep(self.sleep_increment)
-            except:
-                pass
+            time.sleep(self.sleep_increment)
 
         self.plugin_manager.plugin_hook('app_quitting')
 
     def get_resolution(self):
         # (width, height, x-offset, y-offset)
         res_log_message = ''
+        resolutions = None
         if self.config['resolution'] == [(0,0)]:
-            self.resolutions = self.plugin_manager['GetResolution'][0].get()
-            res_log_message = 'Resolution plugin returned %s' % self.resolutions
+            resolutions = self.plugin_manager['GetResolution'][0].get()
+            res_log_message = 'Resolution plugin returned %s' % resolutions
         else:
-            self.resolutions = self.config['resolution']
-            res_log_message = 'Resolution set to %s by config' % self.resolutions
+            resolutions = self.config['resolution']
+            res_log_message = 'Resolution set to %s by config' % resolutions
         logging.debug(res_log_message)
 
-        if self.resolution == None or self.resolution == []:
+        for i, r in enumerate(resolutions):
+            if len(r) == 2:
+                # Add default x- and y-offset coordinates if missing to (0,0)
+                resolutions[i] = (r[0], r[1], 0, 0)
+
+        if not resolutions:
             raise ValueError('Resolution invalid')
+        logging.debug("resolutions: {}".format(resolutions))
+        self.resolutions = resolutions
 
     def generate(self):
         if time.time() >= self.next_generation and not self.is_paused:
@@ -123,8 +128,7 @@ class Application:
                     total_height = resolution[1] + resolution[3]
 
                 # Create new collage
-                collage_index = random.randint(0, len(self.plugin_manager['Collage']) - 1)
-                collage_plugin = self.plugin_manager['Collage'][collage_index]
+                collage_plugin = random.choice(self.plugin_manager['Collage'])
 
                 logging.debug('Generating collage, using plugin %s' % collage_plugin.__class__.__name__)
 
@@ -133,14 +137,11 @@ class Application:
 
             # Merge collages
             wallpaper = pygame.Surface((total_width, total_height))
-            wallpaper.lock()
-
+            
             for i, resolution in enumerate(self.resolutions):
-                for x1, x2 in enumerate(range(resolution[2], resolution[2] + resolution[0])):
-                    for y1, y2 in enumerate(range(resolution[3], resolution[3] + resolution[1])):
-                        wallpaper.set_at((x2, y2), wps[i].get_at((x1, y1)))
+                offset = resolution[2:]
+                wallpaper.blit(wps[i], offset)
 
-            wallpaper.unlock()
             pygame.image.save(wallpaper, self.config['wallpaper'])
 
             if len(self.plugin_manager['SetWallpaper']):

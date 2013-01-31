@@ -244,7 +244,11 @@ class PluginManager:
                             .replace('\\', '.')
 
                     # This is a python module, import it
-                    module = __import__(modulename, level=-1, fromlist=['*'])
+                    try:
+                        module = __import__(modulename, level=-1, fromlist=['*'])
+                    except ImportError:
+                        logging.debug('add FAIL - {}'.format(modulename))
+                        pass
 
                     # Go through each item in the list and check if they inherit from the base_classes
                     for key in module.__dict__:

@@ -2,8 +2,9 @@ from .. import UI
 
 class Console(UI):
 
-    def __init__(self):
-        super(Console, self).__init__()
+    def __init__(self, config):
+        super(Console, self).__init__(config)
+        self.config = config
 
     def app_started(self):
         print 'Application Started.'

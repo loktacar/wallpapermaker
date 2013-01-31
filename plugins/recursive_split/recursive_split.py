@@ -24,8 +24,6 @@ class RecursiveSplit(Collage):
     def generate_split(self, split_size, wallpapers, i=0):
         split = pygame.Surface(split_size)
 
-        split.lock()
-
         # get cell size
         size = (int(math.ceil(split_size[0]/2.0)),
                 int(math.ceil(split_size[1]/2.0)))
@@ -41,11 +39,8 @@ class RecursiveSplit(Collage):
 
             pos = [size[j%2]*placement[i][j] for j in range(4)]
 
-            for x1, x2 in enumerate(range(pos[0], pos[2]), offset[0]):
-                for y1, y2 in enumerate(range(pos[1], pos[3]), offset[1]):
-                    split.set_at((x2, y2), wp.get_at((x1, y1)))
+            split.blit(wp, pos[:2], pygame.Rect(offset[0], offset[1], *pos[2:]))
 
-        split.unlock()
         return split
 
     def _get_wallpapers(self, i=1):
