@@ -10,8 +10,8 @@ class Console(UI):
         print 'Application Started.'
         print
 
-    def app_initialized(self):
-        super(Console, self).app_initialized()
+    def app_initialized(self, app):
+        super(Console, self).app_initialized(app)
         print 'Application initialized.'
         print 
 

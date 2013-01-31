@@ -40,11 +40,12 @@ class UI(Plugin):
 
     # ui hooks
 
-    def app_initialized(self):
+    def app_initialized(self, app):
         """ Run after app initialization
 
             config and plugin information available now
         """
+        self.app = app
 
     def app_started(self):
         """ Run before app initialization """
