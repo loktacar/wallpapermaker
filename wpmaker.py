@@ -23,7 +23,7 @@ from plugins import plugin_manager
 from config import get_config
 config = get_config(plugin_manager['Option'])
 
-plugin_manager.activate_plugins(config)
+plugin_manager.activate_plugins(config, 'UI')
 
 # Find and set ui
 ui = None
@@ -33,6 +33,10 @@ if len(plugin_manager['UI']):
 # Check if ui is set
 if ui is None and config['ui'] is not None:
     raise RuntimeError("Couldn't find ui plugin '%s'" % config['ui'])
+
+plugin_manager.plugin_hook('check_config')
+
+plugin_manager.activate_plugins(config)
 
 app = Application(config, ui)
 

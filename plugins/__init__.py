@@ -75,10 +75,8 @@ class PluginManager:
         else:
             logging.debug('Plugin hook %s not found in any plugins.' % hook_name)
 
-    def activate_plugins(self, config=None):
+    def activate_plugins(self, config, base_plugin_type=None):
         logging.debug('Activating plugins.')
-
-        # plugin_type is a string
 
         if config:
             self.config = config
@@ -86,6 +84,12 @@ class PluginManager:
             raise RuntimeError("No plugins can be activated before configuration is set.")
 
         for plugin_type in self.plugin_bases:
+            if base_plugin_type and not plugin_type == base_plugin_type:
+                continue
+
+            if len(self.active[plugin_type]):
+                continue
+
             plugin_type_class = self.plugin_bases[plugin_type]
             plugins = self.plugins[plugin_type]
 
@@ -175,44 +179,6 @@ class PluginManager:
 
             logging.debug("All %d instances of %s plugin of type %s deactivated." % (len(plugin_instances), plugin_name, plugin_type))
             return True
-
-    def toggle_collage(self, collage_name, activate=True):
-        # Find the collage
-        collage = None
-        for c in self.plugins['Collage']:
-            if c.name == collage_name:
-                collage = c
-
-        if not collage:
-            raise ValueError("Collage, named '%s', not found" % collage_name)
-
-        # Check if (de)activation is redundant
-        if activate and collage in self.active['Collage']:
-            logging.debug('Failed to activate %s, %s is active' % (collage_name, collage_name))
-            return False
-        if not activate and not collage in self.active['Collage']:
-            logging.debug('Failed to deactivate %s, %s is inactive' % (collage_name, collage_name))
-            return False
-
-        # (De)activate
-        if activate:
-            self.active['Collage'].append(collage)
-            logging.debug('Activating %s' % collage_name)
-        else:
-            self.active['Collage'].remove(collage)
-            logging.debug('Deactivating %s' % collage_name)
-
-        # If none of the collages are active, activate all
-        if not len(self.active['Collage']):
-            logging.debug('No active collages, activating all of them')
-            self.active['Collage'] = self.plugins['Collage']
-            c_names = [c.name for c in self.active['Collage']]
-            activated = {}
-            for c in c_names:
-                activated[c] = True
-            return activated
-
-        return {collage_name: activate}
 
     def find_plugins(self, base_class):
         """
