@@ -14,11 +14,6 @@ class Application:
         from plugins import plugin_manager
         self.plugin_manager = plugin_manager
 
-        # Call ui hooks
-        self.ui = ui
-        if self.ui is not None:
-            self.ui.app = self
-
         self.plugin_manager.plugin_hook('app_started')
 
         # Set config
@@ -44,7 +39,8 @@ class Application:
         # Variables relating to ui changes
         self.next_collage_plugin = None
 
-        self.plugin_manager.plugin_hook('app_initialized')
+        # Important parts are all here
+        self.plugin_manager.plugin_hook('app_initialized', self)
 
     def pause(self, paused_value=None):
         if paused_value is None:

@@ -10,6 +10,7 @@ from .. import UI
 class wxPython(UI):
     def __init__(self, config):
         super(wxPython, self).__init__(config)
+        self.initialize_gui()
 
     def initialize_gui(self):
         logging.debug('initializing gui...')
@@ -26,6 +27,7 @@ class wxPython(UI):
         self.tbicon.SetIcon(icon, "wpmaker")
         wx.EVT_TASKBAR_RIGHT_UP(self.tbicon, self.OnTaskBarRight)
 
+    def initialize_menu(self):
         #menu
         self.menu = wx.Menu()
 
@@ -113,24 +115,37 @@ class wxPython(UI):
 
 
     def OnFolderSelect(self, event):
-        dialog = wx.DirDialog(None, message='Pick a directory', defaultPath=os.path.expanduser('~'))
+        path = getWPFolder()
 
-        if dialog.ShowModal() == wx.ID_OK:
-            path = dialog.GetPath()
+        if path:
             for source in self.app.plugin_manager['Source']:
                 if source.__class__.handles_path(path):
                     source.set_path(path)
 
+
+    def getWPFolder(self):
+        dialog = wx.DirDialog(None, message='Pick a directory', defaultPath=os.path.expanduser('~'))
+        path = None
+
+        if dialog.ShowModal() == wx.ID_OK:
+            path = dialog.GetPath()
+
         dialog.Destroy()
+        return path
 
     # Following methods are called from the application, via ui hooks
+
+    def check_config(self):
+        if not self.config['sources']:
+            self.config['sources'] = self.getWPFolder()
 
     def app_quitting(self):
         # Using CallAfter because app_quitting is called from another thread, and that's bad
         wx.CallAfter(self.exit_app)
 
-    def app_initialized(self):
-        self.initialize_gui()
+    def app_initialized(self, app):
+        self.app = app
+        self.initialize_menu()
 
     def collage_toggled(self, collage_name, activated):
         """ Called when collage plugin is (de)activated """
