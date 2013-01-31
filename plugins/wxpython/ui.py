@@ -10,65 +10,7 @@ from .. import UI
 class wxPython(UI):
     def __init__(self, config):
         super(wxPython, self).__init__(config)
-        self.initialize_gui()
-
-    def initialize_gui(self):
-        logging.debug('initializing gui...')
-        #setup app
-        self.ui_app = wx.PySimpleApp()
-
-        #setup icon object
-        icon = wx.Icon("monitor-wallpaper-icon.png", wx.BITMAP_TYPE_PNG)
-        icon.SetHeight(32)
-        icon.SetWidth(32)
-
-        #setup taskbar icon
-        self.tbicon = wx.TaskBarIcon()
-        self.tbicon.SetIcon(icon, "wpmaker")
-        wx.EVT_TASKBAR_RIGHT_UP(self.tbicon, self.OnTaskBarRight)
-
-    def initialize_menu(self):
-        #menu
-        self.menu = wx.Menu()
-
-        # action menu items
-        self.gitem = self.menu.Append(wx.ID_ANY, '&Generate', 'Generate new wallpaper')
-        self.pitem = self.menu.Append(wx.ID_ANY, '&Pause', 'Pause wallpaper generation', kind=wx.ITEM_CHECK)
-        self.menu.Check(self.pitem.GetId(), True)
-        self.menu.Append(wx.ID_SEPARATOR)
-
-        # configuration menu items
-        self.sel_dir_item = self.menu.Append(wx.ID_ANY, '&Select Folder', 'Select a new wallpaper folder')
-
-        self._create_collage_menu()
-
-        self.interval_submenu = wx.Menu()
-        self.interval_submenu_itervals = [1, 5, 10, 30, 60]
-        self.interval_submenu_items = {}
-        submenu_item_index_start = 6000
-        submenu_item_index = submenu_item_index_start
-        for interval in self.interval_submenu_itervals:
-            self.interval_submenu_items[submenu_item_index] = interval
-            self.interval_submenu.Append(id=submenu_item_index,
-                                         text='%d min' % interval,
-                                         kind=wx.ITEM_NORMAL)
-            submenu_item_index += 1
-        self.ui_app.Bind(wx.EVT_MENU_RANGE, self.OnInterval, id=submenu_item_index_start, id2=submenu_item_index)
-        self.menu.AppendMenu(wx.ID_ANY, '&Interval', self.interval_submenu)
-
-        self.menu.Append(wx.ID_SEPARATOR)
-
-        self.qitem = self.menu.Append(wx.ID_EXIT, '&Quit', 'Quit application')
-
-        wx.EVT_MENU(self.tbicon, self.sel_dir_item.GetId(), self.OnFolderSelect)
-        wx.EVT_MENU(self.tbicon, self.gitem.GetId(), self.start_generating)
-        wx.EVT_MENU(self.tbicon, self.pitem.GetId(), self.OnPauseSelected)
-        wx.EVT_MENU(self.tbicon, self.qitem.GetId(), self.exit_app)
-
-        #gui update timer
-        self.timer = wx.Timer()
-        self.ui_app.Bind(wx.EVT_TIMER, self.OnUpdateTick, self.timer)
-        self.timer.Start(1000.0/24)
+        self._initialize_gui()
 
     # App Control functions
 
@@ -115,29 +57,19 @@ class wxPython(UI):
 
 
     def OnFolderSelect(self, event):
-        path = getWPFolder()
+        path = _getWPFolder()
 
         if path:
             for source in self.app.plugin_manager['Source']:
                 if source.__class__.handles_path(path):
                     source.set_path(path)
 
-
-    def getWPFolder(self):
-        dialog = wx.DirDialog(None, message='Pick a directory', defaultPath=os.path.expanduser('~'))
-        path = None
-
-        if dialog.ShowModal() == wx.ID_OK:
-            path = dialog.GetPath()
-
-        dialog.Destroy()
-        return path
-
     # Following methods are called from the application, via ui hooks
 
     def check_config(self):
         if not self.config['sources']:
-            self.config['sources'] = self.getWPFolder()
+            logging.debug('Sources not set, prompting for folder')
+            self.config['sources'] = self._getWPFolder()
 
     def app_quitting(self):
         # Using CallAfter because app_quitting is called from another thread, and that's bad
@@ -145,7 +77,7 @@ class wxPython(UI):
 
     def app_initialized(self, app):
         self.app = app
-        self.initialize_menu()
+        self._initialize_menu()
 
     def collage_toggled(self, collage_name, activated):
         """ Called when collage plugin is (de)activated """
@@ -154,9 +86,67 @@ class wxPython(UI):
             if self.collage_submenu_items[csi] == collage_name:
                 self.collage_submenu.Check(csi, activated)
 
+    # Following methods are called from within the class
+
+    def _initialize_gui(self):
+        logging.debug('initializing gui...')
+        #setup app
+        self.ui_app = wx.PySimpleApp()
+
+        #setup icon object
+        icon = wx.Icon("monitor-wallpaper-icon.png", wx.BITMAP_TYPE_PNG)
+        icon.SetHeight(32)
+        icon.SetWidth(32)
+
+        #setup taskbar icon
+        self.tbicon = wx.TaskBarIcon()
+        self.tbicon.SetIcon(icon, "wpmaker")
+        wx.EVT_TASKBAR_RIGHT_UP(self.tbicon, self.OnTaskBarRight)
+
+    def _initialize_menu(self):
+        #menu
+        self.menu = wx.Menu()
+
+        # action menu items
+        self.gitem = self.menu.Append(wx.ID_ANY, '&Generate', 'Generate new wallpaper')
+        self.pitem = self.menu.Append(wx.ID_ANY, '&Pause', 'Pause wallpaper generation', kind=wx.ITEM_CHECK)
+        self.menu.Check(self.pitem.GetId(), True)
+        self.menu.Append(wx.ID_SEPARATOR)
+
+        # configuration menu items
+        self.sel_dir_item = self.menu.Append(wx.ID_ANY, '&Select Folder', 'Select a new wallpaper folder')
+
+        self._create_collage_menu()
+
+        self.interval_submenu = wx.Menu()
+        self.interval_submenu_itervals = [1, 5, 10, 30, 60]
+        self.interval_submenu_items = {}
+        submenu_item_index_start = 6000
+        submenu_item_index = submenu_item_index_start
+        for interval in self.interval_submenu_itervals:
+            self.interval_submenu_items[submenu_item_index] = interval
+            self.interval_submenu.Append(id=submenu_item_index,
+                                         text='%d min' % interval,
+                                         kind=wx.ITEM_NORMAL)
+            submenu_item_index += 1
+        self.ui_app.Bind(wx.EVT_MENU_RANGE, self.OnInterval, id=submenu_item_index_start, id2=submenu_item_index)
+        self.menu.AppendMenu(wx.ID_ANY, '&Interval', self.interval_submenu)
+
+        self.menu.Append(wx.ID_SEPARATOR)
+
+        self.qitem = self.menu.Append(wx.ID_EXIT, '&Quit', 'Quit application')
+
+        wx.EVT_MENU(self.tbicon, self.sel_dir_item.GetId(), self.OnFolderSelect)
+        wx.EVT_MENU(self.tbicon, self.gitem.GetId(), self.start_generating)
+        wx.EVT_MENU(self.tbicon, self.pitem.GetId(), self.OnPauseSelected)
+        wx.EVT_MENU(self.tbicon, self.qitem.GetId(), self.exit_app)
+
+        #gui update timer
+        self.timer = wx.Timer()
+        self.ui_app.Bind(wx.EVT_TIMER, self.OnUpdateTick, self.timer)
+        self.timer.Start(1000.0/24)
 
     def _create_collage_menu(self):
-        # TODO: Need to implement a better way to store and use the collage submenu
         submenu_item_index_start = 4000
         submenu_item_index = submenu_item_index_start
         self.collage_submenu = wx.Menu()
@@ -182,4 +172,13 @@ class wxPython(UI):
 
         self.menu.AppendMenu(wx.ID_ANY, '&Collage', self.collage_submenu)
 
+    def _getWPFolder(self):
+        dialog = wx.DirDialog(None, message='Pick a directory', defaultPath=os.path.expanduser('~'))
+        path = None
+
+        if dialog.ShowModal() == wx.ID_OK:
+            path = dialog.GetPath()
+
+        dialog.Destroy()
+        return path
 

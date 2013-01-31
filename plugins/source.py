@@ -11,6 +11,9 @@ class Source(Plugin):
 
     @staticmethod
     def get_instances(plugins, config):
+        if not config['sources']:
+            raise ValueError("No sources configured.")
+
         sources = config['sources'].split(',')
 
         instances = []

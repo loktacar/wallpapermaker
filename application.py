@@ -6,14 +6,8 @@ import pygame
 
 class Application:
     def __init__(self, config, ui=None):
-        # Check if path is set in config
-        if config['sources'] == None:
-            raise ValueError('Sources is not set in configuration')
-
-        # Load plugins
         from plugins import plugin_manager
         self.plugin_manager = plugin_manager
-
         self.plugin_manager.plugin_hook('app_started')
 
         # Set config

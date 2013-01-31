@@ -1,3 +1,5 @@
+import logging
+
 from plugin import Plugin
 
 class SetWallpaper(Plugin):
@@ -20,7 +22,7 @@ class SetWallpaper(Plugin):
                 instances.append(i)
 
         if not instances:
-            logger.warning("No plugin to set wallpapers, what's going on?")
+            logging.warning("No plugin to set wallpapers, what's going on?")
             return None
 
         return instances[0]
