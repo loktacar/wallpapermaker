@@ -4,6 +4,8 @@ import logging
 
 import pygame
 
+from config import save_config
+
 class Application:
     def __init__(self, config, ui=None):
         from plugins import plugin_manager
@@ -68,6 +70,8 @@ class Application:
             # Set the wallpaper_source in the newly activated collage plugins
             self.plugin_manager.plugin_hook('set_source', self.wallpaper_source)
 
+    def update_config_file(self, section, option, value):
+        save_config(section, option, value)
 
     def main(self):
         while(self.running):

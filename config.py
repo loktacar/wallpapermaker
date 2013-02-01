@@ -2,6 +2,7 @@ import copy
 import imp
 import sys
 import os
+import io
 import logging
 
 from appdirs import AppDirs
@@ -36,6 +37,28 @@ Configuration files:
 
     return doc
 
+def get_file_config():
+    files = get_appdirs_paths()
+    cfg = ConfigParser.RawConfigParser()
+    cfg_files = cfg.read(files)
+    return cfg
+
+def save_config(section, option, value):
+    # Get file config and update
+    cfg = get_file_config()
+
+    # Check if it has the section, create if neccesary
+    if not cfg.has_section(section):
+        cfg.add_section(section)
+
+    cfg.set(section, option, value)
+
+    # Open file stream and write
+    files = get_appdirs_paths()
+    cf = open(files[0], 'w')
+    cfg.write(cf)
+    cf.close()
+
 def get_config(options):
     logging.debug('Reading config file and parsing options')
 
@@ -60,9 +83,7 @@ def get_config(options):
         else:
             module_options[op_module] = [op]
 
-    files = get_appdirs_paths()
-    cfg = ConfigParser.SafeConfigParser()
-    cfg_files = cfg.read(files)
+    cfg = get_file_config()
 
     for section in cfg.sections():
         module_pref = '' if section == 'options' else '%s.' % section

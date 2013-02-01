@@ -14,7 +14,7 @@ logging.basicConfig(format='%(levelname)s (%(threadName)s): %(message)s | %(path
 from plugins import plugin_manager
 
 # Read options and arguments
-from config import get_config
+from config import get_config, save_config
 config = get_config(plugin_manager['Option'])
 
 plugin_manager.activate_plugins(config, 'UI')
@@ -28,7 +28,7 @@ if len(plugin_manager['UI']):
 if ui is None and config['ui'] is not None:
     raise RuntimeError("Couldn't find ui plugin '%s'" % config['ui'])
 
-plugin_manager.plugin_hook('check_config')
+plugin_manager.plugin_hook('check_config', save_config)
 
 plugin_manager.activate_plugins(config)
 

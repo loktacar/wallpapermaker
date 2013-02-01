@@ -48,6 +48,13 @@ class wxPython(UI):
         collage = self.collage_submenu_class_names[event.GetId()]
         self.app.toggle_collage(collage, activate=event.IsChecked())
 
+        active_collages = ''
+        for csi in self.collage_submenu_items:
+            if self.collage_submenu.IsChecked(csi):
+                active_collages += ',%s' % self.collage_submenu_items[csi]
+
+        self.app.update_config_file('options', 'collage-plugins', active_collages[1:])
+
     def OnInterval(self, event):
         interval = self.interval_submenu_items[event.GetId()] * 60
         self.app.next_generation += interval - self.app.config['update']
@@ -58,6 +65,8 @@ class wxPython(UI):
                     time.strftime('%X', time.localtime(self.app.next_generation)))
         else:
             logging.debug('Generation interval changed, starting generation...')
+
+        self.app.update_config_file('options', 'update', '%d' % interval)
 
 
     def OnFolderSelect(self, event):
@@ -71,12 +80,17 @@ class wxPython(UI):
             if module == 'folder':
                 source.set_path(path)
 
+        self.app.update_config_file('folder', 'source', path)
+
     # Following methods are called from the application, via ui hooks
 
-    def check_config(self):
+    def check_config(self, save_config):
         if not self.config['folder.source']:
             logging.debug('Sources not set, prompting for folder')
-            self.config['folder.source'] = self._getWPFolder()
+            path = self._getWPFolder()
+
+            self.config['folder.source'] = path
+            save_config('folder', 'source', path)
 
     def app_quitting(self):
         # Using CallAfter because app_quitting is called from another thread, and that's bad
