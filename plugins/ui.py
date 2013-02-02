@@ -21,9 +21,13 @@ class UI(Plugin):
     @staticmethod
     def get_instances(plugins, config):
         instance = None
-        for plugin in plugins:
-            if plugin.__name__ == config['ui']:
-                instance = plugin(config)
+        if config['ui'] == 'auto':
+            plugin_order = ('wxPython', 'Console')
+            instance = sorted(plugins, key=lambda p: p.__name__)[0](config)
+        else:
+            for plugin in plugins:
+                if plugin.__name__ == config['ui']:
+                    instance = plugin(config)
 
         if not instance:
             raise RuntimeError("No UI plugin activated.")

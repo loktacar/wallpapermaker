@@ -32,7 +32,7 @@ What about these plugins, how do I create one? Check the wiki, I might add some 
 ### Requirements
 - Python 2.7 ([download link](http://python.org/download/releases/2.7.3/))
 - Pygame ([download link](http://www.pygame.org/download.shtml))
-- wxPython ([download link](http://wxpython.org/download.php))
+- wxPython ([download link](http://wxpython.org/download.php)) (optional)
 
 Follow the platform specific instructions and then download and extract the project.
 Then read the **How do I use this thing anyways?** section.

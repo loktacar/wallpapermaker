@@ -209,8 +209,8 @@ class PluginManager:
                     # This is a python module, import it
                     try:
                         module = __import__(modulename, level=-1, fromlist=['*'])
-                    except ImportError:
-                        logging.debug('add FAIL - {}'.format(modulename))
+                    except Exception, e:
+                        logging.exception('plugin failed - {}'.format(modulename))
                         pass
 
                     # Go through each item in the list and check if they inherit from the base_classes

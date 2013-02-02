@@ -55,7 +55,7 @@ class CollageSelectionOption(Option):
     description = 'Which collage plugin should be used'
 
 class UIOption(Option):
-    default = 'wxPython'
+    default = 'auto'
     option = 'ui'
     cmd_argument = 'UI'
     description = 'Select which plugin, UI, should be used for ui purposes'
