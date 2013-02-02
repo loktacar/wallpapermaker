@@ -19,10 +19,6 @@ class Option(Plugin):
     # Description, duhh
     description = ''
 
-    # Config file description
-    conf_description = """"""
-    conf_default = None # if option is set to none, default is used
-
     @staticmethod
     def parse(value):
         return value
