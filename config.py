@@ -51,7 +51,14 @@ def save_config(section, option, value):
     if not cfg.has_section(section):
         cfg.add_section(section)
 
+    # Set the option
     cfg.set(section, option, value)
+
+    # Confirm that the folders exist
+    full_user_filename = get_appdirs_paths()[0]
+    foldernames = full_user_filename.split(os.sep)[:-1]
+    user_config_dir = os.sep.join(foldernames)
+    os.makedirs(user_config_dir)
 
     # Open file stream and write
     files = get_appdirs_paths()
