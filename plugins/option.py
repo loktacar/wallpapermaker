@@ -44,7 +44,10 @@ class Option(Plugin):
         if cls.cmd_argument is not None:
             s += '=%s' % cls.cmd_argument
 
-        s += ' ' * (30 - len(s))
+        if len(s) < 30:
+            s += ' ' * (30 - len(s))
+        else:
+            s += '\n' + ' ' * 30
 
         s += cls.description
 

@@ -1,7 +1,7 @@
 *Tired of having a folder full of wallpapers and only seeing one at a time?*
 
 `wpmaker` has the ability to create collages of randomly selected images from
-that folder. It can also do the standard one-at-a-time thing, keeping the aspect
+a folder. It can also do the standard one-at-a-time thing, keeping the aspect
 ratio and cropping instead of stretching.
 
 # Here are some examples
@@ -12,31 +12,35 @@ ratio and cropping instead of stretching.
 
 Why is this a better solution than those from other *leading brands*?
 
-`wpmaker` is currently cross-compatible, it works on:
+`wpmaker` is cross-compatible, it works on:
 - Windows XP/Vista/7
-- Mac OS/X (untested)
-- Linux, but only Gnome (untested)
+- Mac OS/X
+- Linux: GNOME and LXDE
 
 `wpmaker` can be configured either by command line options or configuration file, 
-see usage directions in the `How do I use this thing anyways?` section. 
+see usage directions in the **How do I use this thing anyways?** section. 
 
 `wpmaker` also has plugins, I know *amazing* right?:
 - No problem making `wpmaker` work on other systems, just add plugins
-- Easy to create new collages, just add plugins
-- Do you want a completely new type of plugin? Well `wpmaker` is completely 
+- Easy to create new collages, just add a plugin
+- Do you want a completely new type of plugin? Well `wpmaker` is 
 open source and you can just write it yourself.
 
-What about these plugins, how do I create one? For now though you
-have to rely on the ones I've created for documentation.
+What about these plugins, how do I create one? Check the wiki, I might add some info.
 
 ## Installation
-Follow the platform specific instructions and then download and extract the project. 
-Then read the `How do I use this thing anyways?` section. 
+### Requirements
+- Python 2.7 ([download link](http://python.org/download/releases/2.7.3/))
+- Pygame ([download link](http://www.pygame.org/download.shtml))
+- wxPython ([download link](http://wxpython.org/download.php))
+
+Follow the platform specific instructions and then download and extract the project.
+Then read the `How do I use this thing anyways?` section.
 
 ### Windows
-- Install python 2.7 ([download link](http://python.org/download/releases/2.7.3/))
-- Install pygame ([download link](http://www.pygame.org/download.shtml))
-- Install wxPython ([download link](http://wxpython.org/download.php), get the windows binaries for python 2.7 )
+- Install python 2.7
+- Install pygame
+- Install wxPython (get the windows binaries for python 2.7)
 
 ### Linux
 - Install python 2.7
@@ -52,36 +56,30 @@ Then read the `How do I use this thing anyways?` section.
 you also need to run `yum update PackageKit-gtk3-module`
 
 ## How do I use this thing anyways?
-You can run `wpmaker` in the console by running `python wpmaker.py [options]`.
-You can also run `wpmaker` without the console by running `python wpmaker.pyw
-[options]`.
+On **Windows** you can run `wpmaker` by double clicking wpmaker.pyw. On **linux** you can also run `wpmaker` by double clicking wpmaker.py or wpmaker.pyw.
 
-Note: You'll need to be in `wpmaker`s installation path in the console.  
-Also note: On many systems you can double click the `wpmaker.py` and `wpmaker.pyw`
-files to run them. They will only run if you've set the wp folder path in the
-configuration file.
+You can also run `wpmaker` from the terminal by running `wpmaker.py`(on windows), `./wpmaker.py` on linux. See the help message below on how to run `wpmaker` from the terminal.
 
-### Help message
+### Help message (on Fedora 17)
 ```
 Usage: wpmaker.py [options]
 
 Options:
-    --collage-plugin=COLLAGE  Which collage plugin should be used
-    --desktop-environment=DE  Linux Desktop Environment
-    --fs-interval=INT         Check wallpaper folder every INT updates
-    --path=PATH               PATH to the wallpaper folder
-    --recursion-depth=INT     Each split can be split INT times
+    --collage-plugins=COLLAGE Which collage plugin should be used
+    --linux.desktop-environment=DE
+                              Linux Desktop Environment
+    --recursive_split.recursion-depth=INT
+                              Each split can be split INT times
     -r --resolution=RES       Forces resolution of generated wallpaper
-    --section=SECTION         SECTION of configuration file to be used
     -s --single-run           Generate wallpaper once then exit
+    --folder.source=PATH      Folder path of wallpapers
     --ui=UI                   Select which plugin, UI, should be used for ui purposes
     --update=SEC              SEC seconds between generating and updating wallpaper
-    -v --verbose              Debugging output
     --wallpaper=PATH          PATH to generated wallpaper
     -h --help                 Displays this help message
 
 Configuration files:
-    (0) /home/loktacar/.config/wpmaker/wpmaker.conf
+    (0) /home/user/.config/wpmaker/wpmaker.conf
     (1) /etc/xdg/wpmaker/wpmaker.conf
 ```
 
@@ -92,81 +90,32 @@ installation-specific. The options in the configuration files are the same as
 the longer name of options described in the help message.
 
 ### Sample configuration
+The following configures `wpmaker` to the default values, with comments on how each is configured.
 ```
-#############################################################
-#           This is a sample configuration file             #
-#############################################################
+[options]
+collage-plugin=recursive split,simple resize
+# Which collage plugins are active on startup
+# Comma seperated list of names
 
-[default]
-# The 'default' section is read unless another is specified
-#   as a command line option (ex. wpmaker --section=debug)
+resolution=0x0
+# Hard code the resolution of the output wallpaper image
+# widthXheight
+# This can be used if no GetResolution plugin works on your system
 
-# This must be set in either a configuration file or in
-#   command-line
-path=~\Pictures\wp
-
-# Time between wallpaper switching, in seconds
-update=180
-# personal preference
-
-# Set which ui plugin to useui=wxPython
-[debug]
-path=~\Pictures\wp
-update=30
-verbose=True
-
-#############################################################
-# Below are descriptions and default values for each option #
-#            This section should not be included            #
-#############################################################
-
-[default_values]
-
-# This options is specifically for RecursiveSplit plugin
-# recursion_depth: maximum number of times each split can be
-#   split
-recursion-depth=3
-
-# This option specifies which desktop environment should be manhandled into displaying the output wallpaper
-desktop-environment=none
-
-# how many wallpapers will be generated between checking of
-#   wallpaper folder
-fs-interval=5
-
-# create and set a single wallpaper then exit
 single-run=False
+# Set to true if wpmaker is to create only one image then exit
 
-# Debugging info displayed in the command line
-verbose=False
+ui=wxPython
+# The ui to be used, currently only 'Console', and 'wxPython' available
 
-# path to the wallpaper folder. Not set by default
-#   a tilde, ~, in paths is replaced with user directory path
-path=None
-
-# which collage plugin should be used, acceptable values are:
-#     - 'SimpleResize'
-#     - 'RecursiveSplit'
-#     - 'all', plugin chosen at random
-collage-plugin=all
-
-# forces resolution of generated wallpaper
-# i.e. desktop resolution is not queried, useful if
-#   get_resolution plugins fail
-# e.x. setting:
-#   resolution=1680x1050
-resolution=(0, 0)
-
-# time between wallpaper switching
-update=300
-
-# path and filename of generated wallpaper image
 wallpaper=~/.wp.bmp
+# The filename of the output wallpaper image
 
-# Which ui plugin should be used, acceptable values are:
-#     - 'Console'
-#     - 'wxPython'
-ui=Console
+[linux]
+desktop-environment=gnome
+# The desktop environment used on linux, currently only 'gnome', and 'lxde' supported
 
+[recursive_split]
+recursion-depth=3
+# The number of splits within splits
 ```
-``
