@@ -35,7 +35,7 @@ What about these plugins, how do I create one? Check the wiki, I might add some 
 - wxPython ([download link](http://wxpython.org/download.php))
 
 Follow the platform specific instructions and then download and extract the project.
-Then read the `How do I use this thing anyways?` section.
+Then read the **How do I use this thing anyways?** section.
 
 ### Windows
 - Install python 2.7
