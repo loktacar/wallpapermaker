@@ -60,3 +60,8 @@ class UIOption(Option):
     cmd_argument = 'UI'
     description = 'Select which plugin, UI, should be used for ui purposes'
 
+class KeepOption(Option):
+    default = False
+    option = 'keep'
+    cmd_argument = 'INT'
+    description = 'Keep INT files instead of replacing one file'

@@ -1,3 +1,5 @@
+from AppKit import NSScreen
+
 from .. import GetResolution
 
 class DarwinGetResolution(GetResolution):
@@ -12,8 +14,6 @@ class DarwinGetResolution(GetResolution):
             return False
 
     def get(self):
-        from AppKit import NSScreen
-
         return [(int(screen.frame().size.width), int(screen.frame().size.height))
             for screen in NSScreen.screens()]
 

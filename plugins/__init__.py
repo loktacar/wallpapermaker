@@ -11,6 +11,7 @@ from set_wallpaper import SetWallpaper
 from option import Option
 from ui import UI
 from source import Source
+from keep import Keep
 
 class PluginManager:
     """

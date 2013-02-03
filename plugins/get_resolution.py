@@ -1,3 +1,4 @@
+import logging
 from plugin import Plugin
 
 class GetResolution(Plugin):
@@ -18,7 +19,7 @@ class GetResolution(Plugin):
                 instances.append(i)
 
         if not instances:
-            logger.warning("No resolution plugin applicable, hope you set the resolution in config.")
+            logging.warning("No resolution plugin applicable, hope you set the resolution in config.")
             return None
 
         return instances[0]
