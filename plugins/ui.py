@@ -23,7 +23,11 @@ class UI(Plugin):
         instance = None
         if config['ui'] == 'auto':
             plugin_order = ('wxPython', 'Console')
-            instance = sorted(plugins, key=lambda p: p.__name__)[0](config)
+            for plugin in sorted(plugins,
+                cmp=lambda a, b: plugin_order.index(a.__name__) - \
+                                 plugin_order.index(b.__name__)):
+                instance = plugin(config)
+                break
         else:
             for plugin in plugins:
                 if plugin.__name__ == config['ui']:
