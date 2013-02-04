@@ -17,8 +17,12 @@ class ConfigurationError(ValueError):
     def cmdline_message(self):
         return "Configuration error: {}".format(self.message)
 
+
+def get_appdirs():
+    return AppDirs(appname, appauthor)
+
 def get_appdirs_paths():
-    appdirs = AppDirs(appname, appauthor)
+    appdirs = get_appdirs()
     dirs = (appdirs.user_data_dir, appdirs.site_data_dir)
     return [os.path.join(dir, config_file_name) for dir in dirs]
 
@@ -59,10 +63,9 @@ def save_config(section, option, value):
     cfg.set(section, option, value)
 
     # Confirm that the folders exist
-    full_user_filename = get_appdirs_paths()[0]
-    foldernames = full_user_filename.split(os.sep)[:-1]
-    user_config_dir = os.sep.join(foldernames)
-    os.makedirs(user_config_dir)
+    appdirs = get_appdirs()
+    if not os.path.exists(appdirs.user_data_dir):
+        os.makedirs(appdirs.user_data_dir)
 
     # Open file stream and write
     files = get_appdirs_paths()
