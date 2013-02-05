@@ -1,3 +1,4 @@
+import logging
 import sys
 
 from .. import GetResolution
@@ -12,11 +13,17 @@ class XlibGetResolution(GetResolution):
     def get(self):
         import subprocess
 
-        output = subprocess.Popen('xrandr | grep " connected" | cut -d" " -f3', shell=True, stdout=subprocess.PIPE).communicate()[0]
+        output = subprocess.Popen('xrandr | grep " connected" | cut -d" " -f3',
+                                  shell=True,
+                                  stdout=subprocess.PIPE,
+                                  stderr=subprocess.PIPE).communicate()
+
+        if output[1]:
+            logging.warning("xrandr gave warning '%s'" % output[1].strip())
 
         resolutions = []
 
-        displays = output.strip().split('\n')
+        displays = output[0].strip().split('\n')
         for display in displays:
             values = display.split('+')
             res_values = values[0].split('x')
