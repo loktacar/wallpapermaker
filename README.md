@@ -52,8 +52,8 @@ Then read the **How do I use this thing anyways?** section.
 - You should already have python 2.7 installed
 - Run `yum install pygame`
 - Run `yum install wxPython`
-- If you get a warning about `Gtk-Message: Failed to load module "pk-gtk-module"`,
-you also need to run `yum update PackageKit-gtk3-module`
+- If you get a warning about `Gtk-Message: Failed to load module "pk-gtk-module"` when running `wpmaker`,
+you need to run `yum update PackageKit-gtk3-module`
 
 ## How do I use this thing anyways?
 On **Windows** you can run `wpmaker` by double clicking wpmaker.pyw. On **linux** you can also run `wpmaker` by double clicking wpmaker.py or wpmaker.pyw.
