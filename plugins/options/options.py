@@ -65,3 +65,7 @@ class KeepOption(Option):
     option = 'keep'
     cmd_argument = 'INT'
     description = 'Keep INT files instead of replacing one file'
+
+    @staticmethod
+    def parse(value):
+        return int(value)

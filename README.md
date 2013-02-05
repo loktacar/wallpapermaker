@@ -68,6 +68,7 @@ Options:
     --collage-plugins=COLLAGE Which collage plugin should be used
     --linux.desktop-environment=DE
                               Linux Desktop Environment
+    --keep=INT                Keep INT files instead of replacing one file
     --recursive_split.recursion-depth=INT
                               Each split can be split INT times
     -r --resolution=RES       Forces resolution of generated wallpaper
@@ -111,9 +112,14 @@ ui=wxPython
 wallpaper=~/.wp.bmp
 # The filename of the output wallpaper image
 
+keep=0
+# Keep a certain number of files (appends .#number# to the filename givein the 
+# wallpaper option)
+
 [linux]
 desktop-environment=gnome
-# The desktop environment used on linux, currently only 'gnome', and 'lxde' supported
+# The desktop environment used on linux, currently only 'gnome', and 'lxde' 
+# supported
 
 [recursive_split]
 recursion-depth=3

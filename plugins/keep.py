@@ -26,4 +26,4 @@ class Keep(Plugin):
         # Monkey-patch the 'wallpaper' key of the config object
         if self.config['wallpaper'].startswith(self.original_wallpaper):
             self.config['wallpaper'] = self.original_wallpaper + ".{}".format(
-                self.number % int(self.config['keep']))
+                self.number % self.config['keep'])
