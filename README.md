@@ -33,6 +33,8 @@ What about these plugins, how do I create one? Check the wiki, I might add some 
 - Python 2.7 ([download link](http://python.org/download/releases/2.7.3/))
 - Pygame ([download link](http://www.pygame.org/download.shtml))
 - wxPython ([download link](http://wxpython.org/download.php)) (optional)
+- [docopt](https://github.com/docopt/docopt) (easy_install docopt)
+- [appdirs](https://github.com/ActiveState/appdirs) (easy_install appdirs)
 
 Follow the platform specific instructions and then download and extract the project.
 Then read the **How do I use this thing anyways?** section.
@@ -40,18 +42,18 @@ Then read the **How do I use this thing anyways?** section.
 ### Windows
 - Install python 2.7
 - Install pygame
-- Install wxPython (get the windows binaries for python 2.7)
+- Install wxPython (get the windows binaries for python 2.7) (optional)
 
 ### Linux
 - Install python 2.7
 - Install pygame (`python-pygame` package in most repositories)
 - Install `python-xlib`, for the get resolution plugin
-- Install wxPython ([info](http://wiki.wxpython.org/How%20to%20install%20wxPython#Linux_-_Redhat))
+- Install wxPython ([info](http://wiki.wxpython.org/How%20to%20install%20wxPython#Linux_-_Redhat)) (optional)
 
 #### Fedora 17 (F17)
 - You should already have python 2.7 installed
 - Run `yum install pygame`
-- Run `yum install wxPython`
+- Run `yum install wxPython` (optional)
 - If you get a warning about `Gtk-Message: Failed to load module "pk-gtk-module"` when running `wpmaker`,
 you need to run `yum update PackageKit-gtk3-module`
 

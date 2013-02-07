@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import sys
-
 from application import Application
 
 # Start logger
@@ -28,9 +27,15 @@ if len(plugin_manager['UI']):
 if ui is None and config['ui'] is not None:
     raise RuntimeError("Couldn't find ui plugin '%s'" % config['ui'])
 
-plugin_manager.plugin_hook('check_config', save_config)
+from config import ConfigurationError, get_doc
+try:
+    plugin_manager.plugin_hook('check_config', save_config)
+    plugin_manager.activate_plugins(config)
+except ConfigurationError, e:
+    print e.cmdline_message()
+    print get_doc(plugin_manager['Option'])
+    sys.exit(1)
 
-plugin_manager.activate_plugins(config)
 
 app = Application(config, ui)
 

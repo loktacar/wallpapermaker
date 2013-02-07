@@ -13,6 +13,11 @@ appname = 'wpmaker'
 appauthor = 'viktor'
 config_file_name = '%s.conf' % appname
 
+class ConfigurationError(ValueError):
+    def cmdline_message(self):
+        return "Configuration error: {}".format(self.message)
+
+
 def get_appdirs():
     return AppDirs(appname, appauthor)
 

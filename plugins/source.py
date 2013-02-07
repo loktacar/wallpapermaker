@@ -3,6 +3,7 @@ import logging
 import pygame
 
 from plugin import Plugin
+from config import ConfigurationError
 
 class Source(Plugin):
     def __init__(self, path):
@@ -23,6 +24,8 @@ class Source(Plugin):
             # check if there is a source configured for this plugin
             try:
                 source = config['%s.source' % module]
+                if source is None:
+                    raise
             except:
                 continue
             source_config_found = True
@@ -35,7 +38,7 @@ class Source(Plugin):
                                 module)
 
         if not source_config_found:
-            raise ValueError("No sources configured.")
+            raise ConfigurationError("No sources configured.")
         if not instances:
             raise ValueError("No plugins could handle your sources.")
 
