@@ -201,7 +201,8 @@ class PluginManager:
         for root, dirs, files in os.walk(path):
             # Go through files
             for name in files:
-                if name.endswith(".py") and not name.startswith("__"):
+                if name.endswith(".py") and \
+                        not (name.startswith("__") or name.startswith(".")):
                     curr_path = os.path.join(root, name).replace(root_dir, '')
                     modulename = curr_path.rsplit('.', 1)[0]\
                             .replace('/', '.')\

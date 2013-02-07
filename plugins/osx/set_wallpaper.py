@@ -1,4 +1,5 @@
 import logging
+import os
 import sys
 
 from .. import SetWallpaper
@@ -20,7 +21,8 @@ class DarwinSetWallpaper(SetWallpaper):
 
     def set(self):
         import subprocess
-        subprocess.Popen(DARWIN_SCRIPT % self.config['wallpaper'], shell=True)
+        wallpaper_path = os.path.abspath(self.config['wallpaper'])
+        subprocess.Popen(DARWIN_SCRIPT % wallpaper_path, shell=True)
         if not self.config['keep']:
             logging.warning("DarwinSetWallpaper works better if you configure "
                             "the Keep plugin (e.g. --keep=2)")

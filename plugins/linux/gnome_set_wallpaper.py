@@ -1,3 +1,4 @@
+import os
 import sys
 
 from .. import SetWallpaper
@@ -10,9 +11,8 @@ class GnomeSetWallpaper(SetWallpaper):
         return sys.platform == 'linux2' and self.config['linux.desktop-environment'] == 'gnome'
 
     def set(self):
-        import os
-
+        wallpaper_path = os.path.abspath(self.config['wallpaper'])
         os.system(\
                 'gsettings set org.gnome.desktop.background picture-uri "file://%s"' \
-                    % self.config['wallpaper'])
+                    % wallpaper_path)
 

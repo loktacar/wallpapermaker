@@ -1,3 +1,4 @@
+import os
 import sys
 
 from .. import SetWallpaper
@@ -17,7 +18,8 @@ class Win32SetWallpaper(SetWallpaper):
         iad = pythoncom.CoCreateInstance(shell.CLSID_ActiveDesktop, None,
                 pythoncom.CLSCTX_INPROC_SERVER, shell.IID_IActiveDesktop)
 
-        iad.SetWallpaper(self.config['wallpaper'], 0)
+        wallpaper_path = os.path.abspath(self.config['wallpaper'])
+        iad.SetWallpaper(wallpaper_path, 0)
         iad.SetWallpaperOptions(1, 0)
         iad.ApplyChanges(shellcon.AD_APPLY_ALL)
 

@@ -1,3 +1,4 @@
+import os
 import sys
 
 from .. import SetWallpaper
@@ -11,11 +12,13 @@ class LXDESetWallpaper(SetWallpaper):
         return sys.platform == 'linux2' and self.config['linux.desktop-environment'] == 'lxde'
 
     def set(self):
-        import os
 
         # TODO: Find a better solution than cycling
         #       - Cause: --set-wallpaper doesn't reload the file if the arguments are the same
+        wallpaper_path = os.path.abspath(self.config['wallpaper'])
         os.system(\
-                'pcmanfm --set-wallpaper=%s --wallpaper-mode=%s' % (self.config['wallpaper'], 'fit' if self.cycle % 2 else 'center'))
+                'pcmanfm --set-wallpaper=%s --wallpaper-mode=%s' % (wallpaper_path,
+                                                                    'fit' if self.cycle % 2 else 'center'))
 
         self.cycle += 1
+
