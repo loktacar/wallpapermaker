@@ -44,6 +44,9 @@ class wxPython(UI):
         # Set collage activation status ticks
         self._set_active_collage_tics()
 
+        # Set interval status ticks
+        self._set_interval_tics()
+
     def OnCollage(self, event):
         collage = self.collage_submenu_class_names[event.GetId()]
         self.app.toggle_collage(collage, activate=event.IsChecked())
@@ -56,7 +59,7 @@ class wxPython(UI):
         self.app.update_config_file('options', 'collage-plugins', active_collages[1:])
 
     def OnInterval(self, event):
-        interval = self.interval_submenu_items[event.GetId()] * 60
+        interval = self.interval_submenu_items[event.GetId()]
         self.app.next_generation += interval - self.app.config['update']
         self.app.config['update'] = interval
 
@@ -139,16 +142,26 @@ class wxPython(UI):
 
         self._create_collage_menu()
 
+        interval = self.app.config['update']
         self.interval_submenu = wx.Menu()
-        self.interval_submenu_itervals = [1, 5, 10, 30, 60]
+        self.interval_submenu_intervals = [60, 300, 600, 1800, 3600]
         self.interval_submenu_items = {}
+        if not interval in self.interval_submenu_intervals:
+            self.interval_submenu_intervals = [interval] + self.interval_submenu_intervals
         submenu_item_index_start = 6000
         submenu_item_index = submenu_item_index_start
-        for interval in self.interval_submenu_itervals:
+        for interval in self.interval_submenu_intervals:
+            if interval < 60:
+                interval_text = 'custom: %d sec' % interval
+            elif interval > 60 and submenu_item_index == 6000:
+                interval_text = 'custom: %d min' % (interval/60)
+            else:
+                interval_text = '%d min' % (interval/60)
+
             self.interval_submenu_items[submenu_item_index] = interval
             self.interval_submenu.Append(id=submenu_item_index,
-                                         text='%d min' % interval,
-                                         kind=wx.ITEM_NORMAL)
+                                         text=interval_text,
+                                         kind=wx.ITEM_RADIO)
             submenu_item_index += 1
         self.ui_app.Bind(wx.EVT_MENU_RANGE, self.OnInterval, id=submenu_item_index_start, id2=submenu_item_index)
         self.menu.AppendMenu(wx.ID_ANY, '&Interval', self.interval_submenu)
@@ -200,6 +213,12 @@ class wxPython(UI):
             if class_name in self.active_collages:
                 self.collage_submenu.Check(item_id, True)
 
+    def _set_interval_tics(self):
+        interval = self.app.config['update']
+
+        for item_id in self.interval_submenu_items:
+            check = self.interval_submenu_items[item_id] == interval
+            self.interval_submenu.Check(item_id, check)
 
     def _getWPFolder(self):
         dialog = wx.DirDialog(None, message='Pick a directory', defaultPath=os.path.expanduser('~'))
