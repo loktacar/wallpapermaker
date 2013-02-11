@@ -88,7 +88,7 @@ class wxPython(UI):
     # Following methods are called from the application, via ui hooks
 
     def check_config(self, save_config):
-        if not self.config['folder.source']:
+        if not self.config['folder.source'] or self.config['folder.source'] == 'None':
             logging.debug('Sources not set, prompting for folder')
             path = self._getWPFolder()
 
