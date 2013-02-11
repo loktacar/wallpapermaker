@@ -2,6 +2,11 @@
 import sys
 from application import Application
 
+try:
+    import wx
+except:
+    pass
+
 # Start logger
 import logging
 logging.basicConfig(format='%(levelname)s (%(threadName)s): %(message)s | %(pathname)s:%(lineno)d @ %(asctime)s',

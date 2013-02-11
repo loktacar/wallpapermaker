@@ -196,7 +196,6 @@ class PluginManager:
         else:
             root_dir = path[:path.rindex(os.sep) + 1]
 
-
         # walk through files within path
         for root, dirs, files in os.walk(path):
             # Go through files
