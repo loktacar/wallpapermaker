@@ -31,7 +31,7 @@ def get_doc(options):
 
 Options:
 """
-    for op in sorted(options, key=lambda op: op.option):
+    for op in sorted(options, key=lambda op: (op.folder_module(), op.option)):
         doc += """%s
 """ % op.get_doc_line()
 

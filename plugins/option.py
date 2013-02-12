@@ -24,6 +24,10 @@ class Option(Plugin):
         return value
 
     @classmethod
+    def folder_module(cls):
+        return cls.__module__.split('.')[-2]
+
+    @classmethod
     def get_doc_line(cls):
         s = ' '*4
 
@@ -31,7 +35,7 @@ class Option(Plugin):
             s += '-%s ' % cls.cmd_short
 
         if cls.option is not None:
-            folder_module = cls.__module__.split('.')[-2]
+            folder_module = cls.folder_module()
             if folder_module == 'options':
                 s += '--%s' % cls.option
             else:
