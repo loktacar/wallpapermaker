@@ -30,9 +30,12 @@ class Source(Plugin):
                 continue
             source_config_found = True
 
-            #for i, source in enumerate(sources):
             if plugin.handles_path(source):
-                instances.append(plugin(source))
+                if module == 'folder':
+                    instances.append(plugin(source,
+                        include_hidden=config['folder.include_hidden']))
+                else:
+                    instances.append(plugin(source))
             else:
                 logging.warning('Source in [%s] section not handled by corresponding plugin' %
                                 module)

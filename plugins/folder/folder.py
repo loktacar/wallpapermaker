@@ -5,12 +5,14 @@ import logging
 import pygame
 
 from .. import Source
+from utils import file_hidden
 
 class Folder(Source):
-    def __init__(self, path):
+    def __init__(self, path, include_hidden=False):
         super(Folder, self).__init__(path)
 
         self.path = os.path.expanduser(path)
+        self.include_hidden = include_hidden
         self.index = -1
 
     @staticmethod
@@ -56,12 +58,24 @@ class Folder(Source):
             yield wallpaper
 
     def _find_wallpapers(self):
-        os.path.walk(self.path, self._folder_visit, [])
+        for root, dirs, files in os.walk(self.path):
+            if not self.include_hidden:
+                if file_hidden(root):
+                    continue # The dir we're visiting is hidden
+                for f in files:
+                    if file_hidden(os.path.join(root, f)):
+                        files.remove(f)
+                for d in dirs:
+                    if file_hidden(os.path.join(root, d)):
+                        # Don't traverse in to hidden directories
+                        dirs.remove(d)
+
+            self._folder_visit(root, files)
 
         count = self.count()
         logging.debug('%s image%s in %s' % (count, '' if count == 1 else 's', self.path))
 
-    def _folder_visit(self, arg, dirpath, filenames):
+    def _folder_visit(self, dirpath, filenames):
         wallpaper_paths = [os.path.join(dirpath, filename) for filename in filenames]
         pushed_count = self._push(wallpaper_paths)
 
