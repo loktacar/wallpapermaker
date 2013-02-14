@@ -7,6 +7,7 @@ html, body {
 }
 a { color: white; }
 a:hover { text-decoration: none; }
+dt { font-weight: bold; }
 dl { padding: 16px 0; }
 dd { padding-left: 20px; }
 
@@ -28,8 +29,8 @@ dd { padding-left: 20px; }
 #top-right { background: url('images/woven.png'); }
 #top-right .content { background: url('images/woven_dark.png'); }
 #top-right, #top-right .content { background-position: 0% 100%; }
-.content-quarter.windows,
-.content-quarter.osx { background: url('images/woven_dark_rot90.png'); }
+.content-quarter.windows { background: url('images/woven_dark_rot90.png') 0% 100%; }
+.content-quarter.osx { background: url('images/woven_dark_rot90.png') 100% 0%; }
 
 #bottom-left { background: url('images/diagonal_striped_brick.png'); }
 #bottom-left .content { background: url('images/diagonal_striped_brick_dark.png'); }
@@ -124,3 +125,11 @@ dd { padding-left: 20px; }
 #usage ul {
   padding-left: 25px;
 }
+
+.footer-left,
+.footer-right {
+  position: absolute;
+  bottom: 10px;
+}
+.footer-left { right: 6px; }
+.footer-right { left: 6px; }
