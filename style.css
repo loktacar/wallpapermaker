@@ -1,6 +1,14 @@
 * { margin: 0; padding: 0; }
 
-html, body { height: 100%; color: #fff; }
+html, body {
+  height: 100%;
+  color: #fff;
+  font-family: Arial, Helvetica, sans;
+}
+a { color: white; }
+a:hover { text-decoration: none; }
+dl { padding: 16px 0; }
+dd { padding-left: 20px; }
 
 .bg-quarter {
   height: 100%;
@@ -51,21 +59,25 @@ html, body { height: 100%; color: #fff; }
 /* Description */
 #description h1 {
   text-indent: -99000px;
-  background: url('images/wpmaker-title.png') no-repeat; 
+  background: url('images/wpmaker-title.png') no-repeat 10px 0;
   height: 91px;
-  width: 466px;
+  width: 480px;
   margin-top: 9px
 }
 #description .description {
   width: 326px;
   float: left;
+  text-align: justify;
 }
+
 #description .examples {
   float: left;
   margin-left: 10px;
   width: 144px;
 }
 #description .examples ul { list-style: none; }
+#description .examples a { display: block; height: 90px; }
+#description .examples .ex1 { margin-bottom: 10px; }
 
 /* Downloads */
 .content-quarter {
@@ -107,4 +119,8 @@ html, body { height: 100%; color: #fff; }
 .linux .download-button {
   width: 163px;
   background: url('images/dl_linux.png');
+}
+
+#usage ul {
+  padding-left: 25px;
 }
