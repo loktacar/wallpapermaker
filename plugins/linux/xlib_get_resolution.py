@@ -25,6 +25,9 @@ class XlibGetResolution(GetResolution):
 
         displays = output[0].strip().split('\n')
         for display in displays:
+            if not ('+' in display or 'x' in display):
+                continue
+
             values = display.split('+')
             res_values = values[0].split('x')
 
