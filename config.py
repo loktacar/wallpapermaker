@@ -102,6 +102,10 @@ def get_config(options):
     for section in cfg.sections():
         module_pref = '' if section == 'options' else '%s.' % section
 
+        if not section in module_options:
+            logging.warning('Section %s in configuration file not found' % section)
+            continue
+
         for op in module_options[section]:
             if cfg.has_option(section, op.option):
                 config[module_pref + op.option] = op.parse(cfg.get(section, op.option))
