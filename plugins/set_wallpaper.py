@@ -21,7 +21,9 @@ class SetWallpaper(Plugin):
             if i.platform_check():
                 instances.append(i)
 
-        if not instances:
+        if not instances and config['set-wallpaper'] == 'none':
+            return None
+        else:
             logging.warning("No plugin to set wallpapers, what's going on?")
             return None
 
