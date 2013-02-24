@@ -69,3 +69,9 @@ class KeepOption(Option):
     @staticmethod
     def parse(value):
         return int(value)
+
+class SetWallpaper(Option):
+    default = 'auto'
+    option = 'set-wallpaper'
+    cmd_argument = 'MODULE'
+    description = 'Set wallpaper using MODULE (none if off)'

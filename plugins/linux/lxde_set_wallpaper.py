@@ -9,7 +9,7 @@ class LXDESetWallpaper(SetWallpaper):
         self.cycle = 0
 
     def platform_check(self):
-        return sys.platform == 'linux2' and self.config['linux.desktop-environment'] == 'lxde'
+        return sys.platform == 'linux2' and self.config['set-wallpaper'] == 'lxde'
 
     def set(self):
 
