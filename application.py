@@ -138,7 +138,7 @@ class Application:
 
             # Merge collages
             wallpaper = pygame.Surface((total_width, total_height))
-            
+
             for i, resolution in enumerate(self.resolutions):
                 offset = resolution[2:]
                 wallpaper.blit(wps[i], offset)
@@ -146,7 +146,11 @@ class Application:
             pygame.image.save(wallpaper, self.config['wallpaper'])
 
             if len(self.plugin_manager['SetWallpaper']):
-                self.plugin_manager['SetWallpaper'][0].set()
+                if not self.config['set-wallpaper'] == 'none':
+                    try:
+                        self.plugin_manager['SetWallpaper'][0].set()
+                    except TypeError:
+                        logging.warning('No set-wallpaper plugin active')
 
             self.plugin_manager.plugin_hook('generate_finished')
 
