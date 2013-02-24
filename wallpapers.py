@@ -19,7 +19,12 @@ class Wallpapers:
 
         self.plugin_index += 1
 
-        return [wp for wp in wallpaper_plugin.pop(count)]
+        wp = wallpaper_plugin.pop(count)
+
+        if len(wp) == 0:
+            raise RuntimeError("No wallpapers found, check configuration")
+
+        return [w for w in wp]
 
     def count(self):
         return sum([q.count() for q in self.wallpaper_plugins])
