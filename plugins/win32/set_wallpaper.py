@@ -8,7 +8,7 @@ class Win32SetWallpaper(SetWallpaper):
         super(Win32SetWallpaper, self).__init__(config)
 
     def platform_check(self):
-        return sys.platform == 'win32' and self.config['set-wallpaper'] == 'auto'
+        return sys.platform == 'win32' and self.config['set-wallpaper'] == 'auto' or self.config['set-wallpaper'] == 'win32'
 
     def set(self):
         from win32com.shell import shell, shellcon

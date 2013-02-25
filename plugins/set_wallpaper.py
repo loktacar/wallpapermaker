@@ -23,7 +23,7 @@ class SetWallpaper(Plugin):
 
         if not instances and config['set-wallpaper'] == 'none':
             return None
-        else:
+        elif not instances:
             logging.warning("No plugin to set wallpapers, what's going on?")
             return None
 

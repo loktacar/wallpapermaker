@@ -17,7 +17,7 @@ class DarwinSetWallpaper(SetWallpaper):
         self.config = config
 
     def platform_check(self):
-        return sys.platform == 'darwin' and self.config['set-wallpaper'] == 'auto'
+        return sys.platform == 'darwin' and self.config['set-wallpaper'] == 'auto' or self.config['set-wallpaper'] == 'osx'
 
     def set(self):
         import subprocess
