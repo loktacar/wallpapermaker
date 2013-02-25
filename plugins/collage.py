@@ -30,7 +30,8 @@ class Collage(Plugin):
         for plugin in plugins:
             if plugin.name in collages or collages == 'all':
                 instances.append(plugin(config))
-                collages.remove(plugin.name)
+                if type(collages) is list:
+                    collages.remove(plugin.name)
 
         for collage_exception in collages:
             logging.warning('Collage %s not found' % collage_exception)
