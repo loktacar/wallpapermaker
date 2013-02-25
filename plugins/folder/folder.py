@@ -1,11 +1,19 @@
 import random
-import os
+import os, os.path
 import logging
+if os.name == 'nt':
+    import win32api, win32con
 
 import pygame
 
 from .. import Source
-from utils import file_hidden
+
+def file_hidden(handle):
+    if os.name == 'nt':
+        attribute = win32api.GetFileAttributes(handle)
+        return attribute & (win32con.FILE_ATTRIBUTE_HIDDEN | win32con.FILE_ATTRIBUTE_SYSTEM)
+    else:
+        return os.path.basename(handle).startswith(".")
 
 class Folder(Source):
     def __init__(self, path, include_hidden=False):
