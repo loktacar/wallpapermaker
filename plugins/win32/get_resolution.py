@@ -10,12 +10,20 @@ class Win32GetResolution(GetResolution):
         return sys.platform == 'win32'
 
     def get(self):
+        """
+            For use with windows 8
+            changes must be made in set_wallpaper.py aswell
+        """
         import win32api
 
         resolutions = []
         for result in win32api.EnumDisplayMonitors():
             res = result[-1]
-            resolutions.append((res[2] - res[0], res[3] - res[1], res[0], res[1]))
+            resolutions.append(
+                    (res[2] - res[0],
+                     res[3] - res[1],
+                     res[0],
+                     res[1]))
 
         return resolutions
 

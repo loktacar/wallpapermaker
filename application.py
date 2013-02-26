@@ -117,16 +117,25 @@ class Application:
             wps = []
             total_width = 0
             total_height = 0
+            # To fix issues with windows tiling
+            min_width = 0
+            min_height = 0
 
             self.plugin_manager.plugin_hook('generate_starting')
 
-            # Find the maximum width + x-offset and height + y-offset
-            # Also create a wallpaper collage for each resolution
+            # Create a wallpaper collage for each resolution
             for i, resolution in enumerate(self.resolutions):
+                # Find the maximum width + x-offset and height + y-offset
                 if resolution[0] + resolution[2] > total_width:
                     total_width = resolution[0] + resolution[2]
                 if resolution[1] + resolution[3] > total_height:
                     total_height = resolution[1] + resolution[3]
+
+                # Find the minimum offset of width and height
+                if resolution[2] < min_width:
+                    min_width = resolution[2]
+                if resolution[3] < min_height:
+                    min_height = resolution[3]
 
                 # Create new collage
                 collage_plugin = random.choice(self.plugin_manager['Collage'])
@@ -136,12 +145,34 @@ class Application:
                 # Generate collage
                 wps.append(collage_plugin.generate(resolution[:2]))
 
+            # For windows tiling append (right/bottom) wallpapers left/ontop of main screen (those with negative offset)
+            total_width -= min_width
+            total_height -= min_height
+
             # Merge collages
             wallpaper = pygame.Surface((total_width, total_height))
 
             for i, resolution in enumerate(self.resolutions):
+                size = resolution[:2]
                 offset = resolution[2:]
+
+                # Fix windows tiling issues
+                if offset[0] < 0:
+                    offset = (offset[0] + total_width, offset[1])
+                if offset[1] < 0:
+                    offset = (offset[0], offset[1] + total_height)
+
                 wallpaper.blit(wps[i], offset)
+
+                # More windows tiling issues
+                neu_offset = (offset[0], offset[1])
+                if offset[0] + size[0] > total_width:
+                    neu_offset = (offset[0] - total_width, neu_offset[1])
+                if offset[1] + size[1] > total_height:
+                    neu_offset = (neu_offset[0], offset[1] - total_height)
+
+                if not neu_offset == offset:
+                    wallpaper.blit(wps[i], neu_offset)
 
             pygame.image.save(wallpaper, self.config['wallpaper'])
 

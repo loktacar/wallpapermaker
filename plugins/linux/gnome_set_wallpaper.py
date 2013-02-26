@@ -13,6 +13,8 @@ class GnomeSetWallpaper(SetWallpaper):
     def set(self):
         wallpaper_path = os.path.abspath(self.config['wallpaper'])
         os.system(\
+                "gsettings set org.gnome.desktop.background picture-options 'spanned'")
+        os.system(\
                 'gsettings set org.gnome.desktop.background picture-uri "file://%s"' \
                     % wallpaper_path)
 

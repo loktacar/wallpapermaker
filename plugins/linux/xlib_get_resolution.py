@@ -13,7 +13,7 @@ class XlibGetResolution(GetResolution):
     def get(self):
         import subprocess
 
-        output = subprocess.Popen('xrandr | grep " connected" | cut -d" " -f3',
+        output = subprocess.Popen('xrandr | grep " connected"',
                                   shell=True,
                                   stdout=subprocess.PIPE,
                                   stderr=subprocess.PIPE).communicate()
@@ -24,8 +24,15 @@ class XlibGetResolution(GetResolution):
         resolutions = []
 
         displays = output[0].strip().split('\n')
-        for display in displays:
-            if not ('+' in display or 'x' in display):
+        for disp in displays:
+            display = ''
+
+            disp_info = disp.split(' ')
+            for di in disp_info:
+                if '+' in di and 'x' in di:
+                    display = di
+
+            if di == '':
                 continue
 
             values = display.split('+')

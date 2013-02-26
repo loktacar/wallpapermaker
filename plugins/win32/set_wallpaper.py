@@ -23,3 +23,20 @@ class Win32SetWallpaper(SetWallpaper):
         iad.SetWallpaperOptions(1, 0)
         iad.ApplyChanges(shellcon.AD_APPLY_ALL)
 
+    def _set(self):
+        """
+            For use with windows 8
+            changes must be made in get_resolution aswell
+        """
+        from win32com.shell import shell, shellcon
+        import pythoncom
+
+        pythoncom.CoInitialize()
+        iad = pythoncom.CoCreateInstance(shell.CLSID_ActiveDesktop, None,
+                pythoncom.CLSCTX_INPROC_SERVER, shell.IID_IActiveDesktop)
+
+        wallpaper_path = os.path.abspath(self.config['wallpaper'])
+        iad.SetWallpaper(wallpaper_path, 0)
+        iad.SetWallpaperOptions(5, 0)
+        iad.ApplyChanges(shellcon.AD_APPLY_ALL)
+
