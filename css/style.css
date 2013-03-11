@@ -1,0 +1,13 @@
+body {
+  padding-top: 20px;
+  padding-bottom: 40px;
+}
+.container-narrow {
+  margin: 0 auto;
+  max-width: 800px;
+/*  border-radius: 5px;
+  box-shadow: 0 0 3px rgba(0,0,0,.4);/**/
+}
+.container-narrow > hr {
+  margin: 30px 10px;
+}
