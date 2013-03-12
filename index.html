@@ -4,32 +4,33 @@
     <title>wpmaker</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
     <link href="css/style.css" rel="stylesheet" media="screen">
   </head>
   <body>
     <div class="container-narrow">
-      <h1>wpmaker</h1>
-
-      <hr>
+      <div id="header" class="text-center">
+        <h1>wpmaker</h1>
+      </div>
 
       <div id="examplesCarousel" class="carousel slide">
         <div class="carousel-inner">
           <div class="item active">
-            <img src="http://i.imgur.com/YHrL4.jpg" alt="Split collage" />
+            <img src="img/wp1.png" alt="Split collage" />
             <div class="carousel-caption">
               <h4>Split collage</h4>
-              <p>wpmaker creates collages such as this using plugins, ensuring that you&apos;ll get a unique desktop wallpaper each time a new one is generated.</p>
+              <p>Wpmaker creates collages such as this using plugins, ensuring that you&apos;ll get a unique desktop wallpaper each time a new one is generated.</p>
             </div>
           </div>
           <div class="item">
-            <img src="http://i.imgur.com/dg5fI.jpg" alt="Scale and crop" />
+            <img src="img/wp2.png" alt="Scale and crop" />
             <div class="carousel-caption">
               <h4>Scale and crop</h4>
-              <p>wpmaker also has a plugin which just scales and crops your images, making sure to fit the image to your desktop without compromizing the aspect-ratio.</p>
+              <p>Wpmaker also has a plugin which just scales and crops your images, making sure to fit the image to your desktop without compromizing the aspect-ratio.</p>
             </div>
           </div>
           <div class="item">
-            <img src="http://i.imgur.com/XLNHp.jpg" alt="Collage selection" />
+            <img src="img/wp3.png" alt="Collage selection" />
             <div class="carousel-caption">
               <h4>Collage selection</h4>
               <p>Collages can be toggled using the notification icon, your preferences are saved after each toggle.</p>
@@ -39,8 +40,6 @@
         <a href="#examplesCarousel" class="left carousel-control" data-slide="prev">&lsaquo;</a>
         <a href="#examplesCarousel" class="right carousel-control" data-slide="next">&rsaquo;</a>
       </div>
-
-      <hr>
 
       <div id="download" class="row-fluid">
         <div class="span3 text-center">
@@ -61,7 +60,7 @@
         <div class="span3 text-center">
           <h3>Source Code</h3>
           <a href="#" class="btn btn-primary"><i class="icon-download icon-white"></i> Download</a>
-          <p><small>.zip 178.6 KB</small></p>
+          <p><small><a href="#source">See requirements</a></small></p>
         </div>
       </div>
 
@@ -97,9 +96,57 @@
         </div>
       </div>
 
+      <hr>
+
+      <div id="advanced">
+        <h2>Configuration</h2>
+        <p>To run wpmaker only the path to the wallpaper folder needs to be configured. All options can be configured using the command line or the configuration file. Options are called the same in the command line as in the file, however the file has specific sections for each plugin. In the command line these sections are prepended to each option with a period. </p>
+        <div class="row-fluid">
+          <div class="span6">
+            <h3>By file</h3>
+            <p>Here's an example, just a little sample</p>
+            <pre>[options]
+collage-plugin=recursive split, simple resize
+wallpaper=~/.wp.png
+
+[folder]
+source=~/Pictures/wp/</pre>
+            <p>Above we've set specific collage plugins, the output wallpaper path, and the path to our wallpaper folder respectively. The source option is in the folder section because the folder plugin handles that option.</p>
+          </div>
+          <div class="span6">
+            <h3>By command Line</h3>
+            <p>All command line options can be seen if you run wpmaker with the <code>--help</code> option.</p>
+            <pre>wpmaker --folder.source=~/Pictures/wp/</pre>
+            <p>Here's how you can run wallpaper maker with a specific wallpaper source folder.</p>
+            <p>On windows you'd run <code>wpmaker.exe [..]</code></p>
+          </div>
+        </div>
+      </div>
+
+      <hr>
+
+      <div id="source">
+        <h2>Source requirements</h2>
+        <p>To run the python code the following dependencies need to be installed:</p>
+        <ul>
+          <li><strong>Python 2.7</strong> (<a href="http://python.org/download/releases/2.7.3/">download</a>)</li>
+          <li><strong>Pygame</strong> (<a href="http://www.pygame.org/download.shtml">download</a>)</li>
+          <li><strong>docopt</strong> (<a href="https://github.com/docopt/docopt">download</a>) (<code>easy_install docopt</code> or <code>pip install docopt</code>)</li>
+          <li><strong>appdirs</strong> (<a href="https://github.com/ActiveState/appdirs">download</a>) (<code>easy_install appdirs</code> or <code>pip install appdirs</code>)</li>
+          <li><strong>wxPython</strong> (<a href="http://wxpython.org/download.php">download</a>) <em>(optional)</em></li>
+        </ul>
+      </div>
+
+      <hr>
+
+      <div id="footer">
+        <p class="text-center">&copy; 2013 Viktor Alex Brynjarsson</p>
+      </div>
+
     </div>
 
-    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="js/jquery.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/script.js"></script>
   </body>
 </html>
