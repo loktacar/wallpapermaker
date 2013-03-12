@@ -1,0 +1,23 @@
+Create scripts to run pyinstaller on specific output folders
+  win32
+  linux2
+  osx
+
+windows:
+delete win32 directory
+python pyinstaller.py -F -w -o win32 -n wpmaker wpmaker.py
+python pyinstaller.py -F -c -o win32 -n wpmaker_console wpmaker.py
+remove *.pyc files from plugins dir
+copy plugins recursively into win32/dist/
+copy LICENSE into win32/dist
+copy monitor-wallpaper-icon.png into win32/dist
+
+linux:
+See linux.sh
+
+osx:
+python pyinstaller.py -F -o osx -n wpmaker wpmaker.py
+
+
+Also copy plugins folder from wpmaker\plugins to wpmaker\dist\plugins
+
