@@ -21,6 +21,12 @@ body {
   margin-bottom: 30px;
   text-shadow: 2px 2px 5px rgba(0,0,0,.3);
 }
+#header { position: relative; }
+#header .github {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}
 
 #examplesCarousel img {
   border-radius: 5px;
