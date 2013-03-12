@@ -32,7 +32,7 @@ class XlibGetResolution(GetResolution):
                 if '+' in di and 'x' in di:
                     display = di
 
-            if di == '':
+            if display == '':
                 continue
 
             values = display.split('+')
