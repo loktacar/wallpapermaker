@@ -12,6 +12,8 @@ class wxPython(UI):
         super(wxPython, self).__init__(config)
         self._initialize_gui()
 
+        self.app_paused = False
+
     # App Control functions
 
     def start_app(self):
@@ -38,8 +40,16 @@ class wxPython(UI):
         self.app.pause()
 
     def OnUpdateTick(self, event):
-        # Set pause status tick
-        self.menu.Check(self.pitem.GetId(), self.app.is_paused)
+        # Set pause status tick and icon
+        if not (self.app_paused == self.app.is_paused):
+            self.menu.Check(self.pitem.GetId(), self.app.is_paused)
+            if self.app.is_paused:
+                self.tbicon.SetIcon(self.pause_icon, "wpmaker")
+            else:
+                self.tbicon.SetIcon(self.run_icon, "wpmaker")
+
+            self.app_paused = self.app.is_paused
+
 
         # Set collage activation status ticks
         self._set_active_collage_tics()
@@ -118,13 +128,17 @@ class wxPython(UI):
         self.ui_app = wx.PySimpleApp()
 
         #setup icon object
-        icon = wx.Icon("wpmaker.ico", wx.BITMAP_TYPE_ICO)
-        icon.SetHeight(32)
-        icon.SetWidth(32)
+        self.run_icon = wx.Icon("wpmaker.ico", wx.BITMAP_TYPE_ICO)
+        self.run_icon.SetHeight(32)
+        self.run_icon.SetWidth(32)
+
+        self.pause_icon = wx.Icon("wpmaker_paused.ico", wx.BITMAP_TYPE_ICO)
+        self.pause_icon.SetHeight(32)
+        self.pause_icon.SetWidth(32)
 
         #setup taskbar icon
         self.tbicon = wx.TaskBarIcon()
-        self.tbicon.SetIcon(icon, "wpmaker")
+        self.tbicon.SetIcon(self.run_icon, "wpmaker")
         wx.EVT_TASKBAR_RIGHT_UP(self.tbicon, self.OnTaskBarRight)
 
     def _initialize_menu(self):
@@ -134,7 +148,7 @@ class wxPython(UI):
         # action menu items
         self.gitem = self.menu.Append(wx.ID_ANY, '&Generate', 'Generate new wallpaper')
         self.pitem = self.menu.Append(wx.ID_ANY, '&Pause', 'Pause wallpaper generation', kind=wx.ITEM_CHECK)
-        self.menu.Check(self.pitem.GetId(), True)
+        self.menu.Check(self.pitem.GetId(), False)
         self.menu.Append(wx.ID_SEPARATOR)
 
         # configuration menu items
