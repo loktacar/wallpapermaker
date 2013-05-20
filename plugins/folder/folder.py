@@ -56,7 +56,7 @@ class Folder(Source):
             try:
                 wallpaper = self._image_from_path(wallpaper_path)
             except:
-                logging.error('Failed to find wallpaper %s' % wallpaper)
+                logging.error('Failed to find wallpaper %s, removing...' % wallpaper_path)
                 self.wallpapers.remove(wallpaper)
                 continue
 
